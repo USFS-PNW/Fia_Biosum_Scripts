@@ -47,7 +47,7 @@ master_package$ATBA_ReductionPct <- as.numeric(master_package$ATBA_ReductionPct)
 #    by the user (BA_threshold) (problem_wrong_cut_amt)
 # 4. Checks that cuts only took place every other cut cycle (20 years between cuts) (problem_wrong_cut_int)
 
-i <- 2
+i <- 3
 directory <- "G:/cec_20170915/fvs/data/CA"
 variantname <- "CA"
 BA_threshold <- 10
@@ -58,8 +58,9 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
   end <- length(path)
   path <- path[-c(20,21,27:end)]#remove packages with qmd/volumne limits; this only works for BA only limits
   problem <- data.frame()
-  numfiles <- 14
-  #numfiles <- nrow(data.frame(path)) #calculates the number of package MDB files based on the path variable above
+  #numfiles <- 14
+  numfiles <- nrow(data.frame(path)) #calculates the number of package MDB files based on the path variable above
+  FVS_Cases_rows <- as.numeric(0)
   for (i in 1:numfiles) {
     row <- NULL
     file <- file.path(directory, path[i]) #creates a file path using the directory variable and the iteration of the pakage MDB
@@ -67,7 +68,12 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     conn <- odbcDriverConnect(x) #Connect to access database 
     FVS_Summary <- sqlFetch(conn, "FVS_Summary", as.is = TRUE)
     FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
+    FVS_Cases <- sqlFetch(conn, "FVS_Cases")
     odbcCloseAll()
+    
+    #Get # rows in FVS_Cases
+    FVS_Cases_rows[i] <- nrow(FVS_Cases)
+    
     years <- data.frame("Year" = unique(FVS_Compute$Year)) #takes unique values for "year" from FVS_Summary
     years <- arrange(years, Year)
     cut_cycles <- c(1,4,7,10) #takes the year #  for the cut cycles. These are defined in the KCP files
@@ -230,7 +236,7 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
       return(check_data)
     }
     problem_wrong_cut_int <- data.frame(test())
-    row <- data.frame("filename" = path[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
+    row <- data.frame("filename" = path[i], "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
     problem <- rbind(problem, row)
   }
   return(problem)
@@ -245,20 +251,28 @@ WS_BAonly_problem <- data.frame(Check_BAonly_Packages("F:/BiosumVM/cec_20170915/
 #The function below allows you to spot check values for a specific package. You need to call the function then 
 #separate the output list into separate data frames. These are the same data frames used in the Check_BAonly_Packages function
 packagenum <- "013"
-directory <- "F:/BiosumVM/cec_20170915/fvs/data/CA"
+directory <- "G:/cec_20170915/fvs/data/CA"
 variantname <- "CA"
 BA_threshold <- 10
+
 BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagenum) {
   setwd(directory)#sets the working directory to the directory variable
   path <- list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", variantname, "_P", packagenum, "*.MDB", sep = ""))) #lists all the files in the directory that begin with FVSOUT_{variantname}_P{packagenum} and end with .MDB (case sensitive)
   problem <- data.frame()
   row <- NULL
+  FVS_Cases_rows <- as.numeric(0)
   file <- file.path(directory, path) #creates a file path using the directory variable and the iteration of the pakage MDB
   x <- paste("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file, sep = "") #writes the argument for the odbcDriverConnect function below
   conn <- odbcDriverConnect(x) #Connect to access database 
   FVS_Summary <- sqlFetch(conn, "FVS_Summary", as.is = TRUE)
   FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
+  FVS_Cases <- sqlFetch(conn, "FVS_Cases", as.is = TRUE)
   odbcCloseAll()
+  
+  
+  #Get # rows in FVS_Cases
+  FVS_Cases_rows[i] <- nrow(FVS_Cases)
+  
   years <- data.frame("Year" = unique(FVS_Compute$Year)) #takes unique values for "year" from FVS_Summary
   cut_cycles <- c(1,4,7,10) #takes the year #  for the cut cycles. These are defined in the KCP files
   
@@ -422,7 +436,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   }
   problem_wrong_cut_int <- data.frame(test())
   
-  row <- data.frame("filename" = path, "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
+  row <- data.frame("filename" = path, "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
   problem <- rbind(problem, row)
   
   problem2 <- list()
@@ -435,7 +449,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   return(problem2)
 }
 
-output <- BA_Package_Spot_Check("F:/BiosumVM/cec_20170915/fvs/data/WS","WS", 10, "013")
+output <- BA_Package_Spot_Check("G:/cec_20170915/fvs/data/WS","WS", 10, "013")
 
 problem <- data.frame(output$problem)
 problem_wrong_cut <- data.frame(output$problem_wrong_cut)
