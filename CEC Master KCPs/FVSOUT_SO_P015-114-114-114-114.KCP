@@ -177,7 +177,7 @@ POTFIRE            2
 BURNREPT           2
 CARBRPTS           2
 STRCLASS           2
-COMPUTE            0
+COMPUTE            0         1
 End
 
 !! _CRT is criteria  for entry which is set at very high for basal basal. Later as this variable is set  to real level such that stand can be harvested.
