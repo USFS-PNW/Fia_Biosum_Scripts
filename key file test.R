@@ -2,12 +2,12 @@
 #The script tests to make sure the package KCP file used to create each FVS key
 #file in FVS Suppose uses the correct corresponding package KCP. 
 
-setwd("G:/cec_20170915/fvs/data/CA") #you'll need to change the working directory and run each variant separately
+setwd("G:/cec_20170915/fvs/data/NC") #you'll need to change the working directory and run each variant separately
 
 #NOTE: Before running, make sure all the variant KCP files follow the same name format. They should begin with the 
 #variant name then end with ".kcp" (the extension MUST be lowercase). For example, "CA_SDImax.kcp" will work, but 
 #CA_SDImax.KCP and SDImax_CA.kcp will not work. The only argument for the function is the variant name.
-
+variantname <- "NC"
 test <- function(variantname) {
   numfiles <- nrow(data.frame(list.files(path = ".", pattern = ".key")))#calculate the number of .KEY files in the directory
   numadd <- nrow(data.frame(list.files(path = ".", pattern = glob2rx(paste(variantname, "*.kcp", sep = "")))))#calculate the number of additional variant KCPS (file names must start with the variant name, e.g. "CA.kcp")
@@ -24,7 +24,7 @@ test <- function(variantname) {
       rows2 <- as.numeric(0)
       filenames2 <- as.numeric(0)
       for (j in 1:numadd) {
-        addfile <- list.files(path = ".", pattern = glob2rx("CA*.kcp"))[j] #lists the variant KCPs
+        addfile <- list.files(path = ".", pattern = glob2rx(paste(variantname, "*.kcp", sep = "")))[j] #lists the variant KCPs
         a <- data.frame(grep(addfile, readLines(list.files(path = ".", pattern = ".key")[i]), value = TRUE)) #calculates the # of times the variant KCP name appears in the .key file
         rows2[j] <- nrow(a)
       }
@@ -35,9 +35,10 @@ test <- function(variantname) {
     filename[i] <- list.files(path = ".", pattern = ".key")[i]
   }
   testresult <- data.frame(unlist(filename), final)
-  addfilenames <- list.files(path = ".", pattern = glob2rx("CA*.kcp"))
+  addfilenames <- list.files(path = ".", pattern = glob2rx(paste(variantname, "*.kcp", sep = "")))
   colnames(testresult) <- c("key file", "package KCP", addfilenames)
   return(testresult)
 }
 
 CA_result <- test(variantname = "CA")
+NC_result <- test(variantname = "NC")
