@@ -199,7 +199,6 @@ COMPUTE      0
 _UD = 30.00
 _CRT = 115.
 _LD = 9.
-_OWN = OWNCD
 END
 ENDIF
 
@@ -211,7 +210,6 @@ COMPUTE      0
 _UD = 36.00
 _CRT = 115.
 _LD = 9.
-_OWN = OWNCD
 END
 ENDIF
 

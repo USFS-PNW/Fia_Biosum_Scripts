@@ -206,15 +206,26 @@ _CRT = 115.
 END
 ENDIF
 
+SpGroup    FIR
+WF RF
+
 IF          0  
 CYCLE GE 1
 THEN
 COMPUTE     0
 _bBA     = SPMCDBH(2,  0, 0.,  4., 999) 
+_FIRBA   = SPMCDBH(2, FIR, 0.,4) 
 _bsBA    = SPMCDBH(2,  0, 0.,  4., _UD) 
 _blBA    = SPMCDBH(2,  0, 0.,_UD, 999) 
 _TBA     = SPMCDBH(2,  0, 0.,  4., 999)  * 0.667 
-_dtBA    = _TBA - _blBA 
+_dtBA    = _TBA - _blBA
+_LESSBA  = _bBA - _TBA
+_TFIR    = MAX(_FIRBA/2, _FIRBA-_LESSBA)
+_PRFMD = SPMCDBH(2, FIR, 0, 4,_UD,0,500,0,0)
+_PRFLG = SPMCDBH(2, FIR, 0, _UD,999,0,500,0,0)
+_PSTFSM = SPMCDBH(2, FIR, 0, 1,4,0,500,3,0)
+_PSTFMD = SPMCDBH(2, FIR, 0, 4,_UD,0,500,3,0)
+_PSTFLG = SPMCDBH(2, FIR, 0, _UD,999,0,500,3,0) 
 END
 ENDIF
 

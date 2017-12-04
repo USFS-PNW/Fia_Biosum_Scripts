@@ -261,16 +261,17 @@ ThinDBH            0     Parms(4., _UD, 1., FIR, 0,_TFIR)
 ENDIF
 
 IF          0             
-_lBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT 
+_lBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT
 THEN
-ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0            
-_lBA LE _TBA AND CYCLE EQ 1 AND _bBA GT _CRT 
+_lBA LE _TBA AND CYCLE EQ 1 AND _bBA GT _CRT
 THEN
-!!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
-ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0
@@ -312,14 +313,15 @@ ENDIF
 IF          0              
 _lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
 THEN
-ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0             
 _lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
 THEN
-!!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
-ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0
@@ -362,14 +364,15 @@ ENDIF
 IF          0             
 _lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
 THEN
-ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0              
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1
+_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
 THEN
-!!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
-ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0
@@ -411,14 +414,15 @@ ENDIF
 IF          0              
 _lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1 
 THEN
-ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0             
 _lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1
 THEN
-!!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
-ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
+!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
 IF          0
