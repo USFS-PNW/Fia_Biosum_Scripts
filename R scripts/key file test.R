@@ -2,13 +2,14 @@
 #The script tests to make sure the package KCP file used to create each FVS key
 #file in FVS Suppose uses the correct corresponding package KCP. 
 
-setwd("G:/cec_20170915/fvs/data/NC") #you'll need to change the working directory and run each variant separately
+setwd("H:/cec_20170915/fvs/data/NC") #you'll need to change the working directory and run each variant separately
 
 #NOTE: Before running, make sure all the variant KCP files follow the same name format. They should begin with the 
 #variant name then end with ".kcp" (the extension MUST be lowercase). For example, "CA_SDImax.kcp" will work, but 
 #CA_SDImax.KCP and SDImax_CA.kcp will not work. The only argument for the function is the variant name.
-variantname <- "NC"
-test <- function(variantname) {
+variantname <- "CA"
+test <- function(directory, variantname) {
+  setwd(directory) #sets the working directory to the directory variable
   numfiles <- nrow(data.frame(list.files(path = ".", pattern = ".key")))#calculate the number of .KEY files in the directory
   numadd <- nrow(data.frame(list.files(path = ".", pattern = glob2rx(paste(variantname, "*.kcp", sep = "")))))#calculate the number of additional variant KCPS (file names must start with the variant name, e.g. "CA.kcp")
   rows <- as.numeric(0)
@@ -40,5 +41,8 @@ test <- function(variantname) {
   return(testresult)
 }
 
-CA_result <- test(variantname = "CA")
-NC_result <- test(variantname = "NC")
+CA_result <- test(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA")
+NC_result <- test(directory = "H:/cec_20170915/fvs/data/NC", variantname = "NC")
+SO_result <- test(directory = "H:/cec_20170915/fvs/data/SO", variantname = "SO")
+WS_result <- test(directory = "H:/cec_20170915/fvs/data/WS", variantname = "WS")
+

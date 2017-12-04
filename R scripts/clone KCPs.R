@@ -28,6 +28,6 @@ cloneKCP <- function(oldvariant, newvariant) {
 }
 
 #The function is called below by changing the variant names. 
-cloneKCP(oldvariant = "SO", newvariant = "CA")
+cloneKCP(oldvariant = "SO", newvariant = "WS")
 
 

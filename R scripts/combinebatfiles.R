@@ -18,7 +18,7 @@
 #can run without getting your CPU to 90%, put the bat files you've already run in a 
 #separate directory, then run this script. 
 
-setwd("G:/cec_20170915/fvs/data/CA")
+setwd("H:/cec_20170915/fvs/data/NC")
 
 batchfiles <- function(batchsize) {
   files <- length(list.files(path = ".", pattern = glob2rx("FVSOUT_*_P0*.bat"))) #get # of files named {package}.bat
@@ -33,4 +33,4 @@ batchfiles <- function(batchsize) {
   }
 }
 
-batchfiles(8)
+batchfiles(6)

@@ -307,6 +307,7 @@ SO_BAonly_problem <- data.frame(Check_BAonly_Packages("G:/cec_20170915/fvs/data/
 WS_BAonly_problem <- data.frame(Check_BAonly_Packages("F:/BiosumVM/cec_20170915/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 
+write.csv(CA_BAonly_problem, "CA_QA.csv")
 #The function below allows you to spot check values for a specific package. You need to call the function then 
 #separate the output list into separate data frames. These are the same data frames used in the Check_BAonly_Packages function
 
@@ -561,7 +562,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   return(problem2)
 }
 
-output <- BA_Package_Spot_Check("G:/cec_20170915/fvs/data/SO","SO", 10, "021")
+output <- BA_Package_Spot_Check("G:/cec_20170915/fvs/data/SO","SO", 10, "029")
 
 problem <- data.frame(output$problem)
 problem_wrong_cut <- data.frame(output$problem_wrong_cut)
