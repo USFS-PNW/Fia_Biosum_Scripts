@@ -37,62 +37,23 @@ processor_test <- function(directory, variantname) {
     FVS_Tree<- sqlFetch(conn, "FVS_Tree", as.is = TRUE)
     
     completetest <- function(data) {
-      result <- data[!complete.cases(data$biosum_cond_id,
-                                     data$rxcycle,
-                                     data$rx,
-                                     data$rxyear,
-                                     data$dbh,
-                                     data$tpa,
-                                     data$volcfnet,
-                                     data$volcfgrs, 
-                                     data$drybiom, 
-                                     data$drybiot, 
-                                     data$fvs_tree_id, 
-                                     data$FvsCreatedTree_YN, 
-                                     data$voltsgrs),]
-      return(result)
-    }
-    
-    completerowtest <- function(data) {
-      result <- complete.cases(data$biosum_cond_id,
-                               data$rxcycle,
-                               data$rx,
-                               data$rxyear,
-                               data$dbh,
-                               data$tpa,
-                               data$volcfnet,
-                               data$volcfgrs, 
-                               data$drybiom, 
-                               data$drybiot, 
-                               data$fvs_tree_id, 
-                               data$FvsCreatedTree_YN, 
-                               data$voltsgrs)
-      return(result)
-    }
-    
-    if(nrow(completetest(FVS_Tree)) != 0) {
-      for (j in 1:nrow(FVS_Tree)) {
-        data <- FVS_Tree[j,]
-        if (!completerowtest(data)) {#if it fails the complete test
-          if (substr(FVS_Tree$fvs_tree_id[j], 3,4) == "ES" | FVS_Tree$dbh[j] <= 5) {
-            if (is.na(FVS_Tree$volcfnet[j])) {
-              FVS_Tree$volcfnet[j] <- 0.1
+      result <- data.frame()
+      for (i in 1:nrow(data)) {
+        row <- data[i,]
+        if (!complete.cases(row$biosum_cond_id, row$rxcycle, row$rx, row$rxyear, row$dbh,
+                           row$tpa, row$volcfnet, row$volcfgrs, row$drybiom,row$drybiot, 
+                           row$fvs_tree_id, row$FvsCreatedTree_YN, row$voltsgrs)) {
+          if (row$dbh <= 5) {
+            if (!complete.cases(row$biosum_cond_id, row$rxcycle, row$rx, row$rxyear, row$dbh,
+                               row$tpa, row$volcfnet, row$drybiot, row$fvs_tree_id, row$FvsCreatedTree_YN, row$voltsgrs)) {
+              result <- rbind(result, row)
             }
-            if (is.na(FVS_Tree$volcfgrs[j])) {
-              FVS_Tree$volcfgrs[j] <- 0.1
-            }
-            if (is.na(FVS_Tree$drybiom[j])) {
-              FVS_Tree$drybiom[j] <- 0.1
-            }
-            if (is.na(FVS_Tree$drybiot[j])) {
-              FVS_Tree$drybiot[j] <- 0.1
-            }
-            if (is.na(FVS_Tree$voltsgrs[j])) {
-              FVS_Tree$voltsgrs[j] <- 0.1
-            }
+          } else {
+            result <- rbind(result, row)
           }
         }
       }
+      return(result)
     }
     
     problems <- completetest(FVS_Tree)
@@ -117,8 +78,8 @@ processor_test <- function(directory, variantname) {
     }
     
     for (m in 1:nrow(FVS_Tree)) {
-      if (FVS_Tree[m,]$fvs_tree_id %in% problems$fvs_tree_id) {
-        problemsrow <- problems[FVS_Tree[m,]$fvs_tree_id == problems$fvs_tree_id,]
+      if (FVS_Tree[m,]$id %in% problems$id) {
+        problemsrow <- problems[FVS_Tree[m,]$id == problems$id,]
         FVS_Tree[m,]$volcfnet <- problemsrow$volcfnet
         FVS_Tree[m,]$volcfgrs <- problemsrow$volcfgrs
         FVS_Tree[m,]$drybiom <- problemsrow$drybiom
@@ -127,9 +88,10 @@ processor_test <- function(directory, variantname) {
       }
     }
     
-    problems2 <- completetest(FVS_Tree)
-    
-    result <- rbind(result, problems2)
+    # test <- FVS_Tree[FVS_Tree$id %in% problems$id,]
+    stillproblems <- completetest(FVS_Tree)
+
+    result <- rbind(result, stillproblems)
     
     sqlQuery(conn, 'SELECT * INTO FVS_Tree_Old FROM FVS_Tree')
     sqlQuery(conn, 'DROP TABLE FVS_Tree')
