@@ -43,9 +43,10 @@ rx_addcost_update$Description <- paste("Cost of", rx_addcost_update$ColumnName, 
 
 sqlQuery(conn, 'DROP TABLE rx_harvest_cost_columns')
 
-odbcCloseAll()
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
-sqlQuery(conn, 'DROP TABLE rx_harvest_cost_columns')
+# odbcCloseAll()
+# 
+# conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
+# sqlQuery(conn, 'DROP TABLE rx_harvest_cost_columns')
 sqlSave(conn, dat = rx_addcost_update, tablename = "rx_harvest_cost_columns", rownames = FALSE)
 odbcCloseAll()
 

@@ -8,7 +8,7 @@ library("RODBC")
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #create a master_package database that has the BA, less, and QMD thresholds for cutting
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=G:/cec_20170915/db/fvsmaster.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
 package_labels <- sqlFetch(conn, "PkgLabels", as.is = TRUE) #import package labels table from fvsmaster.mdb NOTE: this table was manually added earlier
 odbcCloseAll()
 
@@ -37,6 +37,8 @@ names(master_package)[2] <- "LD"
 master_package$BA <- as.numeric(master_package$BA)
 master_package$ATBA_ReductionPct <- as.numeric(master_package$ATBA_ReductionPct)
 
+master_package <- master_package[-c(20,21,27,28),]
+
 # The function below checks 4 things:
 # 1. Checks for cuts being made in a non cut-year (problem_wrong_cut)
 # 2. Checks for cut-year cycles where BA was greater than the BA threshold for cutting
@@ -47,16 +49,16 @@ master_package$ATBA_ReductionPct <- as.numeric(master_package$ATBA_ReductionPct)
 #    by the user (BA_threshold) (problem_wrong_cut_amt)
 # 4. Checks that cuts only took place every other cut cycle (20 years between cuts) (problem_wrong_cut_int)
 
-i <- 3
-directory <- "G:/cec_20170915/fvs/data/CA"
+# i <- 3
+# directory <- "G:/cec_20170915/fvs/data/CA"
+# variantname <- "CA"
+# BA_threshold <- 10
+# 
+directory <- "H:/cec_20170915/fvs/data/CA"
 variantname <- "CA"
 BA_threshold <- 10
-
-directory <- "G:/cec_20170915/fvs/data/CA"
-variantname <- "CA"
-BA_threshold <- 10
-
-i <- 2
+# 
+# i <- 2
 
 Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
   setwd(directory)#sets the working directory to the directory variable
@@ -75,7 +77,13 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     FVS_Summary <- sqlFetch(conn, "FVS_Summary", as.is = TRUE)
     FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
     FVS_Cases <- sqlFetch(conn, "FVS_Cases")
+    
+    if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
+      SurvVolRatio = "YES"
+    }
+    
     odbcCloseAll()
+
     
     #Get # rows in FVS_Cases
     FVS_Cases_rows[i] <- nrow(FVS_Cases)
@@ -294,17 +302,18 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
       
     }
     problem_wrong_cut_int <- data.frame(test())
-    row <- data.frame("filename" = path[i], "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
+    row <- data.frame("filename" = path[i], "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), 
+                      "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int), 
+                      "SurVVolRatio" = SurvVolRatio)
     problem <- rbind(problem, row)
   }
   return(problem)
 }
 
-check <- data.frame(Check_BAonly_Packages("E:/Dropbox/Carlin/Berkeley/biosum", "CA", 10))
-CA_BAonly_problem <- data.frame(Check_BAonly_Packages(directory = "G:/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
-NC_BAonly_problem <- data.frame(Check_BAonly_Packages("G:/cec_20170915/fvs/data/NC","NC",10))
-SO_BAonly_problem <- data.frame(Check_BAonly_Packages("G:/cec_20170915/fvs/data/SO","SO",10))
-WS_BAonly_problem <- data.frame(Check_BAonly_Packages("F:/BiosumVM/cec_20170915/fvs/data/WS","WS",10))
+CA_BAonly_problem <- data.frame(Check_BAonly_Packages(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
+NC_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/NC","NC",10))
+SO_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/SO","SO",10))
+WS_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 
 write.csv(CA_BAonly_problem, "CA_QA.csv")
@@ -328,6 +337,11 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   FVS_Summary <- sqlFetch(conn, "FVS_Summary", as.is = TRUE)
   FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
   FVS_Cases <- sqlFetch(conn, "FVS_Cases", as.is = TRUE)
+  
+  if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
+    SurvVolRatio = "YES"
+  }
+  
   odbcCloseAll()
   
   
@@ -549,7 +563,9 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   }
   problem_wrong_cut_int <- data.frame(test())
   
-  row <- data.frame("filename" = path, "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int))
+  row <- data.frame("filename" = path, "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), 
+                    "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int),
+                    "SurVVolRatio" = SurvVolRatio)
   problem <- rbind(problem, row)
   
   problem2 <- list()
@@ -562,7 +578,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   return(problem2)
 }
 
-output <- BA_Package_Spot_Check("G:/cec_20170915/fvs/data/SO","SO", 10, "029")
+output <- BA_Package_Spot_Check("H:/cec_20170915/fvs/data/CA","CA", 10, "001")
 
 problem <- data.frame(output$problem)
 problem_wrong_cut <- data.frame(output$problem_wrong_cut)
