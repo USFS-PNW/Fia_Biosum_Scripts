@@ -1,4 +1,3 @@
-
 #Translate plot data afer running the "Near" function in ArcGIS to get 
 #Yarding distance for each plot. This takes the output attribute table, 
 #trims to relevant columns, converts from meters to feet, rounds it to 
@@ -6,6 +5,8 @@
 #imported into the master.mdb file and used to update the gis_yard_dist
 #value in the plot table by linking plot (NOT biosum_plot_id), measyear, 
 #invyr, statecd, and fvs_variant. 
+
+
 setwd("D:/cec_20170915/gis/")
 plot_near <- read.csv("plot_near.txt", colClasses = c(rep("numeric",3), "character", rep("numeric", 9), rep("character", 8), "numeric", "character", rep("numeric", 17)))
 yard_dist_2017 <- plot_near[,c(4:6,9:10,14, 17:21,38)]

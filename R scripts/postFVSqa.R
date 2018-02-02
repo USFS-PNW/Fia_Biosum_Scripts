@@ -1,3 +1,7 @@
+#This script was created by Carlin Starrs in 2017
+#The script tests to make sure FVS carried out prescriptions as to be expected based on the KCP files
+#for the CEC project dataset. 
+
 #Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
 
@@ -49,24 +53,11 @@ master_package <- master_package[-c(20,21,27,28),]
 #    by the user (BA_threshold) (problem_wrong_cut_amt)
 # 4. Checks that cuts only took place every other cut cycle (20 years between cuts) (problem_wrong_cut_int)
 
-# i <- 3
-# directory <- "G:/cec_20170915/fvs/data/CA"
-# variantname <- "CA"
-# BA_threshold <- 10
-# 
-directory <- "H:/cec_20170915/fvs/data/CA"
-variantname <- "CA"
-BA_threshold <- 10
-# 
-# i <- 2
-
-Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
+fvs_qa <- function(directory, variantname, BA_threshold) {
   setwd(directory)#sets the working directory to the directory variable
   path <- list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", variantname, "_P0", "*.MDB", sep = ""))) #lists all the files in the directory that begin with FVSOUT_{variantname}_P0 and end with .MDB (case sensitive)
   end <- length(path)
-  #path <- path[-c(20,21,27:end)]#remove packages with qmd/volumne limits; this only works for BA only limits
   problem <- data.frame()
-  #numfiles <- 14
   numfiles <- nrow(data.frame(path)) #calculates the number of package MDB files based on the path variable above
   FVS_Cases_rows <- as.numeric(0)
   for (i in 1:numfiles) {
@@ -78,12 +69,13 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
     FVS_Cases <- sqlFetch(conn, "FVS_Cases")
     
+    #check to see if the package has the SurvVolRatio table (this is added using the MortCalc R script)
     if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
       SurvVolRatio = "YES"
-    }
+    } 
     
     odbcCloseAll()
-
+    
     
     #Get # rows in FVS_Cases
     FVS_Cases_rows[i] <- nrow(FVS_Cases)
@@ -97,24 +89,26 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     #Find rows where RTPA is >0 in a non-cut_year
     problem_wrong_cut <- FVS_Summary[!FVS_Summary$Year %in% cut_years$cut_years & FVS_Summary$RTpa > 0,]
     
-    #Find rows where BA reaches over maximum and it wasn't cut
+    #Check for _CRT column in the package database (CRT is the cut threshold value set by the KCP File. If it is missing you need to change the 
+    #KCP file to properly print the CRT variable)
     if(!"_CRT" %in% colnames(FVS_Compute)) {
       problem_no_crt <- "YES"
     } else {
       problem_no_crt <- "NO"
     }
-    BA_cut <- FVS_Compute[!FVS_Compute$`_CRT` == "999",] #remove stands with CRT = 999, as these are in non-relevant ownership categories
+    
+    BA_cut <- FVS_Compute[!FVS_Compute$`_CRT` == "999",] #remove stands with CRT = 999, as these are not eligible for harvest
     PkgBA <- unique(BA_cut$`_CRT`) #get package BA
     
     #QMD check
     if (is.na(master_package$QMD[master_package$PkgNum == substr(path[i],12,14)])) { #check if master_package has a QMD value. If the QMD value is not NA, this code runs, otherwise skip to else.
       BA_cutyears <- BA_cut[BA_cut$Year %in% cut_years$cut_years,] #limit to rows in a cut year
-      BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT`,] #find rows where BBA is >= CRT
+      BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT`,] #find rows where eligible basal area BBA is >= CRT
       FVS_Summary2 <- data.frame("StandID" = FVS_Summary$StandID, "Year" = FVS_Summary$Year, "BA" = FVS_Summary$BA, "TPA" = FVS_Summary$Tpa, "RTpa" = FVS_Summary$RTpa) #get RTpa from FVS_Summary
       BA_cutyears2 <- merge(BA_cutyears, FVS_Summary2, by = c("StandID", "Year")) #add RTpa to BA_cutyears
       
       problem_didnt_cut <- BA_cutyears2[BA_cutyears2$RTpa == 0,] #rows where BBA > CRT in a cut cycle with RTpa = 0
-    } else { #process for stands with QMD limit (clearcut packages)
+    } else { #process for stands with QMD limit (clearcut packages: note these were removed from the final run of the project)
       BA_cutyears <- BA_cut[BA_cut$Year %in% cut_years$cut_years,] #limit to rows in a cut year
       BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT` | BA_cutyears$`_BQMD` >= BA_cutyears$`_QCRT`,] #find rows where BBA is >= CRT OR BQMD >= QCRT
       FVS_Summary2 <- data.frame("StandID" = FVS_Summary$StandID, "Year" = FVS_Summary$Year, "BA" = FVS_Summary$BA, "TPA" = FVS_Summary$Tpa, "RTpa" = FVS_Summary$RTpa) #get RTpa from FVS_Summary
@@ -146,7 +140,7 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     #Make sure cut amount was correct
     BA_cutyears2$`_TBA` <- as.numeric(BA_cutyears2$`_TBA`)
     
-    #Sometimes LBA was called BLBA (e.g. package 5). The if statements below correct for that.
+    #Sometimes LBA was called BLBA (e.g. package 5) and SBA was called something different. The if statements below corrects for these cases
     if("_LBA" %in% colnames(BA_cutyears2)) {
       BA_cutyears2$LBA <- BA_cutyears2$`_LBA`
     } else if ("_BLBA" %in% colnames(BA_cutyears2)) {
@@ -160,9 +154,11 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     } else {
     }
     
+    #The section below checks that the harvest amount was as expected based on the prescription set in the KCP file. 
+    #It is a rough estimate as the printed variables don't account forall harvested amounts.
     if (!is.na(master_package$QMD[master_package$PkgNum == substr(path[i],12,14)])) { #check if master_package has a QMD value. If the QMD value is not NA, this code runs, otherwise skip to else.
       clearcut <- BA_cutyears2[BA_cutyears2$`_BQMD` >= BA_cutyears2$`_QCRT`,]
-      clearcut$check <- ifelse(clearcut$TPA == clearcut$RTpa, "NO", "YES")
+      clearcut$check <- ifelse(clearcut$TPA == clearcut$RTpa, "NO", "YES") #Check that TPA = RTpa, i.e. check that all TPA was removed
       problem_wrong_amt_cut <- clearcut[clearcut$check == "YES",]
       
       nonclearcut <- BA_cutyears2[BA_cutyears2$`_BQMD` < BA_cutyears2$`_QCRT`,] #now check nonclearcuts
@@ -195,24 +191,24 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
     } else {
       BA_cutyears2$LBA <- as.numeric(BA_cutyears2$LBA)
       BA_cutyears2$`_BBA` <- as.numeric(BA_cutyears2$`_BBA`)
-      LBA_GT_TBA <- BA_cutyears2[BA_cutyears2$LBA > BA_cutyears2$`_TBA`,]
-      LBA_GT_TBA$POSTCALC <- LBA_GT_TBA$`_BBA` - LBA_GT_TBA$SBA
-      LBA_GT_TBA$check <- round(LBA_GT_TBA$PSTBAALL,0) == round(LBA_GT_TBA$POSTCALC, 0)
-      problem_LBA_GT_TBA <- LBA_GT_TBA[LBA_GT_TBA$check == FALSE,]
+      LBA_GT_TBA <- BA_cutyears2[BA_cutyears2$LBA > BA_cutyears2$`_TBA`,] #Get standyears where LBA > TBA
+      LBA_GT_TBA$POSTCALC <- LBA_GT_TBA$`_BBA` - LBA_GT_TBA$SBA #Calculate post harvest BA By subtracting SBA from BBA
+      LBA_GT_TBA$check <- round(LBA_GT_TBA$PSTBAALL,0) == round(LBA_GT_TBA$POSTCALC, 0) #Check that the FVS printed variable PSTBAALL is equal to above calculation
+      problem_LBA_GT_TBA <- LBA_GT_TBA[LBA_GT_TBA$check == FALSE,] #Label problems where above check is not the case
       problem_LBA_GT_TBA <- problem_LBA_GT_TBA[!paste(problem_LBA_GT_TBA$StandID, problem_LBA_GT_TBA$Year) %in% paste(nonproblem_didnt_cut$StandID, nonproblem_didnt_cut$Year),] #remove stands that weren't cut because they were cut the previous cycle
-      problem_LBA_GT_TBA$FOURTOFIVE <- problem_LBA_GT_TBA$`_BBA` - problem_LBA_GT_TBA$PREBAALL #get BA for trees in 4-5in DBH
+      problem_LBA_GT_TBA$FOURTOFIVE <- problem_LBA_GT_TBA$`_BBA` - problem_LBA_GT_TBA$PREBAALL #get BA for trees in 4-5in DBH which were in "grey area" as per KCP files as PSTBAALL didn't include them by taking BBA - PREBAALL
       problem_LBA_GT_TBA$PSTBAFOURTOFIVE <- problem_LBA_GT_TBA$PSTBAALL + (problem_LBA_GT_TBA$FOURTOFIVE) #add 4-5in DBH trees 
       problem_LBA_GT_TBA$check2 <- with(problem_LBA_GT_TBA, problem_LBA_GT_TBA$PSTBAFOURTOFIVE <= problem_LBA_GT_TBA$PSTBAALL + BA_threshold & 
                                           problem_LBA_GT_TBA$PSTBAFOURTOFIVE >= problem_LBA_GT_TBA$PSTBAALL- BA_threshold) #check that package calculated BA is within BA_threshold of ATBA
-      problem_LBA_GT_TBA <- problem_LBA_GT_TBA[problem_LBA_GT_TBA$check2 == FALSE,]
+      problem_LBA_GT_TBA <- problem_LBA_GT_TBA[problem_LBA_GT_TBA$check2 == FALSE,] #find rows that still remain a problem even with 4-5in trees added in
       
-      LBA_LT_TBA <- BA_cutyears2[BA_cutyears2$LBA < BA_cutyears2$`_TBA`,]
-      LBA_LT_TBA$check <- round(LBA_LT_TBA$PSTBAALL,0) == round(LBA_LT_TBA$`_TBA`,0)
-      LBA_LT_TBA$POSTCALC <- LBA_LT_TBA$`_TBA`
-      problem_LBA_LT_TBA <- LBA_LT_TBA[LBA_LT_TBA$check == FALSE,]
+      LBA_LT_TBA <- BA_cutyears2[BA_cutyears2$LBA < BA_cutyears2$`_TBA`,] #Get standyears where LBA < TBA
+      LBA_LT_TBA$check <- round(LBA_LT_TBA$PSTBAALL,0) == round(LBA_LT_TBA$`_TBA`,0) #Check rows where PSTBAALL is not equal to TBA
+      LBA_LT_TBA$POSTCALC <- LBA_LT_TBA$`_TBA` #Post harvest BA should be equal to TBA for these stand-years
+      problem_LBA_LT_TBA <- LBA_LT_TBA[LBA_LT_TBA$check == FALSE,] #Get rows that failed above check
       problem_LBA_LT_TBA <- problem_LBA_LT_TBA[!paste(problem_LBA_LT_TBA$StandID, problem_LBA_LT_TBA$Year) %in% paste(nonproblem_didnt_cut$StandID, nonproblem_didnt_cut$Year),] #remove stands that weren't cut because they were cut the previous cycle
-      problem_LBA_LT_TBA$FOURTOFIVE <- problem_LBA_LT_TBA$`_BBA` - problem_LBA_LT_TBA$PREBAALL #get BA for trees in 4-5in DBH
-      problem_LBA_LT_TBA$PSTBAFOURTOFIVE <- problem_LBA_LT_TBA$PSTBAALL + (problem_LBA_LT_TBA$FOURTOFIVE*2/3) #add 4-5in DBH trees and multiply by 2/3 to get post-harvest BA
+      problem_LBA_LT_TBA$FOURTOFIVE <- problem_LBA_LT_TBA$`_BBA` - problem_LBA_LT_TBA$PREBAALL #get BA for trees in 4-5in DBH which were in "grey area" as per KCP files as PSTBAALL didn't include them by taking BBA - PREBAALL
+      problem_LBA_LT_TBA$PSTBAFOURTOFIVE <- problem_LBA_LT_TBA$PSTBAALL + (problem_LBA_LT_TBA$FOURTOFIVE*2/3) #add 4-5in DBH trees and multiply by 2/3 to get estimated post-harvest BA
       problem_LBA_LT_TBA$check2 <- with(problem_LBA_LT_TBA, problem_LBA_LT_TBA$PSTBAFOURTOFIVE <= problem_LBA_LT_TBA$`_TBA` + BA_threshold & 
                                           problem_LBA_LT_TBA$PSTBAFOURTOFIVE >= problem_LBA_LT_TBA$`_TBA`- BA_threshold) #check that package calculated BA is within BA_threshold of ATBA
       problem_LBA_LT_TBA <- problem_LBA_LT_TBA[problem_LBA_LT_TBA$check2 == FALSE,]
@@ -220,13 +216,15 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
       problem_wrong_amt_cut <- rbind(problem_LBA_LT_TBA, problem_LBA_GT_TBA)
     }
     
-    nonzero_rtpa <- FVS_Summary[FVS_Summary$RTpa > 0,]
+    
     
     #Make sure cuts are 20 years apart.
+    nonzero_rtpa <- FVS_Summary[FVS_Summary$RTpa > 0,] #get all stand-years with cut based on RTpa > 0
+    
     test <- function() {
-      multiple_cuts <- data.frame(table(nonzero_rtpa$StandID))
+      multiple_cuts <- data.frame(table(nonzero_rtpa$StandID)) #get number of cuts for all stands that were cut
       if (!nrow(multiple_cuts) == 0) {
-        multiple_cuts2 <- multiple_cuts[multiple_cuts$Freq == 2,]
+        multiple_cuts2 <- multiple_cuts[multiple_cuts$Freq == 2,] #for stands that were cut twice
         if (nrow(multiple_cuts2) > 0) {
           multiple_cuts2$Freq <- NULL
           names(multiple_cuts2)[1] <- "StandID"
@@ -240,7 +238,7 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
           
           for (i in mult_length) {
             multiple_cuts2$check[i:(i+1)] <- (multiple_cuts2[(i+1),3] - multiple_cuts2[i,3]) >= 20
-          } 
+          }  #check that positive cut values are 20 years apart
           
           problem_mc2 <- multiple_cuts2[multiple_cuts2$check == FALSE,]
         } else {
@@ -250,7 +248,7 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
         return(problem_mc2)
         
         
-        multiple_cuts3 <- multiple_cuts[multiple_cuts$Freq == 3,]
+        multiple_cuts3 <- multiple_cuts[multiple_cuts$Freq == 3,] #for stands that were cut 3 times
         
         if (nrow(multiple_cuts3 > 0)) {
           multiple_cuts3$Freq <- NULL
@@ -272,7 +270,7 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
           
         }
         
-        multiple_cuts4 <- multiple_cuts[multiple_cuts$Freq == 4,]
+        multiple_cuts4 <- multiple_cuts[multiple_cuts$Freq == 4,] #for stands that were cut 4 times
         if (nrow(multiple_cuts4 > 0)) {
           multiple_cuts4$Freq <- NULL
           names(multiple_cuts4)[1] <- "StandID"
@@ -310,22 +308,17 @@ Check_BAonly_Packages <- function(directory, variantname, BA_threshold) {
   return(problem)
 }
 
-CA_BAonly_problem <- data.frame(Check_BAonly_Packages(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
-NC_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/NC","NC",10))
-SO_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/SO","SO",10))
-WS_BAonly_problem <- data.frame(Check_BAonly_Packages("H:/cec_20170915/fvs/data/WS","WS",10))
+CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
+NC_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/NC","NC",10))
+SO_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/SO","SO",10))
+WS_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 
-write.csv(CA_BAonly_problem, "CA_QA.csv")
+
 #The function below allows you to spot check values for a specific package. You need to call the function then 
-#separate the output list into separate data frames. These are the same data frames used in the Check_BAonly_Packages function
+#separate the output list into separate data frames. These are the same data frames used in the fvs_qa function
 
-packagenum <- "015"
-directory <- "G:/cec_20170915/fvs/data/CA"
-variantname <- "CA"
-BA_threshold <- 10
-
-BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagenum) {
+fvs_spotcheck <- function(directory, variantname, BA_threshold, packagenum) {
   setwd(directory)#sets the working directory to the directory variable
   path <- list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", variantname, "_P", packagenum, "*.MDB", sep = ""))) #lists all the files in the directory that begin with FVSOUT_{variantname}_P{packagenum} and end with .MDB (case sensitive)
   problem <- data.frame()
@@ -338,15 +331,16 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   FVS_Compute <- sqlFetch(conn, "FVS_Compute", as.is = TRUE)
   FVS_Cases <- sqlFetch(conn, "FVS_Cases", as.is = TRUE)
   
+  #check to see if the package has the SurvVolRatio table (this is added using the MortCalc R script)
   if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
     SurvVolRatio = "YES"
-  }
+  } 
   
   odbcCloseAll()
   
   
   #Get # rows in FVS_Cases
-  FVS_Cases_rows[i] <- nrow(FVS_Cases)
+  FVS_Cases_rows <- nrow(FVS_Cases)
   
   years <- data.frame("Year" = unique(FVS_Compute$Year)) #takes unique values for "year" from FVS_Summary
   years <- arrange(years, Year)
@@ -357,24 +351,26 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   #Find rows where RTPA is >0 in a non-cut_year
   problem_wrong_cut <- FVS_Summary[!FVS_Summary$Year %in% cut_years$cut_years & FVS_Summary$RTpa > 0,]
   
-  #Find rows where BA reaches over maximum and it wasn't cut
+  #Check for _CRT column in the package database (CRT is the cut threshold value set by the KCP File. If it is missing you need to change the 
+  #KCP file to properly print the CRT variable)
   if(!"_CRT" %in% colnames(FVS_Compute)) {
     problem_no_crt <- "YES"
   } else {
     problem_no_crt <- "NO"
   }
-  BA_cut <- FVS_Compute[!FVS_Compute$`_CRT` == "999",] #remove stands with CRT = 999, as these are in non-relevant ownership categories
+  
+  BA_cut <- FVS_Compute[!FVS_Compute$`_CRT` == "999",] #remove stands with CRT = 999, as these are not eligible for harvest
   PkgBA <- unique(BA_cut$`_CRT`) #get package BA
   
   #QMD check
   if (is.na(master_package$QMD[master_package$PkgNum == substr(path,12,14)])) { #check if master_package has a QMD value. If the QMD value is not NA, this code runs, otherwise skip to else.
     BA_cutyears <- BA_cut[BA_cut$Year %in% cut_years$cut_years,] #limit to rows in a cut year
-    BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT`,] #find rows where BBA is >= CRT
+    BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT`,] #find rows where eligible basal area BBA is >= CRT
     FVS_Summary2 <- data.frame("StandID" = FVS_Summary$StandID, "Year" = FVS_Summary$Year, "BA" = FVS_Summary$BA, "TPA" = FVS_Summary$Tpa, "RTpa" = FVS_Summary$RTpa) #get RTpa from FVS_Summary
     BA_cutyears2 <- merge(BA_cutyears, FVS_Summary2, by = c("StandID", "Year")) #add RTpa to BA_cutyears
     
     problem_didnt_cut <- BA_cutyears2[BA_cutyears2$RTpa == 0,] #rows where BBA > CRT in a cut cycle with RTpa = 0
-  } else { #process for stands with QMD limit (clearcut packages)
+  } else { #process for stands with QMD limit (clearcut packages: note these were removed from the final run of the project)
     BA_cutyears <- BA_cut[BA_cut$Year %in% cut_years$cut_years,] #limit to rows in a cut year
     BA_cutyears <- BA_cutyears[BA_cutyears$`_BBA` >= BA_cutyears$`_CRT` | BA_cutyears$`_BQMD` >= BA_cutyears$`_QCRT`,] #find rows where BBA is >= CRT OR BQMD >= QCRT
     FVS_Summary2 <- data.frame("StandID" = FVS_Summary$StandID, "Year" = FVS_Summary$Year, "BA" = FVS_Summary$BA, "TPA" = FVS_Summary$Tpa, "RTpa" = FVS_Summary$RTpa) #get RTpa from FVS_Summary
@@ -406,7 +402,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   #Make sure cut amount was correct
   BA_cutyears2$`_TBA` <- as.numeric(BA_cutyears2$`_TBA`)
   
-  #Sometimes LBA was called BLBA (e.g. package 5). The if statements below correct for that.
+  #Sometimes LBA was called BLBA (e.g. package 5) and SBA was called something different. The if statements below corrects for these cases
   if("_LBA" %in% colnames(BA_cutyears2)) {
     BA_cutyears2$LBA <- BA_cutyears2$`_LBA`
   } else if ("_BLBA" %in% colnames(BA_cutyears2)) {
@@ -420,9 +416,11 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   } else {
   }
   
+  #The section below checks that the harvest amount was as expected based on the prescription set in the KCP file. 
+  #It is a rough estimate as the printed variables don't account forall harvested amounts.
   if (!is.na(master_package$QMD[master_package$PkgNum == substr(path,12,14)])) { #check if master_package has a QMD value. If the QMD value is not NA, this code runs, otherwise skip to else.
     clearcut <- BA_cutyears2[BA_cutyears2$`_BQMD` >= BA_cutyears2$`_QCRT`,]
-    clearcut$check <- ifelse(clearcut$TPA == clearcut$RTpa, "NO", "YES")
+    clearcut$check <- ifelse(clearcut$TPA == clearcut$RTpa, "NO", "YES") #Check that TPA = RTpa, i.e. check that all TPA was removed
     problem_wrong_amt_cut <- clearcut[clearcut$check == "YES",]
     
     nonclearcut <- BA_cutyears2[BA_cutyears2$`_BQMD` < BA_cutyears2$`_QCRT`,] #now check nonclearcuts
@@ -455,24 +453,24 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   } else {
     BA_cutyears2$LBA <- as.numeric(BA_cutyears2$LBA)
     BA_cutyears2$`_BBA` <- as.numeric(BA_cutyears2$`_BBA`)
-    LBA_GT_TBA <- BA_cutyears2[BA_cutyears2$LBA > BA_cutyears2$`_TBA`,]
-    LBA_GT_TBA$POSTCALC <- LBA_GT_TBA$`_BBA` - LBA_GT_TBA$SBA
-    LBA_GT_TBA$check <- round(LBA_GT_TBA$PSTBAALL,0) == round(LBA_GT_TBA$POSTCALC, 0)
-    problem_LBA_GT_TBA <- LBA_GT_TBA[LBA_GT_TBA$check == FALSE,]
+    LBA_GT_TBA <- BA_cutyears2[BA_cutyears2$LBA > BA_cutyears2$`_TBA`,] #Get standyears where LBA > TBA
+    LBA_GT_TBA$POSTCALC <- LBA_GT_TBA$`_BBA` - LBA_GT_TBA$SBA #Calculate post harvest BA By subtracting SBA from BBA
+    LBA_GT_TBA$check <- round(LBA_GT_TBA$PSTBAALL,0) == round(LBA_GT_TBA$POSTCALC, 0) #Check that the FVS printed variable PSTBAALL is equal to above calculation
+    problem_LBA_GT_TBA <- LBA_GT_TBA[LBA_GT_TBA$check == FALSE,] #Label problems where above check is not the case
     problem_LBA_GT_TBA <- problem_LBA_GT_TBA[!paste(problem_LBA_GT_TBA$StandID, problem_LBA_GT_TBA$Year) %in% paste(nonproblem_didnt_cut$StandID, nonproblem_didnt_cut$Year),] #remove stands that weren't cut because they were cut the previous cycle
-    problem_LBA_GT_TBA$FOURTOFIVE <- problem_LBA_GT_TBA$`_BBA` - problem_LBA_GT_TBA$PREBAALL #get BA for trees in 4-5in DBH
+    problem_LBA_GT_TBA$FOURTOFIVE <- problem_LBA_GT_TBA$`_BBA` - problem_LBA_GT_TBA$PREBAALL #get BA for trees in 4-5in DBH which were in "grey area" as per KCP files as PSTBAALL didn't include them by taking BBA - PREBAALL
     problem_LBA_GT_TBA$PSTBAFOURTOFIVE <- problem_LBA_GT_TBA$PSTBAALL + (problem_LBA_GT_TBA$FOURTOFIVE) #add 4-5in DBH trees 
     problem_LBA_GT_TBA$check2 <- with(problem_LBA_GT_TBA, problem_LBA_GT_TBA$PSTBAFOURTOFIVE <= problem_LBA_GT_TBA$PSTBAALL + BA_threshold & 
                                         problem_LBA_GT_TBA$PSTBAFOURTOFIVE >= problem_LBA_GT_TBA$PSTBAALL- BA_threshold) #check that package calculated BA is within BA_threshold of ATBA
-    problem_LBA_GT_TBA <- problem_LBA_GT_TBA[problem_LBA_GT_TBA$check2 == FALSE,]
+    problem_LBA_GT_TBA <- problem_LBA_GT_TBA[problem_LBA_GT_TBA$check2 == FALSE,] #find rows that still remain a problem even with 4-5in trees added in
     
-    LBA_LT_TBA <- BA_cutyears2[BA_cutyears2$LBA < BA_cutyears2$`_TBA`,]
-    LBA_LT_TBA$check <- round(LBA_LT_TBA$PSTBAALL,0) == round(LBA_LT_TBA$`_TBA`,0)
-    LBA_LT_TBA$POSTCALC <- LBA_LT_TBA$`_TBA`
-    problem_LBA_LT_TBA <- LBA_LT_TBA[LBA_LT_TBA$check == FALSE,]
+    LBA_LT_TBA <- BA_cutyears2[BA_cutyears2$LBA < BA_cutyears2$`_TBA`,] #Get standyears where LBA < TBA
+    LBA_LT_TBA$check <- round(LBA_LT_TBA$PSTBAALL,0) == round(LBA_LT_TBA$`_TBA`,0) #Check rows where PSTBAALL is not equal to TBA
+    LBA_LT_TBA$POSTCALC <- LBA_LT_TBA$`_TBA` #Post harvest BA should be equal to TBA for these stand-years
+    problem_LBA_LT_TBA <- LBA_LT_TBA[LBA_LT_TBA$check == FALSE,] #Get rows that failed above check
     problem_LBA_LT_TBA <- problem_LBA_LT_TBA[!paste(problem_LBA_LT_TBA$StandID, problem_LBA_LT_TBA$Year) %in% paste(nonproblem_didnt_cut$StandID, nonproblem_didnt_cut$Year),] #remove stands that weren't cut because they were cut the previous cycle
-    problem_LBA_LT_TBA$FOURTOFIVE <- problem_LBA_LT_TBA$`_BBA` - problem_LBA_LT_TBA$PREBAALL #get BA for trees in 4-5in DBH
-    problem_LBA_LT_TBA$PSTBAFOURTOFIVE <- problem_LBA_LT_TBA$PSTBAALL + (problem_LBA_LT_TBA$FOURTOFIVE*2/3) #add 4-5in DBH trees and multiply by 2/3 to get post-harvest BA
+    problem_LBA_LT_TBA$FOURTOFIVE <- problem_LBA_LT_TBA$`_BBA` - problem_LBA_LT_TBA$PREBAALL #get BA for trees in 4-5in DBH which were in "grey area" as per KCP files as PSTBAALL didn't include them by taking BBA - PREBAALL
+    problem_LBA_LT_TBA$PSTBAFOURTOFIVE <- problem_LBA_LT_TBA$PSTBAALL + (problem_LBA_LT_TBA$FOURTOFIVE*2/3) #add 4-5in DBH trees and multiply by 2/3 to get estimated post-harvest BA
     problem_LBA_LT_TBA$check2 <- with(problem_LBA_LT_TBA, problem_LBA_LT_TBA$PSTBAFOURTOFIVE <= problem_LBA_LT_TBA$`_TBA` + BA_threshold & 
                                         problem_LBA_LT_TBA$PSTBAFOURTOFIVE >= problem_LBA_LT_TBA$`_TBA`- BA_threshold) #check that package calculated BA is within BA_threshold of ATBA
     problem_LBA_LT_TBA <- problem_LBA_LT_TBA[problem_LBA_LT_TBA$check2 == FALSE,]
@@ -480,13 +478,15 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
     problem_wrong_amt_cut <- rbind(problem_LBA_LT_TBA, problem_LBA_GT_TBA)
   }
   
-  nonzero_rtpa <- FVS_Summary[FVS_Summary$RTpa > 0,]
+  
   
   #Make sure cuts are 20 years apart.
+  nonzero_rtpa <- FVS_Summary[FVS_Summary$RTpa > 0,] #get all stand-years with cut based on RTpa > 0
+  
   test <- function() {
-    multiple_cuts <- data.frame(table(nonzero_rtpa$StandID))
+    multiple_cuts <- data.frame(table(nonzero_rtpa$StandID)) #get number of cuts for all stands that were cut
     if (!nrow(multiple_cuts) == 0) {
-      multiple_cuts2 <- multiple_cuts[multiple_cuts$Freq == 2,]
+      multiple_cuts2 <- multiple_cuts[multiple_cuts$Freq == 2,] #for stands that were cut twice
       if (nrow(multiple_cuts2) > 0) {
         multiple_cuts2$Freq <- NULL
         names(multiple_cuts2)[1] <- "StandID"
@@ -500,7 +500,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
         
         for (i in mult_length) {
           multiple_cuts2$check[i:(i+1)] <- (multiple_cuts2[(i+1),3] - multiple_cuts2[i,3]) >= 20
-        } 
+        }  #check that positive cut values are 20 years apart
         
         problem_mc2 <- multiple_cuts2[multiple_cuts2$check == FALSE,]
       } else {
@@ -510,7 +510,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
       return(problem_mc2)
       
       
-      multiple_cuts3 <- multiple_cuts[multiple_cuts$Freq == 3,]
+      multiple_cuts3 <- multiple_cuts[multiple_cuts$Freq == 3,] #for stands that were cut 3 times
       
       if (nrow(multiple_cuts3 > 0)) {
         multiple_cuts3$Freq <- NULL
@@ -532,7 +532,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
         
       }
       
-      multiple_cuts4 <- multiple_cuts[multiple_cuts$Freq == 4,]
+      multiple_cuts4 <- multiple_cuts[multiple_cuts$Freq == 4,] #for stands that were cut 4 times
       if (nrow(multiple_cuts4 > 0)) {
         multiple_cuts4$Freq <- NULL
         names(multiple_cuts4)[1] <- "StandID"
@@ -557,13 +557,13 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
       check_data <- rbind(problem_mc2, problem_mc3, problem_mc4)
       return(check_data)
     } else {
-      
     }
     
   }
+  
   problem_wrong_cut_int <- data.frame(test())
   
-  row <- data.frame("filename" = path, "FVS_Cases_rows" = FVS_Cases_rows[i], "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), 
+  row <- data.frame("filename" = path, "FVS_Cases_rows" = FVS_Cases_rows, "problem_no_crt" = problem_no_crt, "wrong_cut" = nrow(problem_wrong_cut), 
                     "didnt_cut" = nrow(problem_didnt_cut), "wrong_amt_cut" = nrow(problem_wrong_amt_cut), "wrong_cut_int" = nrow(problem_wrong_cut_int),
                     "SurVVolRatio" = SurvVolRatio)
   problem <- rbind(problem, row)
@@ -578,7 +578,7 @@ BA_Package_Spot_Check <- function(directory, variantname, BA_threshold, packagen
   return(problem2)
 }
 
-output <- BA_Package_Spot_Check("H:/cec_20170915/fvs/data/CA","CA", 10, "001")
+output <- fvs_spotcheck("H:/cec_20170915/fvs/data/CA","CA", 10, "001")
 
 problem <- data.frame(output$problem)
 problem_wrong_cut <- data.frame(output$problem_wrong_cut)

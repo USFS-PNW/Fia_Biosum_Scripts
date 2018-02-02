@@ -1,3 +1,9 @@
+#This script was created by Carlin Starrs in 2018
+#The script calculates Canopy Base Height values from the PREPOST_FVS_STRCLASS table based on
+#formula created by Terrie Jain (see CBH Illustration in additional data on github for more info). 
+
+#This script should be run before running fire_resist_score.R
+
 #Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
 
