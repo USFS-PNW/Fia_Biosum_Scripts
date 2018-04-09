@@ -42,4 +42,6 @@ shovelEst,Shovel,Shovel Logging,meanFeller.BuncherTime,,Shovel,,
 shovelEst,Shovel,Shovel Logging,meanManualTime,,Feller Buncher,,Check this
 shovelEst,Shovel,Shovel Logging,meanSlide.Boom.ProcessorTime,,Slideboom,,
 shovelEst,Shovel,Shovel Logging,meanChipTime,,Chipper,0.15,
-tetheredEst,Tethered,Tethered Harvester,,,,,
+tetheredEst,Tethered,Tethered Harvester,meanTetheredHarvesterTime,,Tethered Harvester,,
+,,Tethered Harvester,meanTetheredForwaderTime,,Tethered Forwarder,,
+,,Tethered Harvester,meanChipTime,,Chipper,,
