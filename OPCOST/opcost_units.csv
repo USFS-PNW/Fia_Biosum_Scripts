@@ -1,0 +1,17 @@
+Unit,TPA_Conversion,Equation
+centi-Minutes/Acre,result*(treesRemoved/60/60),
+min/tree,(treesRemoved*result)/60,
+logs/hour,treesRemoved/result,
+Turn time minutes,((((Small.log.trees.per.acre + Large.log.trees.per.acre)/1.35) * result)/120),
+sec/tree,(treesRemoved * result)/60/60,
+Cords/PMH,cordsPerAcre/result,
+m^3/PMH,totalVolM/result,
+sec/chip,(chipTrees * result)/60/60,
+min/chip,(chipTrees * result)/60,
+min/acre,result/60,
+sec/acre,result/60/60,
+unknown5,totalVolM/(twitchVolM*30)*result/60,ghafSkid
+unknown4,result*30,hartsoughSlide
+unknown1,result*0.4,akaySkid
+unknown2,(((((totalVol/3)*(Large.log.trees.per.acre+Small.log.trees.per.acre))/190)*result)/60),dykstraHeli
+unknown3,((result*treesRemoved)/180),ghafSaw

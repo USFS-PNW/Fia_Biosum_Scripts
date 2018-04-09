@@ -17,12 +17,12 @@ options(scipen = 999) #this is important for making sure your stand IDs do not g
 #Connect to the master.mdb database. To set to your master.mdb location, change the 
 #text following "DBQ=" in the command below (e.g. D:/cec_20170915/db/master.mdb). Make
 #sure your slashes are facing the correct direction. 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/master.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/master.mdb")
 master_tree <- sqlFetch(conn, "tree", as.is = TRUE) #import tree table from master.mdb
 odbcCloseAll()
 
 #Connect to refmaster.mdb usnig the same method as above
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/ref_master.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/ref_master.mdb")
 FVS_WesternTreeSpeciesTranslator <- sqlFetch(conn, "FVS_WesternTreeSpeciesTranslator", as.is = TRUE) #import species crosswalk table from master.mdb
 odbcCloseAll()
 
@@ -527,10 +527,10 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
 
 #Run the CreateSurvVol function. Change the directory location and variantname
 #as needed.
-CreateSurvVolRatioTable(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA")
-CreateSurvVolRatioTable("H:/cec_20170915/fvs/data/NC", "NC")
-CreateSurvVolRatioTable("H:/cec_20170915/fvs/data/SO", "SO")
-CreateSurvVolRatioTable("H:/cec_20170915/fvs/data/WS", "WS")
+CreateSurvVolRatioTable(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA")
+CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC", "NC")
+CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO", "SO")
+CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS", "WS")
 
 #The function below will delete the SurvVolRatio table and all the columns added to FVS_Summary by the 
 #CreateSurvVolRatioTable function above. This is useful in case you need to re-run your calculations after making
@@ -556,7 +556,7 @@ DeleteSurvVolRatioTable <- function (directory, variantname) {
   }
 }
 
-DeleteSurvVolRatioTable(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA")
-DeleteSurvVolRatioTable("H:/cec_20170915/fvs/data/NC", "NC")
-DeleteSurvVolRatioTable("H:/cec_20170915/fvs/data/SO", "SO")
-DeleteSurvVolRatioTable("H:/cec_20170915/fvs/data/WS", "WS")
+DeleteSurvVolRatioTable(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA")
+DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC", "NC")
+DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO", "SO")
+DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS", "WS")

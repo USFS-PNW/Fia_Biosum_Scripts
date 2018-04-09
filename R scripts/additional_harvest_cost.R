@@ -7,7 +7,7 @@ options(scipen = 999) #this is important for making sure your stand IDs do not g
 #This takes the rx package information, translates it, and prepares it for 
 #updating the scenario_additional_harvest_costs table. 
 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb") #update text after "DBQ=" to the location of your fvsmaster.mdb file
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/fvsmaster.mdb") #update text after "DBQ=" to the location of your fvsmaster.mdb file
 fvsmaster_PkgLabels <- sqlFetch(conn, "PkgLabels", as.is = TRUE) #This PkgLabels table was added separately from the packagelabels.csv file (see github additional data)
 fvsmaster_rx_pkg_xwalk <- sqlFetch(conn, "rx_pkg_xwalk", as.is = TRUE)
 fvsmaster_rxpackage <- sqlFetch(conn, "rxpackage", as.is = TRUE)
@@ -20,6 +20,7 @@ names(rx_addcost)[3] <- "Type"
 
 rx_addcost$ColumnName[rx_addcost$ColumnName == "Pile/burn"] <- "Pile_burn"
 rx_addcost$ColumnName[rx_addcost$ColumnName == "Lop/scatter"] <- "Lop_and_scatter"
+
 rx_addcost$ColumnName[rx_addcost$ColumnName == "Rx Fire"] <- "RX_burn"
 
 rx_xwalk <- fvsmaster_rx_pkg_xwalk[,c(1,2)]
@@ -43,12 +44,12 @@ sqlSave(conn, dat = rx_addcost_update, tablename = "rx_harvest_cost_columns", ro
 odbcCloseAll()
 
 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/master.mdb") #update text after "DBQ=" to the location of your master.mdb file
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/master.mdb") #update text after "DBQ=" to the location of your master.mdb file
 master_cond <- sqlFetch(conn, "cond", as.is = TRUE)
 odbcCloseAll()
 
 #Make sure you have opened the processor module with this project to make sure this table is populated
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=G:/Dropbox/Carlin/Berkeley/biosum/scenario_processor_rule_definitions.mdb") #update text after "DBQ=" to the location of your scenario_processor_rule_definitions.mdb file
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/processor/db/scenario_processor_rule_definitions.mdb") #update text after "DBQ=" to the location of your scenario_processor_rule_definitions.mdb file
 scenario_additional_harvest_costs <- sqlFetch(conn, "scenario_additional_harvest_costs", as.is = TRUE)
 
 slope <- master_cond[,c(1,16)] #get slope values for each condition/stand from master_cond

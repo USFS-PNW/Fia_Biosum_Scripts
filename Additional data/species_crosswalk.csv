@@ -1,0 +1,518 @@
+USDA PLANTS SYMBOL,FIA CODE (3 digit),FVS ALPHA CODE,COMMON NAME (from FSVeg),SCIENTIFIC NAME (from FSVeg),AK_Mapped_To,BM_Mapped_To,CA_Mapped_To,CI_Mapped_To,CR_Mapped_To,EC_Mapped_To,EM_Mapped_To,IE_Mapped_To,KT_Mapped_To,NC_Mapped_To,NI_Mapped_To,PN_Mapped_To,SO_Mapped_To,TT_Mapped_To,UT_Mapped_To,WC_Mapped_To,WS_Mapped_To
+ABIES,010,OF,fir species,Abies ,SF,GF,WF,AF,AF,GF,AF,GF,GF,WF,GF,SF,WF,AF,AF,SF,WF
+ABSH,021,SH,Shasta red fir,Abies ×shastensis ,OS,OS,SH,OS,OS,NF,OS,OS,OT,RF,OT,RF,SH,OS,WF,RF,RF
+ABAM,011,SF,Pacific silver fir,Abies amabilis ,SF,OS,SH,OS,OS,SF,OS,OS,OT,RF,OT,SF,SF,OS,OS,SF,SF
+ABBR,014,SL,bristlecone fir,Abies bracteata  ,OS,OS,OS,OS,OS,WB,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+ABCO,015,WF,white fir,Abies concolor ,OS,GF,WF,GF,WF,WF,AF,GF,GF,WF,GF,WF,WF,AF,WF,WF,WF
+ABCOC,,,white fir,Abies concolor var. concolor,OS,GF,WF,GF,WF,WF,AF,GF,GF,WF,GF,WF,WF,AF,WF,WF,WF
+ABCOL,,,white fir,Abies concolor var. lowiana ,OS,GF,WF,GF,WF,WF,AF,GF,GF,WF,GF,WF,WF,AF,WF,WF,WF
+ABGR,017,GF,grand fir,Abies grandis ,OS,GF,WF,GF,GF,GF,AF,GF,GF,WF,GF,GF,GF,AF,OS,GF,WF
+ABLA,019,AF,subalpine fir,Abies lasiocarpa ,AF,AF,OS,AF,AF,AF,AF,AF,AF,OS,AF,AF,AF,AF,AF,AF,OS
+ABLAA,018,CB,corkbark fir,Abies lasiocarpa var. arizonica,OS,AF,OS,AF,CB,AF,OS,OS,AF,OS,AF,AF,OS,AF,AF,AF,OS
+ABLAL,,,subalpine fir,Abies lasiocarpa var. lasiocarpa,AF,AF,OS,AF,AF,AF,AF,AF,AF,OS,AF,AF,AF,AF,AF,AF,OS
+ABMA,020,RF,California red fir,Abies magnifica,OS,OS,RF,OS,OS,NF,OS,OS,OT,RF,OT,RF,SH,OS,WF,RF,RF
+ABPR,022,NF,noble fir,Abies procera,OS,OS,RF,OS,OS,NF,OS,OS,OT,RF,OT,NF,NF,OS,OS,NF,RF
+ABMAS,,,Shasta red fir,Abies x shastensis,OS,OS,SH,OS,OS,NF,OS,OS,OT,RF,OT,RF,SH,OS,WF,RF,RF
+ACACI,300,AA,acacia species,Acacia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACAN,,,prairie acacia,Acacia angustissima  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACANS,,,Shreve's prairie acacia,Acacia angustissima var. shrevei,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACANS2,,,prairie acacia,Acacia angustissima var. suffrutescens,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACANT4,,,prairie wattle,Acacia angustissima var. texensis,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACBA,,,cootamundra wattle,Acacia baileyana ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACCO2,,,whitethorn acacia,Acacia constricta ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACCOC,,,whitethorn acacia,Acacia constricta var. constricta,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACCOP9,,,whitethorn acacia,Acacia constricta var. paucispina,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACCY2,,,cyclops acacia,Acacia cyclops ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACDE3,,,silver wattle,Acacia dealbata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACDE,,,green wattle,Acacia decurrens,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACEL,,,cedar wattle,Acacia elata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACFA,,,sweet acacia,Acacia farnesiana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACGR,,,catclaw acacia,Acacia greggii ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACGRG3,,,catclaw acacia,Acacia greggii var. greggii,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACLO,,,Sydney golden wattle,Acacia longifolia  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACME80,,,black wattle,Acacia mearnsii ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACME,,,blackwood,Acacia melanoxylon ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACMI,,,milfoil wattle,Acacia millefolia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACNE4,,,viscid acacia,Acacia neovernicosa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACPA8,,,paradox acacia,Acacia paradoxa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACPO2,,,pearl wattle,Acacia podalyriifolia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACPY3,,,golden wattle,Acacia pycnantha ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACRE9,,,bank catclaw,Acacia redolens ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACRE2,,,water wattle,Acacia retinodes ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACSA,,,orange wattle,Acacia saligna  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACVE2,,,prickly Moses,Acacia verticillata  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACER,310,OM,maple species,Acer ,OH,OH,BM,OH,OH,BM,OH,MM,OT,MA,OT,BM,BM,BI,BI,BM,BM
+ACCI,,VN,vine maple,Acer circinatum,OH,OH,OH,OH,OH,VN,OH,OH,OT,OH,OT,CH,CH,OH,OH,CH,OH
+ACGL,321,MM,Rocky Mountain maple,Acer glabrum ,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGLD3,,,Rocky Mountain maple,Acer glabrum var. diffusum  ,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGLD4,,,Douglas maple,Acer glabrum var. douglasii ,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGLG2,,,Rocky Mountain maple,Acer glabrum var. glabrum,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGLG,,,Greene's maple,Acer glabrum var. greenei ,OH,OH,OH,OH,OH,VN,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACGLN2,,,New Mexico maple,Acer glabrum var. neomexicanum,OH,OH,OH,OH,OH,VN,OH,OH,OT,OH,OT,OT,OH,OH,BI,OT,OH
+ACGLT2,,,Torrey maple,Acer glabrum var. torreyi ,OH,OH,OH,OH,OH,VN,OH,OH,OT,OH,OT,OT,OH,OH,BI,OT,OH
+ACGR3,322,BI,bigtooth maple,Acer grandidentatum ,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGRG,,,bigtooth maple,Acer grandidentatum var. grandidentatum,OH,OH,OH,OH,OH,VN,OH,MM,OT,OH,OT,OT,OH,MM,BI,OT,OH
+ACGRS,,,canyon maple,Acer grandidentatum var. sinuosum,OH,OH,OH,OH,OH,VN,OH,OH,OT,OH,OT,OT,OH,OH,BI,OT,OH
+ACMA3,312,BM,bigleaf maple,Acer macrophyllum ,OH,OH,BM,OH,OH,BM,OH,OH,OT,MA,OT,BM,BM,OH,OH,BM,BM
+ACNE2,,,boxelder,Acer negundo ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACNEA,,,Arizona boxelder,Acer negundo var. arizonicum,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACNEC2,,,California boxelder,Acer negundo var. californicum,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACNEI2,,,boxelder,Acer negundo var. interius,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACNEN,,,boxelder,Acer negundo var. negundo,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACNET,,,boxelder,Acer negundo var. texanum,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,BI,BE,OT,OH
+ACPL,,,Norway maple,Acer platanoides ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ACSA2,,,silver maple,Acer saccharinum ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AESCU,330,BH,"buckeye, horsechestnut  ",Aesculus  ,OH,OH,BU,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AECA,333,BU,California buckeye,Aesculus californica  ,OH,OH,BU,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AEGL,331,OI,Ohio buckeye  ,Aesculus glabra  ,OH,OH,BU,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AEHI,,,horse chestnut,Aesculus hippocastanum ,OH,OH,BU,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AIAL,341,TH,tree of heaven,Ailanthus altissima ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALJU,,,silktree,Albizia julibrissin ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALLE,,,woman's tongue,Albizia lebbeck  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALNUS,350,AD,alder species,Alnus ,RA,OH,RA,OH,OH,RA,OH,OH,OT,OH,OT,RA,RA,OH,OH,RA,OH
+ALCO13,,,Italian alder,Alnus cordata  ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALGL2,355,EA,European alder  ,Alnus glutinosa  ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALIN2,,,gray alder,Alnus incana ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALINT,,,thinleaf alder,Alnus incana ssp. tenuifolia ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALOB2,,,Arizona alder,Alnus oblongifolia ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALRH2,352,WA,white alder,Alnus rhombifolia ,OH,OH,RA,OH,OH,RA,OH,OH,OT,OH,OT,WA,WA,OH,OH,WA,OH
+ALRU2,351,RA,red alder,Alnus rubra ,RA,OH,RA,OH,OH,RA,OH,OH,OT,OH,OT,RA,RA,OH,OH,RA,OH
+ALVI5,,,green alder,Alnus viridis ,RA,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALVIC,,,mountain alder,Alnus viridis ssp. crispa ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALVIF,,,Siberian alder,Alnus viridis ssp. fruticosa ,OH,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ALVIS,,,Sitka alder,Alnus viridis ssp. sinuata ,RA,OH,OH,OH,OH,RA,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ARALI,,,spikenard,Aralia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+AREL8,,,Japanese angelica tree,Aralia elata,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ARBUT,360,MS,madrone species,Arbutus ,OH,OH,MA,OH,OH,OH,OH,OH,OT,MA,OT,WA,OH,OH,OH,WA,MA
+ARAR2,362,AM,Arizona madrone,Arbutus arizonica  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ARME,361,MA,Pacific madrone,Arbutus menziesii ,OH,OH,MA,OH,OH,OH,OH,OH,OT,MA,OT,WA,OH,OH,OH,WA,MA
+,,M,Pacific Madrone,Arbutus menziesii (Old Code),OH,OH,MA,OH,OH,OH,OH,OH,OT,MA,OT,WA,OH,OH,OH,WA,MA
+ARXA80,,,Texas madrone,Arbutus xalapensis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BETUL,370,OB,birch species,Betula ,OH,OH,OH,OH,OH,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEEA,,,birch,Betula ×eastwoodiae   ,OH,OH,OH,OH,OH,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEUT,378,NW,birch,Betula ×utahensis ,OH,OH,OH,OH,OH,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEGL,,,resin birch,Betula glandulosa,OH,OH,OH,OH,OH,PB,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BENA,,,dwarf birch,Betula nana ,OH,OH,OH,OH,OH,PB,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BENE4,,,resin birch,Betula neoalaskana ,OH,OH,OH,OH,OH,PB,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BEOC2,374,WT,water birch,Betula occidentalis ,OH,OH,OH,OH,OH,PB,PB,PB,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BEPA,375,PB,paper birch,Betula papyrifera,OH,OH,OH,OH,PB,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEPAC,,,western paper birch,Betula papyrifera var. commutata,OH,OH,OH,OH,PB,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEPAK,,,Kenai birch,Betula papyrifera var. kenaica ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BEPAP,,,paper birch,Betula papyrifera var. papyrifera,OH,OH,OH,OH,PB,PB,PB,PB,OT,OH,OT,PB,OH,OH,OH,PB,OH
+BEPE3,,,European white birch,Betula pendula ,OH,OH,OH,OH,OH,OH,PB,PB,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BEPU4,,,bog birch,Betula pumila ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BEPUG,,,bog birch,Betula pumila var. glandulifera,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+BRPO6,,,whiteflower kurrajong,Brachychiton populneum  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CADE27,081,IC,incense cedar,Calocedrus decurrens  ,OS,OS,IC,OS,OS,OS,OS,OS,OT,IC,OT,IC,IC,OS,OS,IC,IC
+CAGI10,,,saguaro,Carnegiea gigantea  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CATAL,,,catalpa species,Catalpa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CABI8,,,southern catalpa,Catalpa bignonioides,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CASP8,,,northern catalpa,Catalpa speciosa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CELTI,,,hackberry species,Celtis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CEEH,,,spiny hackberry,Celtis ehrenbergiana  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CELA,,,sugarberry,Celtis laevigata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CELAB,,,sugarberry,Celtis laevigata var. brevipes,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CELAR,,,netleaf hackberry,Celtis laevigata var. reticulata,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CELAT8,,,Texan sugarberry,Celtis laevigata var. texana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CEOC,,,common hackberry,Celtis occidentalis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CESI3,,,St. John's bread,Ceratonia siliqua ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CERCO,,,mountain mahogany,Cercocarpus ,OH,OH,OH,MC,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CEAL8,478,MB,birchleaf mountain mahogany,Cercocarpus alnifolius,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CEIN7,,,littleleaf mountain mahogany,Cercocarpus intricatus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CELE3,475,MC,curl-leaf mountain mahogany,Cercocarpus ledifolius ,OH,OH,OH,MC,OH,OH,OH,OH,OT,OH,OT,OT,MC,MC,MC,OT,MC
+CELEI,,,curl-leaf mountain mahogany,Cercocarpus ledifolius var. intercedens ,OH,OH,OH,MC,OH,OH,OH,OH,OT,OH,OT,OT,MC,MC,MC,OT,MC
+CELEL,,,curl-leaf mountain mahogany,Cercocarpus ledifolius var. ledifolius,OH,OH,OH,MC,OH,OH,OH,OH,OT,OH,OT,OT,MC,MC,MC,OT,MC
+CEMO2,,,alderleaf mountain mahogany,Cercocarpus montanus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CEMOG,,BF,birchleaf mountain mahogany,Cercocarpus montanus var. glaber,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CEMOM4,,,alderleaf mountain mahogany,Cercocarpus montanus var. montanus,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CEMOP,,,hairy mountain mahogany,Cercocarpus montanus var. paucidentatus,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,MB,MC,MC,OT,MC
+CHLA,041,PC,Port Orford cedar,Chamaecyparis lawsoniana ,OS,OS,PC,OS,OS,OS,OS,OS,OT,DF,OT,DF,OS,OS,OS,DF,OS
+CHNO,,,Alaska cedar,Chamaecyparis nootkatensis,YC,YC,PC,OS,OS,YC,OS,OS,OT,DF,OT,YC,OS,OS,OS,YC,OS
+CANO9,042,YC,Alaska cedar,Callitropsis nootkatensis,YC,YC,PC,OS,OS,YC,OS,OS,OT,DF,OT,YC,OS,OS,OS,YC,OS
+CHAMA4,040,CS,Cedar species,Chamaecyparis spp.  ,YC,YC,PC,OS,OS,YC,OS,OS,OT,DF,OT,YC,OS,OS,OS,YC,OS
+CHRYS15,,,chinquapin species,Chrysolepis ,OH,OH,GC,OH,OH,GC,OH,OH,OT,OH,OT,GC,GC,OH,OH,GC,GC
+CHCH7,,,giant chinquapin,Chrysolepis chrysophylla  ,OH,OH,GC,OH,OH,GC,OH,OH,OT,OH,OT,GC,GC,OH,OH,GC,GC
+CACH6,,,giant chinquapin,Chrysolepis chrysophylla var. chrysophylla,OH,OH,GC,OH,OH,GC,OH,OH,OT,OH,OT,GC,GC,OH,OH,GC,GC
+CHCHC4,431,GC,giant chinquapin,Chrysolepis chrysophylla var. chrysophylla,OH,OH,GC,OH,OH,GC,OH,OH,OT,OH,OT,GC,GC,OH,OH,GC,GC
+CHCHM,,,giant chinquapin,Chrysolepis chrysophylla var. minor,OH,OH,GC,OH,OH,GC,OH,OH,OT,OH,OT,GC,GC,OH,OH,GC,GC
+CICA,,,camphortree,Cinnamomum camphora  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+COAU12,,,cabbage tree,Cordyline australis  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CORNU,490,DS,dogwood species,Cornus ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COGL3,,,brown dogwood,Cornus glabrata ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+CONU4,492,DG,Pacific dogwood,Cornus nuttallii  ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COSE16,,,redosier dogwood,Cornus sericea ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COSEO,,,western dogwood,Cornus sericea ssp. occidentalis  ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COSES,,,redosier dogwood,Cornus sericea ssp. sericea,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COSE3,,,blackfruit dogwood,Cornus sessilis  ,OH,OH,DG,OH,OH,DG,OH,OH,OT,OH,OT,DG,OH,OH,OH,DG,DG
+COCO6,,HZ,beaked hazlnut,Corylus cornuta,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,OH,OH,OH,CH,OH
+COCI4,,,lemonscented gum,Corymbia citriodora  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+CRATA,500,HT,hawthorn species,Crataegus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CRDO2,,,black hawthorn,Crataegus douglasii,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CRER,,,cerro hawthorn,Crataegus erythropoda ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CRRI,,,river hawthorn,Crataegus rivularis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CRSA2,,,willow hawthorn,Crataegus saligna ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CRSU5,,,fleshy hawthorn,Crataegus succulenta ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,HT,OH,OH,OH,HT,OH
+CUPRE,050,CU,cypress species,Cupressus ,OS,WJ,WJ,OS,RM,WJ,OS,OS,OT,OS,OT,OT,WJ,OS,WJ,OT,WJ
+CUAB,,,Santa Cruz Island cypress,Cupressus abramsiana ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,WJ,OT,OS
+CUAR,051,AC,Arizona cypress,Cupressus arizonica ,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,OT,OS,OS,WJ,OT,OS
+CUARA,,,Arizona cypress,Cupressus arizonica ssp. arizonica,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,OT,OS,OS,WJ,OT,OS
+CUARN2,,,Paiute cypress,Cupressus arizonica ssp. nevadensis,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,OT,OS,OS,WJ,OT,OS
+CUARS2,,,Cuyamaca cypress,Cupressus arizonica ssp. stephensonii,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,OT,OS,OS,WJ,OT,OS
+CUBA,052,CC,Modoc cypress,Cupressus bakeri ,OS,WJ,WJ,OS,OS,WJ,OS,OS,OT,OS,OT,OT,WJ,OS,OS,OT,WJ
+CUFO2,053,TC,tecate cypress,Cupressus forbesii,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUGO,,,Gowen cypress,Cupressus goveniana ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUGOG,,,Gowen cypress,Cupressus goveniana ssp. goveniana,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUGOP2,,,pygmy cypress,Cupressus goveniana ssp. pygmaea,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUMA,,,MacNab's cypress,Cupressus macnabiana ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUMA2,054,MO,Monterey cypress,Cupressus macrocarpa ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+CUNO,,,Alaska cedar,Cupressus nootkatensis ,YC,YC,PC,OS,OS,YC,OS,OS,OT,DF,OT,YC,OS,OS,OS,YC,OS
+CUSA3,055,SA,Sargent's cypress,Cupressus sargentii ,OS,OS,WJ,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,WJ
+DIVI5,,,common persimmon,Diospyros virginiana ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ELAEA,,,elaeagnus species,Elaeagnus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ELAN,,,Russian olive,Elaeagnus angustifolia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ELCO,,,silverberry,Elaeagnus commutata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ERJA3,,,loquat,Eriobotrya japonica  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUCAL,,,gum species,Eucalyptus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUMO5,,,gum,Eucalyptus ×mortoniana ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUCA2,,,river redgum,Eucalyptus camaldulensis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUCL,,,sugargum,Eucalyptus cladocalyx ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUGL,,,Tasmanian bluegum,Eucalyptus globulus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUGLG,,,Tasmanian bluegum,Eucalyptus globulus ssp. globulus,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUPO,,,redbox,Eucalyptus polyanthemos ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUPU,,,silverleaf mountain gum,Eucalyptus pulverulenta ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUSI2,,,red ironbark,Eucalyptus sideroxylon ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUTE,,,forest redgum,Eucalyptus tereticornis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUTO11,,,coral gum,Eucalyptus torquata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+EUVI,,,manna gum,Eucalyptus viminalis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FAGUS,,,beech species,Fagus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FAGR,,,American beech,Fagus grandifolia,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FASY,,,European beech,Fagus sylvatica ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FICUS,,,fig species,Ficus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FICA,,,edible fig,Ficus carica ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FIPA2,,,Punjab fig,Ficus palmata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FIRU4,,,Port Jackson fig,Ficus rubiginosa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRPU7,,BT,Cascara buckthorn,Frangula purshiana,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,OH,OH,OH,CH,OH
+FRAXI,540,OX,ash species,Fraxinus ,OH,OH,FL,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRAM2,,,white ash,Fraxinus americana ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRAN2,,,singleleaf ash,Fraxinus anomala   ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRANA,,,singleleaf ash,Fraxinus anomala var. anomala,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRANL,,,singleleaf ash,Fraxinus anomala var. lowellii,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRCU,,,fragrant ash,Fraxinus cuspidata ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRDI2,,,California ash,Fraxinus dipetala  ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRGO,,,Goodding's ash,Fraxinus gooddingii ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRGR2,,,Gregg's ash,Fraxinus greggii ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRLA,542,FL,Oregon ash,Fraxinus latifolia ,OH,OH,FL,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRPA4,,,Chihuahuan ash,Fraxinus papillosa ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRPE,544,GA,green ash,Fraxinus pennsylvanica ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRUH,,,shamel ash,Fraxinus uhdei  ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRVE2,547,VA,velvet ash,Fraxinus velutina ,OH,OH,OH,OH,OH,OH,GA,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRCA6,,,California flannelbush,Fremontodendron californicum  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+FRME2,,,Mexican flannelbush,Fremontodendron mexicanum ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+GLTR,,,honeylocust,Gleditsia triacanthos ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+HOPO5,,,lacebark,Hoheria populnea ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ILAQ80,,,English holly,Ilex aquifolium ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUGLA,600,WN,walnut species,Juglans ,OH,OH,WN,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUCA,604,SB,Southern California walnut,Juglans californica ,OH,OH,WN,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUHI,603,CA,Northern California walnut,Juglans hindsii ,OH,OH,WN,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUMA,,,Arizona walnut,Juglans major  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUMI,605,TW,Texas walnut  ,Juglans microcarpa  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUNI,,,black walnut,Juglans nigra ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JURE80,,,English walnut,Juglans regia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+JUNIP,057,JU,juniper species,Juniperus ,OS,WJ,WJ,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,WJ,WJ,WJ
+,,J,juniper species,Juniperus (Old Code),OS,WJ,WJ,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,WJ,WJ,WJ
+JUCA7,062,CJ,California juniper,Juniperus californica ,OS,WJ,WJ,WJ,RM,WJ,OS,OS,OT,OS,OT,WJ,WJ,OS,WJ,WJ,CJ
+JUCO11,059,RJ,redberry juniper,Juniperus coahuilensis  ,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,WJ,OS,OS,OS,WJ,OS
+JUCOA2,,,redberry juniper,Juniperus coahuilensis var. arizonica,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,WJ,OS,OS,OS,WJ,OS
+JUCOC2,,,redberry juniper,Juniperus coahuilensis var. coahuilensis,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,WJ,OS,OS,OS,WJ,OS
+JUCO6,,,common juniper,Juniperus communis ,OS,WJ,WJ,OS,OS,WJ,RM,RM,OT,OS,OT,WJ,WJ,OS,OS,WJ,WJ
+JUCOD,,,common juniper,Juniperus communis var. depressa ,OS,WJ,WJ,OS,OS,WJ,RM,RM,OT,OS,OT,WJ,WJ,OS,OS,WJ,WJ
+JUCOS2,,,common juniper,Juniperus communis var. saxatilis ,OS,WJ,WJ,OS,OS,WJ,RM,RM,OT,OS,OT,WJ,WJ,OS,OS,WJ,WJ
+JUDE2,063,AJ,alligator juniper,Juniperus deppeana ,OS,OS,OS,WJ,AJ,OS,OS,OS,OT,OS,OT,WJ,OS,OS,WJ,WJ,OS
+JUER,,,redberry juniper,Juniperus erythrocarpa,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,WJ,OS,OS,OS,WJ,OS
+JUMO,069,OJ,oneseed juniper,Juniperus monosperma  ,OS,OS,OS,WJ,OJ,OS,OS,OS,OT,OS,OT,WJ,OS,OS,WJ,WJ,OS
+JUOC,064,WJ,western juniper,Juniperus occidentalis ,OS,WJ,WJ,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,WJ,WJ,WJ
+JUOCA,,,western juniper,Juniperus occidentalis var. australis,OS,WJ,WJ,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,WJ,WJ,WJ
+JUOCO,,,western juniper,Juniperus occidentalis var. occidentalis,OS,WJ,WJ,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,WJ,WJ,WJ
+JUOS,065,UJ,Utah juniper,Juniperus osteosperma  ,OS,WJ,OS,WJ,UJ,WJ,RM,RM,OT,OS,OT,WJ,WJ,UJ,UJ,WJ,UJ
+JUPI,058,PJ,Pinchot's juniper,Juniperus pinchotii ,OS,OS,OS,OS,RM,OS,OS,OS,OT,OS,OT,WJ,OS,OS,OS,WJ,OS
+JUSC2,066,RM,Rocky Mountain juniper,Juniperus scopulorum,OS,WJ,OS,WJ,RM,WJ,RM,RM,OT,OS,OT,WJ,WJ,RM,RM,WJ,OS
+JUVI,068,ER,eastern redcedar,Juniperus virginiana ,OS,OS,OS,OS,ER,WJ,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+JUVIV,,,eastern redcedar,Juniperus virginiana var. virginiana,OS,OS,OS,OS,ER,WJ,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+KOPA,,,goldenrain tree,Koelreuteria paniculata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LAAN2,,,golden chain tree,Laburnum anagyroides ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LARIX,070,OL,larch species,Larix ,OS,WL,OS,WL,WL,WL,WL,WL,WL,OS,WL,YC,WL,OS,OS,YC,OS
+LALA,071,TA,tamarack,Larix laricina,OS,WL,OS,WL,WL,WL,WL,WL,WL,OS,WL,YC,WL,OS,OS,YC,OS
+LALY,072,LL,subalpine larch,Larix lyallii ,OS,AF,OS,WL,WL,LL,LL,LL,WL,OS,WL,LL,OS,OS,OS,LL,OS
+LAOC,073,WL,western larch,Larix occidentalis ,OS,WL,OS,WL,WL,WL,WL,WL,WL,OS,WL,YC,WL,OS,OS,YC,OS
+,,L,western larch,Larix occidentalis (Old Code),OS,WL,OS,WL,WL,WL,WL,WL,WL,OS,WL,YC,WL,OS,OS,YC,OS
+LANO80,,,sweet bay,Laurus nobilis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LEPTO,,,sprangletop,Leptochloa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LEUCA,,,leadtree,Leucaena ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LEES2,,,guaje,Leucaena esculenta  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LELE10,,,white leadtree,Leucaena leucocephala  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LIDE,,,incense-cedar,Libocedrus decurrens,OS,OS,IC,OS,OS,OS,OS,OS,OT,IC,OT,IC,IC,OS,OS,IC,IC
+LIST2,,,sweetgum,Liquidambar styraciflua ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LITHO,,,tanoak species,Lithocarpus ,OH,OH,TO,OH,OH,OH,OH,OH,OT,TO,OT,GC,OH,OH,OH,GC,TO
+LIDE3,631,TO,tanoak,Lithocarpus densiflorus  ,OH,OH,TO,OH,OH,OH,OH,OH,OT,TO,OT,GC,OH,OH,OH,GC,TO
+LIDED2,,,tanoak,Lithocarpus densiflorus var. densiflorus,OH,OH,TO,OH,OH,OH,OH,OH,OT,TO,OT,GC,OH,OH,OH,GC,TO
+LIDEE,,,tanoak,Lithocarpus densiflorus var. echinoides,OH,OH,TO,OH,OH,OH,OH,OH,OT,TO,OT,GC,OH,OH,OH,GC,TO
+LIMO4,,,aroeira blanca,Lithrea molleoides ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LYONO,,,lyononthmnus,Lyonothamnus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LYFL2,,,Catalina ironwood,Lyonothamnus floribundus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LYFLA,,,Catalina ironwood,Lyonothamnus floribundus ssp. aspleniifolius  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+LYFLF,,,Catalina ironwood,Lyonothamnus floribundus ssp. floribundus,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MALUS,660,AL,apple species,Malus  ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,OH,OH,OH,CH,OH
+MACO5,,,sweet crabapple,Malus coronaria   ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MAFU,661,OR,Oregon crabapple,Malus fusca  ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,OT,OH,OH,OH,CH,OH
+MAPU,,,paradise apple,Malus pumila ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MEQU,992,MU,melaleuca  ,Melaleuca quinquenervia  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MEAZ,,,Chinaberrytree,Melia azedarach ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MOCA6,,WM,California wax myrtle,Morella californica,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MORUS,,,mulberry species,Morus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MOAL,,,white mulberry,Morus alba ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+MOMI,,,Texas mulberry,Morus microphylla ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+OLTE,990,DI,desert ironwood  ,Olneya tesota  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+OSTRY,,,hophornbean species,Ostrya ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+OSKN,,,Knowlton's hophornbeam,Ostrya knowltonii ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+OSVI,,,hophornbeam,Ostrya virginiana  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+OSVIV,,,hophornbeam,Ostrya virginiana  var. virginiana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+2TREE,999,OT,Unknown species,Other,OH,OS,OH,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+,,OC,Unknown conifer,Other Conifer,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,DF,OS,OS,OS,DF,OS
+2TD,998,OH,"tree, deciduous species",Other Hardwood,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+,290,,"tree, evergreen",Other Softwood,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+2TE,298,OS,"tree, evergreen species",Other Softwood,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PHOEN2,,,date palm,Phoenix ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PHCA13,,,Canary Island date palm,Phoenix canariensis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PHDA4,,,date palm,Phoenix dactylifera ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PICEA,090,SR,spruce species,Picea ,SS,ES,BR,ES,ES,ES,ES,ES,ES,OS,ES,SS,ES,ES,ES,ES,OS
+PIBR,092,BR,Brewer spruce,Picea breweriana ,OS,OS,BR,OS,OS,ES,OS,OS,OT,OS,OT,OT,ES,OS,OS,OT,OS
+PIEN,093,ES,Engelmann spruce,Picea engelmannii,OS,ES,BR,ES,ES,ES,ES,ES,ES,OS,ES,ES,ES,ES,ES,ES,OS
+,,S,Engelmann spruce,Picea engelmannii (Old Code),OS,ES,BR,ES,ES,ES,ES,ES,ES,OS,ES,ES,ES,ES,ES,ES,OS
+PIENE,,,Engelmann spruce,Picea engelmannii var. engelmannii,OS,ES,BR,ES,ES,ES,ES,ES,ES,OS,ES,ES,ES,ES,ES,ES,OS
+PIENM2,,,Engelmann spruce,Picea engelmannii var. mexicana  ,OS,ES,BR,ES,ES,ES,ES,ES,ES,OS,ES,ES,ES,ES,ES,ES,OS
+PIGL,094,WS,white spruce,Picea glauca ,WS,OS,OS,OS,WS,ES,ES,ES,ES,OS,ES,OT,OS,OS,OS,OT,OS
+PILU,,,Lutz's spruce,Picea lutzii,OS,OS,OS,OS,OS,ES,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIMA,095,BE,black spruce,Picea mariana,OS,OS,OS,OS,OS,ES,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIPU,096,BS,blue spruce,Picea pungens ,OS,OS,OS,OS,BS,ES,ES,ES,ES,OS,ES,OT,OS,BS,BS,OT,OS
+PISI,098,SS,Sitka spruce,Picea sitchensis ,SS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,SS,OS,OS,OS,ES,OS
+PINUS,100,OP,pine species,Pinus ,LP,PP,SP,PP,PP,LP,LP,LP,LP,SP,LP,LP,PP,LP,LP,LP,PP
+PIAT2,,,pine,Pinus ×attenuradiata ,OS,OS,MP,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,MP
+PIAL,101,WB,whitebark pine,Pinus albicaulis ,OS,WB,WB,WB,WB,WB,WB,WB,LP,OS,LP,WB,WB,WB,WB,WB,WB
+PIAR,102,BC,bristlecone pine,Pinus aristata ,OS,OS,OS,OS,BC,WB,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIAR5,135,AR,Arizona pine,Pinus arizonica ,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIARA,,,Arizona pine,Pinus arizonica var. arizonica,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIARS2,,,Arizona pine,Pinus arizonica var. stormiae,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIAT,103,KP,knobcone pine,Pinus attenuata ,OS,LP,KP,OS,OS,LP,OS,OS,OT,OS,OT,KP,LP,OS,OS,KP,GB
+PIBA,104,FP,foxtail pine,Pinus balfouriana ,OS,WB,WB,OS,OS,WB,OS,OS,OT,OS,OT,WB,WB,OS,OS,WB,FP
+PIBAA,,,foxtail pine,Pinus balfouriana ssp. austrina ,OS,WB,WB,OS,OS,WB,OS,OS,OT,OS,OT,WB,WB,OS,OS,WB,FP
+PIBAB,,,foxtail pine,Pinus balfouriana ssp. balfouriana,OS,WB,WB,OS,OS,WB,OS,OS,OT,OS,OT,WB,WB,OS,OS,WB,FP
+PICE,140,ME,Mexican pinyon,Pinus cembroides,OS,OS,OS,OS,PI,OS,OS,OS,OT,OS,OT,OT,OS,OS,PI,OT,OS
+PICO,108,LP,lodgepole pine,Pinus contorta  ,LP,LP,LP,LP,LP,LP,LP,LP,LP,PP,LP,LP,LP,LP,LP,LP,LP
+PICOB,,,Bolander beach pine,Pinus contorta var. bolanderi,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,LP,OS,OS,OS,OT,OS
+PICOC,,,beach pine,Pinus contorta var. contorta,LP,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,LP,OS,OS,OS,OT,OS
+PICOL,,,lodgepole pine,Pinus contorta var. latifolia,LP,LP,LP,LP,LP,LP,LP,LP,LP,PP,LP,LP,LP,LP,LP,LP,LP
+PICOM,,,Sierra lodgepole pine,Pinus contorta var. murrayana,OS,LP,LP,LP,LP,LP,LP,LP,LP,PP,LP,LP,LP,LP,LP,LP,LP
+PICO3,109,CP,Coulter pine,Pinus coulteri ,OS,OS,CP,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,CP
+PIDI3,134,PD,border pinyon,Pinus discolor ,OS,OS,OS,OS,PD,OS,OS,OS,OT,OS,OT,OT,OS,PM,PI,OT,OS
+PIED,106,PI,common pinyon,Pinus edulis ,OS,OS,OS,OS,PI,OS,OS,PI,OT,OS,OT,OT,OS,PM,PI,OT,OS
+PIEN2,112,AP,Apache pine,Pinus engelmannii ,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,OS,PP,OT,OS
+PIFL2,113,LM,limber pine,Pinus flexilis ,OS,LM,LM,LM,LM,WB,LM,LM,OT,OS,OT,OT,WB,LM,LM,OT,LM
+PIHA7,,,aleppo pine,Pinus halepensis ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIJE,116,JP,Jeffrey pine,Pinus jeffreyi ,OS,OS,JP,OS,OS,PP,OS,OS,OT,PP,OT,JP,PP,OS,OS,JP,JP
+PILA,117,SP,sugar pine,Pinus lambertiana ,OS,OS,SP,OS,OS,WP,OS,OS,OT,SP,OT,SP,SP,OS,OS,SP,SP
+PILE,,,Chihuahuan pine,Pinus leiophylla ,OS,OS,OS,OS,CI,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PILEC,118,CI,Chihuahuan pine,Pinus leiophylla var. chihuahuana  ,OS,OS,OS,OS,CI,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PILO,142,GB,Great Basin bristlecone pine,Pinus longaeva ,OS,OS,OS,OS,BC,OS,OS,OS,OT,OS,OT,OT,OS,OS,GB,OT,GB
+PIMO,133,PM,singleleaf pinyon,Pinus monophylla  ,OS,OS,OS,OS,PM,OS,OS,PI,OT,OS,OT,OT,OS,PM,PM,OT,PM
+PIMOC,,,California pine,Pinus monophylla var. californiarum  ,OS,OS,OS,OS,PI,OS,OS,OS,OT,OS,OT,OT,OS,PM,PM,OT,PM
+PIMOF,143,AZ,Arizona pinyon pine,Pinus monophylla var. fallax,OS,OS,OS,OS,AZ,OS,OS,PI,OT,OS,OT,OT,OS,PM,PM,OT,PM
+PIMOM2,,,singleleaf pinyon,Pinus monophylla var. monophylla,OS,OS,OS,OS,PI,OS,OS,PI,OT,OS,OT,OT,OS,PM,PM,OT,PM
+PIMO3,119,WP,western white pine,Pinus monticola  ,OS,WP,WP,WP,SW,WP,PP,WP,WP,SP,WP,WP,WP,OS,OS,WP,WP
+PIMU,120,BP,Bishop pine,Pinus muricata ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PINI,136,PN,Austrian pine,Pinus nigra,OS,OS,OS,PP,PP,OS,OS,OS,OT,OS,OT,OT,OS,OS,PP,OT,OS
+PIPI7,,,Italian stone pine,Pinus pinea ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIPO,122,PP,ponderosa pine,Pinus ponderosa ,OS,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP
+PIPOA2,,,Arizona pine,Pinus ponderosa ssp. arizonica,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,PP,PP,OT,OS
+PIPOA,,,Arizona pine,Pinus ponderosa var. arizonica,OS,OS,OS,OS,PP,OS,OS,OS,OT,OS,OT,OT,OS,PP,PP,OT,OS
+PIPOP,,,ponderosa pine,Pinus ponderosa var. ponderosa,OS,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP
+PIPOS,,,ponderosa pine,Pinus ponderosa var. scopulorum ,OS,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP,PP
+PIQU,138,FO,Parry pinyon,Pinus quadrifolia ,OS,OS,OS,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PIRA2,124,MP,Monterey pine,Pinus radiata ,OS,OS,MP,OS,OS,OS,OS,OS,OT,PP,OT,LP,OS,OS,OS,OT,MP
+PISA2,127,GP,California foothill pine,Pinus sabiniana ,OS,OS,GP,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,GP
+PIST3,114,SW,southwestern white pine,Pinus strobiformis ,OS,OS,OS,OS,SW,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+PISY,130,ST,Scotch pine,Pinus sylvestris  ,OS,OS,OS,OS,LP,OS,OS,OS,OT,OS,OT,OT,OS,LP,LP,OT,OS
+PITO,139,TP,Torrey pine,Pinus torreyana,OS,OS,MP,OS,OS,OS,OS,OS,OT,PP,OT,OT,OS,OS,OS,OT,OS
+PITOI2,,,Santa Cruz Island Torrey pine,Pinus torreyana var. insularis  ,OS,OS,MP,OS,OS,OS,OS,OS,OT,PP,OT,OT,OS,OS,OS,OT,OS
+PITOT2,,,Torrey pine,Pinus torreyana var. torreyana,OS,OS,MP,OS,OS,OS,OS,OS,OT,PP,OT,OT,OS,OS,OS,OT,OS
+PIWA,137,WE,Washoe pine,Pinus washoensis ,OS,OS,PP,OS,OS,OS,OS,OS,OT,PP,OT,OT,OS,OS,OS,OT,WE
+PISTA,,,pistache,Pistacia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PIAT4,,,Mt. Atlas mastic tree,Pistacia atlantica ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PICH4,,,Chinese pistache,Pistacia chinensis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PLOC,,,American sycamore,Platanus occidentalis,OH,OH,SY,OH,NC,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PLRA,730,SY,California sycamore,Platanus racemosa ,OH,OH,SY,OH,NC,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PLATA,729,PS,Sycamore species,Platanus spp.  ,OH,OH,SY,OH,NC,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PLWR2,,,Arizona sycamore,Platanus wrightii ,OH,OH,SY,OH,NC,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+POPUL,740,CO,cottonwood species,Populus ,CW,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POAC5,,,lanceleaf cottonwood,Populus ×acuminata   ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POBR7,,,hybrid balsam poplar,Populus ×brayshawii ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POCA19,,,Carolina poplar,Populus ×canadensis ,OH,CW,CW,CW,OH,CW,OH,OH,OT,OH,OT,CW,CW,OH,NC,CW,OH
+POHI8,,,cottonwood,Populus ×hinckleyana ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POIN23,,,cottonwood,Populus ×inopina ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POJA2,,,balm-of-Gilead,Populus ×jackii ,OH,CW,CW,CW,OH,CW,OH,OH,OT,OH,OT,CW,CW,OH,NC,CW,OH
+POPA11,,,cottonwood,Populus ×parryi ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POAL7,,,white poplar,Populus alba ,OH,CW,CW,CW,OH,CW,CW,CO,OT,OH,OT,CW,CW,OH,NC,CW,OH
+POAN3,749,NC,narrowleaf cottonwood,Populus angustifolia ,OH,CW,CW,CW,NC,CW,NC,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POBA2,741,BA,balsam poplar,Populus balsamifera ,CW,CW,CW,CW,NC,CW,BA,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POBAB2,,,balsam poplar,Populus balsamifera ssp. balsamifera,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POBAT,747,CW,black cottonwood,Populus balsamifera ssp. trichocarpa,CW,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+PODE3,,,eastern cottonwood,Populus deltoides ,OH,CW,CW,CW,PW,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+PODEM,745,PW,plains cottonwood,Populus deltoides ssp. monilifera  ,OH,CW,CW,CW,PW,CW,PW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+PODEW,,,Rio Grande cottonwood,Populus deltoides ssp. wislizeni  ,OH,CW,CW,CW,PW,CW,OH,OH,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POFR2,748,FC,Fremont cottonwood,Populus fremontii ,OH,CW,CW,CW,NC,CW,OH,OH,OT,OH,OT,CW,CW,NC,FC,CW,OH
+POFRF3,,,Fremont cottonwood,Populus fremontii ssp. fremontii,OH,CW,CW,CW,NC,CW,OH,OH,OT,OH,OT,CW,CW,NC,FC,CW,OH
+POFRM,,,Fremont cottonwood,Populus fremontii ssp. mesetae,OH,CW,CW,CW,NC,CW,OH,OH,OT,OH,OT,CW,CW,NC,FC,CW,OH
+PONI,,,Lombardy poplar,Populus nigra ,OH,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+POTR5,746,AS,quaking aspen,Populus tremuloides ,OH,AS,AS,AS,AS,AS,AS,AS,OT,OH,OT,AS,AS,AS,AS,AS,AS
+POTR15,,,black cottonwood,Populus trichocarpa,CW,CW,CW,CW,NC,CW,CW,CO,OT,OH,OT,CW,CW,NC,NC,CW,OH
+PROSO,755,MQ,mesquite species,Prosopis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRGL2,,,honey mesquite,Prosopis glandulosa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRGLG,,,honey mesquite,Prosopis glandulosa var. glandulosa,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRGLT,756,HM,honey mesquite  ,Prosopis glandulosa var. torreyana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRPU,758,SM,screwbean mesquite  ,Prosopis pubescens  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRVE,757,VM,velvet mesquite  ,Prosopis velutina  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PRUNU,760,PL,plum/cherry species,Prunus ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,CH,OH,OH,CH,OH
+PRAM,,,American plum,Prunus americana ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,CH,OH,OH,CH,OH
+PREM,768,CH,bitter cherry,Prunus emarginata  ,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,CH,OH,OH,CH,OH
+PRVID,,,western chokecherry,Prunus virginiana var. demissa,OH,OH,OH,OH,OH,PL,OH,OH,OT,OH,OT,CH,CH,OH,OH,CH,OH
+PSEUD7,200,OD,Douglas-fir species,Pseudotsuga ,OS,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF
+PSMA,201,BD,bigcone Douglas-fir,Pseudotsuga macrocarpa  ,OS,DF,OS,OS,OS,DF,OS,OS,OT,OS,OT,DF,OS,OS,OS,DF,BD
+PSME,202,DF,Douglas-fir,Pseudotsuga menziesii ,OS,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF
+PSMEG,,,Rocky Mountain Douglas-fir,Pseudotsuga menziesii var. glauca ,OS,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF
+PSMEM,,,Douglas-fir,Pseudotsuga menziesii var. menziesii,OS,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF,DF
+PTELE,,,hoptree species,Ptelea ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PTTR,,,common hoptree,Ptelea trifoliata ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PTTRP,,,pallid hoptree,Ptelea trifoliata ssp. pallida,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PTTRC2,,,pallid hoptree,Ptelea trifoliata ssp. pallida  var. confinis,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PTTRP2,,,pallid hoptree,Ptelea trifoliata ssp. polyadenia,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+PYCO,,,common pear,Pyrus communis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUERC,800,OA,"oak, deciduous species",Quercus ,OH,OH,LO,OH,GO,WO,OH,OH,OT,BO,OT,WO,WO,OH,GO,WO,BO
+,850,OE,"oak, evergreen species",Quercus ,OH,OH,LO,OH,EM,WO,OH,OH,OT,BO,OT,WO,WO,OH,GO,WO,BO
+QUMO2,,,oracle oak,Quercus ×moreha ,OH,OH,OH,OH,GO,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,BO
+QUPA4,,,oak,Quercus ×pauciloba   ,OH,OH,LO,OH,GO,WO,OH,OH,OT,BO,OT,WO,WO,OH,GO,WO,LO
+QUAG,801,LO,California live oak,Quercus agrifolia ,OH,OH,LO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,LO
+QUAR,803,AW,Arizona white oak,Quercus arizonica ,OH,OH,OH,OH,AW,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUCH2,805,CY,canyon live oak,Quercus chrysolepis ,OH,OH,CY,OH,EM,OH,OH,OH,OT,BO,OT,WO,WO,OH,GO,WO,CY
+QUCHC,,,canyon live oak,Quercus chrysolepis var. chrysolepis,OH,OH,CY,OH,EM,OH,OH,OH,OT,BO,OT,WO,WO,OH,GO,WO,CY
+QUDO,807,BL,blue oak,Quercus douglasii  ,OH,OH,BL,OH,EM,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BL
+QUDU,,,coastal sage scrub oak,Quercus dumosa ,OH,OH,IO,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUEM,810,EM,Emory oak,Quercus emoryi ,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUEN,811,EO,Engelmann oak,Quercus engelmannii ,OH,OH,EO,OH,EM,OH,OH,OH,OT,BO,OT,OT,OH,OH,OH,OT,BO
+QUGA,814,GO,Gambel oak,Quercus gambelii ,OH,OH,OH,OH,GO,WO,OH,OH,OT,OH,OT,OT,OH,OH,GO,OT,BO
+QUGAG,,,Gambel oak,Quercus gambelii var. gambelii,OH,OH,OH,OH,GO,WO,OH,OH,OT,OH,OT,OT,OH,OH,GO,OT,BO
+QUGA4,815,WO,Oregon white oak,Quercus garryana  ,OH,OH,WO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BO
+QUGAF,,,Oregon white oak,Quercus garryana var. fruticosa,OH,OH,WO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BO
+QUGAG2,,,Oregon white oak,Quercus garryana var. garryana,OH,OH,WO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BO
+QUGAS,,,Oregon white oak,Quercus garryana var. semota,OH,OH,WO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BO
+QUGR3,846,GR,gray oak,Quercus grisea ,OH,OH,OH,OH,EM,OH,OH,OH,OT,BO,OT,OT,OH,OH,OH,OT,OH
+QUHY,843,SO,silverleaf oak,Quercus hypoleucoides ,OH,OH,OH,OH,SO,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUKE,818,BO,California black oak,Quercus kelloggii ,OH,OH,BO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,BO
+QULO,821,VO,valley oak,Quercus lobata ,OH,OH,VO,OH,OH,WO,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,VO
+QUMA2,823,BK,bur oak,Quercus macrocarpa,OH,OH,OH,OH,BK,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUMU,826,CK,chinkapin oak,Quercus muehlenbergii ,OH,OH,OH,OH,BK,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUOB,829,MK,Mexican blue oak,Quercus oblongifolia ,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QURU4,,,netleaf oak,Quercus rugosa ,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUSA2,,,deer oak,Quercus sadleriana ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUTO2,,,Toumey oak,Quercus toumeyi ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+QUTU2,,,Sonoran scrub oak,Quercus turbinella ,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,GO,OT,OH
+QUUN,,,Wavyleaf oak,Quercus undulata,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,GO,OT,OH
+QUVA,,,huckleberry oak,Quercus vacciniifolia ,OH,OH,OH,OH,EM,OH,OH,OH,OT,OH,OT,OT,OH,OH,GO,OT,OH
+QUWI2,839,IO,interior live oak,Quercus wislizeni  ,OH,OH,IO,OH,OH,OH,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,IO
+QUWIF,,,interior live oak,Quercus wislizeni var. frutescens,OH,OH,IO,OH,OH,OH,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,IO
+QUWIW,,,interior live oak,Quercus wislizeni var. wislizeni,OH,OH,IO,OH,OH,OH,OH,OH,OT,BO,OT,WO,WO,OH,OH,WO,IO
+ROBIN,,,locust species,Robinia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ROHO,,,locust,Robinia ×holdtii ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ROHI,,,bristly locust,Robinia hispida ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ROHIF8,,,bristly locust,Robinia hispida var. fertilis,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ROHIH,,,bristly locust,Robinia hispida var. hispida,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+RONE,902,NM,New Mexico locust,Robinia neomexicana ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+RONEN,,,New Mexico locust,Robinia neomexicana var. neomexicana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+RONER,,,Rusby's locust,Robinia neomexicana var. rusbyi,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ROPS,901,RP,black locust,Robinia pseudoacacia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SALIX,920,WI,willow species,Salix ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAAL,,,feltleaf willow,Salix alaxensis,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAALA,,,feltleaf willow,Salix alaxensis var. alaxensis ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAALL,,,feltleaf willow,Salix alaxensis var. longistylis ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAAL2,,,white willow,Salix alba ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAAM2,,,peachleaf willow,Salix amygdaloides ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SABE2,,,Bebb willow,Salix bebbiana ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SABO,,,Bonpland willow,Salix bonplandiana ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAEX,,,narrowleaf willow,Salix exigua ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAFR,,,crack willow,Salix fragilis ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAGL,,,grayleaf willow,Salix glauca ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAGO,,,Goodding's willow,Salix gooddingii ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALA5,,,Pacific willow,Salix lasiandra,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALA6,,,arroyo willow,Salix lasiolepis ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALAB,,,Bigelow's willow,Salix lasiolepis var. bigelovii,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALAL2,,,arroyo willow,Salix lasiolepis var. lasiolepis,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALI,,,strapleaf willow,Salix ligulifolia  ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALU,,,shining willow,Salix lucida ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SALUL,,,Pacific willow,Salix lucida ssp. lasiandra,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAMA12,,,McCalla's willow,Salix maccalliana ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAMO2,,,park willow,Salix monticola ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAPL2,,,diamondleaf willow,Salix planifolia ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAPLP4,,,diamondleaf willow,Salix planifolia sp. planifolia,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SASC,928,SU,Scouler's willow,Salix scouleriana ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SATA,,,yewleaf willow,Salix taxifolia ,OH,OH,WI,OH,OH,WI,OH,OH,OT,OH,OT,WI,WI,OH,OH,WI,OH
+SAMBU,,,elderberry species,Sambucus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SANIC4,,,common elderberry,Sambucus nigra ssp. canadensis,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SAPIN,,,soapberry species,Sapindus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SASA4,,,wingleaf soapberry,Sapindus saponaria ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SASAD,,,western soapberry,Sapindus saponaria var. drummondii,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SCHIN,,,peppertree species,Schinus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SCMO,,,Peruvian peppertree,Schinus molle ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SCPO7,,,Hardee peppertree,Schinus polygamus  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SCTE,,,Brazilian peppertree,Schinus terebinthifolius ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SCTER2,,,Brazilian peppertree,Schinus terebinthifolius var. raddianus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SESE3,211,RW,redwood,Sequoia sempervirens ,OS,OS,GS,OS,OS,OS,OS,OS,OT,OS,OT,RW,OS,OH,OS,RW,RW
+SEGI2,212,GS,giant sequoia,Sequoiadendron giganteum ,OS,OS,GS,OS,OS,OS,OS,OS,OT,OS,OT,RW,OS,OS,OS,RW,GS
+SYRIN,,,lilac species,Syringa ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SYRE2,,,Japanese tree lilac,Syringa reticulata  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SYREA,,,Amur lilac,Syringa reticulata ssp. amurensis,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+SYVU,,,common lilac,Syringa vulgaris ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TAMAR2,991,SC,tamarisk species,Tamarix ,OH,OH,OH,OH,OS,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TACH2,,,five-stamen tamarisk,Tamarix chinensis ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TAPA4,,,smallflower tamarisk,Tamarix parviflora ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TARA,,,saltcedar,Tamarix ramosissima ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TAXUS,230,OY,yew species,Taxus ,OS,PY,PY,PY,OS,PY,OS,PY,OT,OS,OT,PY,PY,OS,OS,PY,OS
+TABA80,,,English yew,Taxus baccata ,OS,PY,PY,PY,OS,PY,OS,PY,OT,OS,OT,PY,PY,OS,OS,PY,OS
+TABR2,231,PY,Pacific yew,Taxus brevifolia ,OS,PY,PY,PY,OS,PY,OS,PY,OT,OS,OT,PY,PY,OS,OS,PY,OS
+THPL,242,RC,western red cedar,Thuja plicata ,RC,GF,RC,RC,RC,RC,OS,RC,RC,OS,RC,RC,RC,OS,OS,RC,OS
+,,C,western redcedar,Thuja plicata (Old Code),RC,GF,RC,RC,RC,RC,OS,RC,RC,OS,RC,RC,RC,OS,OS,RC,OS
+THUJA,240,TS,Thuja species,Thuja spp.  ,RC,GF,RC,RC,RC,RC,OS,RC,RC,OS,RC,RC,RC,OS,OS,RC,OS
+TIEU4,,,common linden,Tilia ×europaea  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TOCA,251,CN,California nutmeg,Torreya californica ,OS,OS,CN,OS,OS,OS,OS,OS,OT,OS,OT,OT,OS,OS,OS,OT,OS
+TRSE6,,,Chinese tallow,Triadica sebifera  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+TSUGA,260,HS,hemlock species,Tsuga ,WH,MH,WH,WH,MH,WH,OS,WH,WH,DF,WH,WH,WH,OS,OS,WH,MH
+TSJE,,,hemlock,Tsuga ×jeffreyi  ,WH,MH,WH,OS,OS,WH,OS,WH,WH,DF,WH,WH,WH,OS,OS,WH,OS
+TSHE,263,WH,western hemlock,Tsuga heterophylla ,WH,GF,WH,WH,OS,WH,OS,WH,WH,DF,WH,WH,WH,OS,OS,WH,OS
+TSME,264,MH,mountain hemlock,Tsuga mertensiana ,MH,MH,MH,OS,MH,MH,OS,MH,WH,OS,WH,MH,MH,OS,AF,MH,MH
+ULMUS,,,elm species,Ulmus ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ULAM,,,American elm,Ulmus americana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ULGL,,,Wych elm,Ulmus glabra ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ULPA,,,Chinese elm,Ulmus parvifolia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ULPR,,,English elm,Ulmus procera ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+ULPU,,,Siberian elm,Ulmus pumila ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+UMBEL,,,California laurel,Umbellularia  ,OH,OH,CL,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,CL
+UMCA,981,CL,California laurel,Umbellularia californica ,OH,OH,CL,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,CL
+UMCAC,,,California laurel,Umbellularia californica var. californica,OH,OH,CL,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,CL
+UMCAF,,,California laurel,Umbellularia californica var. fresnensis,OH,OH,CL,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,CL
+VAUQU,,,rosewood species,Vauquelinia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+VACA5,,,Arizona rosewood,Vauquelinia californica ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+VACAP,,,Arizona rosewood,Vauquelinia californica  ssp. pauciflora  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+VEFO,,,tungoil tree,Vernicia fordii  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+WASHI,,,fan palm,Washingtonia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+WAFI,,,California fan palm,Washingtonia filifera  ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+WARO,,,Washington fan palm,Washingtonia robusta ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+YUBR,,,Joshua tree,Yucca brevifolia ,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+YUBRB,,,Joshua tree,Yucca brevifolia var. brevifolia,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH
+YUBRJ,,,Jaeger's Joshua tree,Yucca brevifolia var. jaegeriana,OH,OH,OH,OH,OH,OH,OH,OH,OT,OH,OT,OT,OH,OH,OH,OT,OH

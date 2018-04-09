@@ -1,0 +1,8 @@
+Analysis,Harvesting.System,Modifier Type,Modifier,Comment
+Feller Buncher,All,+,mechBC,
+Manual,Cable Manual WT/Log,+,(Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,
+Manual,Ground-Based Manual Log,+,(Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,
+Manual,Shovel Logging,+,(Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,
+Manual,All,+,manBC,"The original code had set this such that if the stand was ineligible for the harvest method, the havest time was set to manBC. Does this make sense? i.e. behjou Manual where dbh.com > 40, should those = manBC?"
+Harvester,All,+,mechBC,
+Helicopter,All,*,1.2,

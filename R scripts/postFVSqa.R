@@ -12,7 +12,7 @@ library("RODBC")
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #create a master_package database that has the BA, less, and QMD thresholds for cutting
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/fvsmaster.mdb")
 package_labels <- sqlFetch(conn, "PkgLabels", as.is = TRUE) #import package labels table from fvsmaster.mdb NOTE: this table was manually added earlier
 odbcCloseAll()
 
@@ -70,9 +70,11 @@ fvs_qa <- function(directory, variantname, BA_threshold) {
     FVS_Cases <- sqlFetch(conn, "FVS_Cases")
     
     #check to see if the package has the SurvVolRatio table (this is added using the MortCalc R script)
-    if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
+    if (any(grepl(pattern = "SurvVolRatio", x = sqlTables(conn)))) {
       SurvVolRatio = "YES"
-    } 
+    } else {
+      SurvVolRatio = "NO"
+    }
     
     odbcCloseAll()
     
@@ -308,10 +310,10 @@ fvs_qa <- function(directory, variantname, BA_threshold) {
   return(problem)
 }
 
-CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
-NC_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/NC","NC",10))
-SO_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/SO","SO",10))
-WS_problem <- data.frame(fvs_qa("H:/cec_20170915/fvs/data/WS","WS",10))
+CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
+NC_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC","NC",10))
+SO_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO","SO",10))
+WS_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 
 
@@ -332,8 +334,10 @@ fvs_spotcheck <- function(directory, variantname, BA_threshold, packagenum) {
   FVS_Cases <- sqlFetch(conn, "FVS_Cases", as.is = TRUE)
   
   #check to see if the package has the SurvVolRatio table (this is added using the MortCalc R script)
-  if (grep(pattern = "SurvVolRatio", x = sqlTables(conn)) > 0) {
+  if (any(grepl(pattern = "SurvVolRatio", x = sqlTables(conn)))) {
     SurvVolRatio = "YES"
+  } else {
+    SurvVolRatio = "NO"
   } 
   
   odbcCloseAll()
