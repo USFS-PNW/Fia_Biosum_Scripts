@@ -1,4 +1,4 @@
-Cost.Component,Default.CPH,Idaho.CPH,Washington.CPH,Oregon.CPH,Limit.Parameter,Limit.Parameter.Type,Limit.Parameter.Value
+Machine.Cost,Default.CPH,Idaho.CPH,Washington.CPH,Oregon.CPH,Limit.Parameter,Limit.Parameter.Type,Limit.Parameter.Value
 Feller Buncher,210.1,210.1,190.1,175.1,,,
 Forwarder,170,170,170,180,,,
 Harvester,180,180,170,175,,,

@@ -129,8 +129,7 @@ m$manBC[m$BrushCutAvgVol > 4] <- m$BrushCutTPA[m$BrushCutAvgVol > 4]/(2*60)
 #####BRING IN REFERENCE TABLES######
 setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
 opcost_ref <- read.csv("opcost_ref.csv")
-# opcost_ref  <- opcost_ref [-45,] 
-# opcost_ref  <- opcost_ref [-65,]
+opcost_ref <- opcost_ref[!opcost_ref$Equation.ID %in% c(45,67,68),]
 opcost_units <- read.csv("opcost_units.csv")
 opcost_modifiers <- read.csv("opcost_modifiers.csv")
 opcost_cost_ref <- read.csv("opcost_cost_ref.csv")
@@ -153,11 +152,9 @@ opcost_chippingcost2 <- read.csv("opcost_chippingcost2.csv")
 #mod - Reference modifiers to use. Defaults to opcost_modifiers
 #units - Reference unit conversion equations to use. Defaults to opcost_units
 
-#Example: calculate_hpa(data = m, author = "behjou", analysis = "Manual", showmod = TRUE, ref = opcost_ref, mod = opcost_modifiers, units = opcost_units)
-####TO DO: CREATE EQUATION INDEXING SYSTEM BASED ON UNIQUE ID TO AVOID ISSUES WITH DUPLICATE AUTHOR/ANALYSIS####
+#Example: calculate_hpa(data = m, author = "behjou", machine = "Manual", showmod = TRUE, ref = opcost_ref, mod = opcost_modifiers, units = opcost_units)
+
 ####TO DO: MULTIPLE LIMIT PARAMETERS####
-####TO DO: PRE-MOD COLUMN####
-####TO DO: ANALYSIS/HARVEST METHODS/HARVEST COMPONENT TO MACHINE####
 ####TO DO: COST ESTIMATE - EACH HARVEST MACHINE SHOULD HAVE A SEPARATE MOVE IN COST####
 ####TO DO: COST ESTIMATE - MOVE IN COST NEEDS TO SCALE FOR EFFICIENCY (COST PER ACRE)####
 ####TO DO: CALCULATE HPA - CHECK FOR 0 DENOMINATORS####
@@ -183,15 +180,15 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
     mod <- opcost_modifiers #if mod is not specified, use opcost_modifiers
   }
   
-  row <- ref[ref$Equation.ID == equation.ID,] #get the row from ref with the specified author/analysis combination
+  row <- ref[ref$Equation.ID == equation.ID,] #get the row from ref with the specified equation ID
   
-  #stop function if there are duplicates of name/analysis combination
+  #stop function if there are duplicates of equation.ID
   if(nrow(row) > 1){
-    stop("Equation ID not found or Use.Equation not set to Y") #this stops function if the equation ID is not in ref or turned on by putting a Y in the "Use.Equations?" column
+    stop("Duplicate equation ID") #this stops function if the equation ID is not unique
   } 
   
   if(nrow(row) == 0) {
-    stop("Reference not found") #this stops the function if the name/analysis combination is not found in ref
+    stop("Reference not found") #this stops the function if the equation.ID is not found in ref
   }
   
   if(row$Units != "") { 
@@ -219,13 +216,24 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
     column <- which(names(data) == row$Limiting.Parameter) #get column number of limiting parameter
     
     data.na <- data[is.na(data[,column]),] #put rows where limiting parameter = NA into data.na
+    if(nrow(data.na) > 0) {
+      data.na$Treated <- "N"
+    }
+    
     data.no.na <- data[!is.na(data[,column]),] #remove rows where limiting parameter = NA from data
     
     #Combine limiting parameter, limit type, and limiting parameter value to get limit.statement
     limit.statement <- parse(text = paste0("with(data.no.na,", row$Limiting.Parameter, row$Limit.Type, row$Limiting.Parameter.Value,")"))
     
     data.nt <- data.no.na[!eval(limit.statement),] #put rows where limit.statement is false into data.nt
+    if(nrow(data.nt) > 0) {
+      data.nt$Treated <- "N"
+    }
     data.treated <- data.no.na[eval(limit.statement),] #remove rows where limit.statement is false from data
+    if(nrow(data.treated) > 0) {
+      data.treated$Treated <- "Y"
+    }
+    
     
     #recombine the data
     if(nrow(data.treated) > 0) {
@@ -264,21 +272,18 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
     
   } else {
     #for harvest methods without limits
+    data$Treated <- "Y"
     data[,ncol(data) + 1] <- eval(equation) #calculate hours per acre value based on equation 
   }
   
   if(ncol(data) > og_data_columns) {
-    if(showmod != TRUE) {
-    names(data)[ncol(data)] <- paste0(row$Name, row$Machine, row$Equation.ID) #add column and name it based on the name/anaylsis/ID
-    } else {
       names(data)[ncol(data)] <- paste0(row$Name, row$Machine, row$Equation.ID, ".PreMod") #add column and name it based on the name/anaylsis/ID with "premod"
-    }
   } else {
     stop("Equation not calculated")
   }
   
   ##### add in modifiers
-  if (row$Machine %in% mod$Machine) { #look to see if specified analysis is in the modifier table
+  if (row$Machine %in% mod$Machine) { #look to see if specified machine is in the modifier table
     if (any(mod$Harvesting.System[as.character(mod$Machine) == as.character(row$Machine)] != "All")) { #add adjustment for specific harvesting.systems 
       mod.rows <- mod[as.character(mod$Machine) == as.character(row$Machine) & mod$Harvesting.System != "All",] #get applicable rows from mod
       
@@ -299,7 +304,7 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
       
     }
     
-    if (any(mod$Harvesting.System[as.character(mod$Machine) == as.character(row$Machine)] == "All")) { #add adjustment for analysis modifier Harvesting.System = "All"
+    if (any(mod$Harvesting.System[as.character(mod$Machine) == as.character(row$Machine)] == "All")) { #add adjustment for machine modifier Harvesting.System = "All"
       mod.rows <- mod[as.character(mod$Machine) == as.character(row$Machine) & as.character(mod$Harvesting.System) == "All",]
       
       data$All.Modifier.Type <- mod.rows$Modifier.Type
@@ -307,12 +312,15 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
       
     }
     
-    calc_column <-  og_data_columns + 1
-    data$Final.adjust <- paste0("with(data[i,],data[i,",calc_column,"]",data$All.Modifier.Type, data$All.Adjust, data$Syst.Modifier.Type, data$Syst.Adjust, ")") #combine all adjustments
-    data$Final.adjust <- as.character(data$Final.adjust)
     
-    # data$new <- NA
-    adjust.col <- ncol(data) +1
+    calc_column <-  og_data_columns + 2
+    data$Adjust.with.NAs.Zero <- data[,calc_column] #this functionality converts any NA values for treatable stands to 0 so they will still have the modifier incorporated
+    data$Adjust.with.NAs.Zero[data$Treated == "Y" & is.na(data[,calc_column])] <- 0
+    adjust.with.NAs.zero.col <- which(names(data) == "Adjust.with.NAs.Zero")
+    data$Final.adjust <- paste0("with(data[i,],data[i,",adjust.with.NAs.zero.col,"]",data$All.Modifier.Type, data$All.Adjust, data$Syst.Modifier.Type, data$Syst.Adjust, ")") #combine all adjustments
+    data$Final.adjust <- as.character(data$Final.adjust)
+ 
+    adjust.col <- ncol(data) +1 #add a new column 
     
     for (i in 1:nrow(data)) {
       data$Final.adjust[i] <- parse(text = data$Final.adjust[i])
@@ -324,6 +332,7 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
     data <- data[,c(1:calc_column, ncol(data))] #remove adjustment columns
   } 
   
+  data$Treated <- NULL
   
   ##remove mod column if showmod = FALSE
   if(missing(showmod)) {
@@ -331,21 +340,28 @@ calculate_hpa <- function(data, equation.ID, showmod, ref, mod, units) {
   }
   
   if (showmod == FALSE) {
+    pre.mod.cols <- which(grepl("PreMod", names(data)))
     if (as.character(row$Machine) %in% as.character(mod$Machine)) {
-      data[,calc_column] <- data[,ncol(data)]
-      data[,ncol(data)] <- NULL
+      data <- data[,-c(pre.mod.cols)] #get rid of pre.mod columns
+    } else {
+      names(data)[pre.mod.cols] <- gsub(".PreMod", "", names(data)[pre.mod.cols])
+    }
+  } else {
+    if (!as.character(row$Machine) %in% as.character(mod$Machine)) {
+      names(data) <- gsub(".PreMod", "", names(data))
     }
   }
+  
   return(data)
   
 }
 
-calculate_hpa1 <- calculate_hpa(data = m, equation.ID = 1, showmod = TRUE)
+# calculate_hpa1 <- calculate_hpa(data = m, equation.ID = 46, showmod = FALSE)
 
 
-#####COMPARE HOURS PER ACRE CALCULATIONS BY ANALYSIS AND GET MEAN######
-#compare_harvest_methods runs calculate_hpa() for all equations in an analysis type (e.g. "Skidder"),
-#puts them in a single table, and calculates the mean of all equation results for the analysis type. 
+#####COMPARE HOURS PER ACRE CALCULATIONS BY MACHINE AND GET MEAN######
+#compare_harvest_methods runs calculate_hpa() for all equations in an machine type (e.g. "Skidder"),
+#puts them in a single table, and calculates the mean of all equation results for the machine type. 
 
 #Arguments:
 #data - The opcost input data
@@ -380,33 +396,45 @@ compare_harvest_methods <- function(data, machine, allCols, showmod, ref, mod, u
   a <- ncol(data1) #get number of columns to start
   newdata2 <- data.frame(matrix(NA, nrow = nrow(data), ncol = 1)) #set up empty matrix for output values
 
-  ref <- ref[ref$Machine == machine,] #get rows for relevant analysis from opcost_reference (disregarding numbers)
+  ref <- ref[ref$Machine == machine,] #get rows for relevant machine from opcost_reference (disregarding numbers)
 
-  for (i in 1:nrow(ref)) { #use calculate_hpa to get hours per acre for each author/analysis combination in analysis
-    newdata <- calculate_hpa(data = data1, equation.ID = ref$Equation.ID[i])
-    newdata <- newdata[,c(1,(ncol(data1)+1):ncol(newdata))] #get the author/analysis hours per acre value
-    data <- merge(data, newdata, by = "Stand") #add author/analysis hours per acre value to the original data (merged on Stand values)
+  for (i in 1:nrow(ref)) { #use calculate_hpa to get hours per acre for each equation.ID
+    newdata <- calculate_hpa(data = data1, equation.ID = ref$Equation.ID[i], showmod)
+    newdata <- newdata[,c(1,(ncol(data1)+1):ncol(newdata))] #get the equation hours per acre value
+    data <- merge(data, newdata, by = "Stand") #add equation hours per acre value to the original data (merged on Stand values)
   }
+  
+  data2 <- data
   
   b <- ncol(data) #get new # of columns for data with analyis hours per acre value columns
   
+  cleaned.newdata <- do.call(data.frame,lapply(data[,c(1,(a+1):b)], function(x) replace(x, is.infinite(x),NA))) #replace Inf values with NA
+  cleaned.newdata <- do.call(data.frame,lapply(cleaned.newdata, function(x) replace(x, x == 0,NA))) #replace zero values with NA
+
+  data <- merge(data1, cleaned.newdata)
+  
   col.diff <- b - a #get difference in # columns
   
-  if (col.diff > 1) { #if there are multiple equations for the analysis
+  if (col.diff > 1) { #if there are multiple equations for the machine
     if (showmod != TRUE) { #if showmod is FALSE
-      data$meanTime <- rowMeans(data[,(ncol(data) - col.diff + 1):ncol(data)], na.rm=TRUE) #calculate mean of analysis hours per acre values
+      data$meanTime <- rowMeans(data[,(ncol(data) - col.diff + 1):ncol(data)], na.rm=TRUE) #calculate mean of machine hours per acre values
     } else {
-      firstnewcol <- (ncol(data) - col.diff) + 1 #get value where new columns start
-      lastnewcol <- ncol(data) #get value where new columns start
-      mod.cols <- seq(firstnewcol+1, lastnewcol, by = 2) #get column # for every other column (aka non-mod columns)
-      data$meanTime <- rowMeans(data[,c(mod.cols)], na.rm=TRUE) #calculate mean of analysis hours per acre values of non-mod columns
+      pre.mod.cols <- which(grepl("PreMod", names(data)))
+      mod.cols <- c((a+1):b) #get column # for every other column (aka non-mod columns)
+      mod.cols <- mod.cols[!mod.cols %in% pre.mod.cols]
+      data$meanTime <- rowMeans(data[,c(mod.cols)], na.rm=TRUE) #calculate mean of machine hours per acre values of non-mod columns
     }
     
-  } else { #if there is only one equation for the analysis
+  } else { #if there is only one equation for the machine
     data$meanTime <- data[,ncol(data)]  #meanTime is equal to the single column values (mean of 1)
   }
   
   names(data)[ncol(data)] <- paste0("mean", machine, "Time") #name the n mean column
+  
+  data.merge <- data[,c(1, ncol(data))]
+  data.merge <- do.call(data.frame,lapply(data.merge, function(x) replace(x, is.nan(x),NA))) #replace zero values with NA
+  
+  data <- merge(data2, data.merge)
   
   if(allCols != TRUE) { #if allCols = FALSE
     data <- data[,c(1,(a+1):(b+1))] #remove old data columns (keep Stand column)
@@ -416,7 +444,7 @@ compare_harvest_methods <- function(data, machine, allCols, showmod, ref, mod, u
 }
 
 
-compare_harvest_methods_Manual <- compare_harvest_methods(data = m, machine = "Manual", allCols = TRUE)
+compare_harvest_methods_Manual <- compare_harvest_methods(data = m, machine = "Yarder", allCols = TRUE)
 
 #####GET MEAN HARVEST HOURS PER ACRE FOR ALL MACHINES######
 #all_machines runs compare_harvest_methods for all analyses and compiles a table
@@ -425,21 +453,17 @@ compare_harvest_methods_Manual <- compare_harvest_methods(data = m, machine = "M
 #Arguments:
 #data - The opcost input data
 #allCols - TRUE/FALSE - If true, shows original data columns as well as cost and mean values. If FALSE, output is stand ID with equation results and mean
-#showmod - TRUE/FALSE - If true, show both the original calculated HPA and the values after being modified according to opcost_modifiers. Defaults to FALSE
-#meansonly - TRUE/FALSE - If true, shows only the calculated means for each analysis method, and not the values for each equation
+#meansonly - TRUE/FALSE - If true, shows only the calculated means for each machine, and not the values for each equation
 #ref - Reference equations to use. Defaults to opcost_ref. Only uses equations where Use.Equation? is set to "Y"
 #mod - Reference modifiers to use. Defaults to opcost_modifiers
 #units - Reference unit conversion equations to use. Defaults to opcost_units
 
-#Example: all_analysis(data = m, allCols = TRUE, showmod = TRUE, meansonly = TRUE, ref = opcost_ref, mod = opcost_modifiers, units = opcost_units)
+#Example: all_machines(data = m, allCols = TRUE, showmod = TRUE, meansonly = TRUE, ref = opcost_ref, mod = opcost_modifiers, units = opcost_units)
 
-all_machines <- function(data, allCols, showmod, meansonly, ref, mod, units) {
+all_machines <- function(data, allCols, meansonly, ref, mod, units) {
   #add in default values for function parameters
   if(missing(allCols)) {
     allCols <- FALSE
-  }
-  if(missing(showmod)) {
-    showmod <- FALSE
   }
   if (missing(ref)) {
     ref <- opcost_ref[opcost_ref$Use.Equation. == "Y",]
@@ -451,7 +475,7 @@ all_machines <- function(data, allCols, showmod, meansonly, ref, mod, units) {
     mod <- opcost_modifiers
   }
 
-  #get unique author_analysis values from ref (ignoring numeric)
+  #get unique machine values from ref for equations where Use.Equation? = "Y"
   unique.machines <- as.character(unique(ref$Machine))
   
   #create empty list to store loop values
@@ -460,12 +484,12 @@ all_machines <- function(data, allCols, showmod, meansonly, ref, mod, units) {
   
   for (i in 1:length(unique.machines)) {
    name.vector <- c(name.vector, paste0(unique.machines[i],"Time") ) #get name vector value for this loop iteration
-   mylist[[i]] <- list(compare_harvest_methods(data, unique.machines[i], allCols)) #run and store compare_harvest_methods for each unique analysis value
+   mylist[[i]] <- list(compare_harvest_methods(data, unique.machines[i], allCols)) #run and store compare_harvest_methods for each unique machine value
   }
   
   names(mylist) <- name.vector #name each list item 
   
-  all <- Reduce(merge, mylist) #merge list items (i.e. put all analysis compare_harvest_methods function results in a single data frame)
+  all <- Reduce(merge, mylist) #merge list items (i.e. put all machine compare_harvest_methods function results in a single data frame)
   all.data <- merge(all, data, all= TRUE) #merge compare_harvest_methods values with original data
   all.diff <- all.data[!all.data$Stand %in% all$Stand,] #get any stand values that did not make it through the merge process (i.e. NA rows)
   all2 <- merge(all.data, all.diff, all = TRUE) #add NA rows back to original data (ensure that all stands are carried through)
@@ -526,7 +550,16 @@ create_harvest_system_cost_table <- function(cost, cost_ref, costestimate_ref, m
   cost.col <- which(names(cost_ref) == cost) #get cost column specified in function parameter (or use Default.CPH)
   cost_ref2 <- cost_ref[c(1,cost.col)] 
   
-  costestimate_ref2  <- merge(cost_ref2, costestimate_ref) #merge cost column with costestimate_ref
+  costestimate_ref2  <- merge(cost_ref2, costestimate_ref, all.y = TRUE) #merge cost column with costestimate_ref
+  
+  costestimate_ref2 <- costestimate_ref2[costestimate_ref2$Harvesting.System != "",] #remove values with no assigned Harvesting.System
+  
+  if (any(is.na(costestimate_ref2$Default.CPH))) {
+    warning("A Harvesting.System was removed; cost per hour value missing for a machine")
+  }
+  
+  remove.harvesting.system <- costestimate_ref2$Harvesting.System[is.na(costestimate_ref2$Default.CPH)] #get harvesting systems where a CPH value is missing
+  costestimate_ref2 <- costestimate_ref2[!costestimate_ref2$Harvesting.System %in% remove.harvesting.system,]
   
   #calculate "full cost" by taking cost values from cost_ref and multiplying them by Cost.Multiplier values in costestimate_ref
   costestimate_ref2$full_cost <- ifelse(!is.na(costestimate_ref2$Cost.Multiplier), costestimate_ref2$Default.CPH * costestimate_ref2$Cost.Multiplier, costestimate_ref2$Default.CPH)
@@ -542,10 +575,11 @@ create_harvest_system_cost_table <- function(cost, cost_ref, costestimate_ref, m
     
     #harvest components equation
     harvest.components <- costestimate_ref2[costestimate_ref2$Harvesting.System == harvest.system,] #get harvest components values from costestimate_ref for this harvest.system iteration
-    harvest.components <- harvest.components[c(6,10)] #list harvest components
+    pattern <- c("Mean.Machine.Time.Hours.Per.Acre", "full_cost")
+    harvest.components <- harvest.components[,which(grepl(paste(pattern, collapse = "|"), names(harvest.components)))] #list harvest components
     
     #create equation to calculate cost of each harvest component by multiplying each by the full_cost value
-    harvest.components$cost_equation <- paste0(harvest.components$Harvest.Component,"*", harvest.components$full_cost)
+    harvest.components$cost_equation <- paste0(harvest.components$Mean.Machine.Time.Hours.Per.Acre,"*", harvest.components$full_cost)
     
     #create equation to sum each harvest component cost
     harvest.components.cost <- paste(collapse = "+", harvest.components$cost_equation)
@@ -553,12 +587,12 @@ create_harvest_system_cost_table <- function(cost, cost_ref, costestimate_ref, m
     #move in cost equation
     move.in.cost <- moveincost_ref[as.character(moveincost_ref$Harvesting.System) == as.character(harvest.system),] #get move in cost for harvest system from moveincost_ref
     move.in.cost <- move.in.cost[c(2:3)] #get relevant columns (Move.In.Cost.Component and Move.In.Cost.Multiplier)
-    names(move.in.cost)[1] <- "Cost.Component" 
+    names(move.in.cost)[1] <- "Machine.Cost" 
     move.in.cost <- merge(move.in.cost, cost_ref2) #merge move in cost and costestimate_ref by Cost.Component to get the Cost per Hour data moved in
     move.in.cost$move.in.cost <- move.in.cost$Default.CPH * move.in.cost$Move.In.Cost.Multiplier #calculate move in cost by multiplying Default.CPH by Move.In.Cost.Multiplier
     
-    #create new data frame row with Harvesting.System iteration, Harvest.Components.Cost, and Move.In.Cost (Move.In.Cost is calculated by summing values calculated in the line above)
-    harvest.data <- data.frame("Harvesting.System"  = unique.harvest.system[i], "Harvest.Components.Cost" = harvest.components.cost, "Move.In.Cost" = sum(move.in.cost$move.in.cost))
+    #create new data frame row with Harvesting.System iteration, Machine.Cost, and Move.In.Cost (Move.In.Cost is calculated by summing values calculated in the line above)
+    harvest.data <- data.frame("Harvesting.System"  = unique.harvest.system[i], "Machine.Cost.Per.Acre" = harvest.components.cost, "Move.In.Cost" = sum(move.in.cost$move.in.cost))
     
     harvest.system.cost <- rbind(harvest.system.cost, harvest.data) #append to data frame
   }
@@ -585,29 +619,28 @@ harvest.system.cost <- create_harvest_system_cost_table()
 estimate_cost <- function(data, harvest.system.cost) {
   data <- merge(data, harvest.system.cost, all.x = TRUE) #merge harvest.system.cost with original data
 
-  data$Harvesting.Cost <-  parse(text = paste0("with(data[j,],", data$Harvest.Components.Cost, ")")) #turn equations into text (so they can be later evaulated as expressions)
+  data$Machine.Cost.Per.Acre <-  parse(text = paste0("with(data[j,],", data$Machine.Cost.Per.Acre, ")")) #turn equations into text (so they can be later evaulated as expressions)
   data$Move.In.Cost.LB <-  parse(text = paste0("with(data[j,],", data$Move.In.Cost.LB, ")")) 
   
-  data$Harvesting.Cost2 <- NA #get rid of unnecessary columns
+  data$Machine.Cost.Per.Acre2 <- NA #get rid of unnecessary columns
   data$Move.In.Cost.LB2 <- NA
   
-  for (j in 1:nrow(data)) { #calculate Harvesting.Cost and Move.In.Cost.LB by row (this breaks if not done iteratively due to strangeness of expressions/parsing)
-    data$Harvesting.Cost2[j] <- eval(data$Harvesting.Cost[j])
+  for (j in 1:nrow(data)) { #calculate Machine.Cost.Per.Acre and Move.In.Cost.LB by row (this breaks if not done iteratively due to strangeness of expressions/parsing)
+    data$Machine.Cost.Per.Acre2[j] <- eval(data$Machine.Cost.Per.Acre[j])
     data$Move.In.Cost.LB2[j] <- eval(data$Move.In.Cost.LB[j])
   }
   
-  data$Harvesting.Cost3 <- as.numeric(as.character(data$Harvesting.Cost2)) #convert to numeric
+  data$Machine.Cost.Per.Acre3 <- as.numeric(as.character(data$Machine.Cost.Per.Acre2)) #convert to numeric
   
   #clean up unneeded columns
-  data$Harvesting.Cost2 <- NULL 
-  data$Harvest.Components.Cost <- NULL
-  data$Harvesting.Cost <- NULL
+  data$Machine.Cost.Per.Acre2 <- NULL 
+  data$Machine.Cost.Per.Acre <- NULL
   data$Move.In.Cost.LB <- NULL
   
-  names(data)[which(grepl("Harvesting.Cost3", names(data)))] <- "Harvesting.Cost" #rename columns
+  names(data)[which(grepl("Machine.Cost.Per.Acre3", names(data)))] <- "Machine.Cost.Per.Acre" #rename columns
   names(data)[which(grepl("Move.In.Cost.LB2", names(data)))] <- "Move.In.Cost.LB"
   
-  pattern <- c("Harvesting.Cost", "Move.In.Cost", "Move.In.Cost.LB", "Total.Cost") #list of columns to sum to get Total.Cost
+  pattern <- c("Machine.Cost.Per.Acre", "Move.In.Cost", "Move.In.Cost.LB", "Total.Cost") #list of columns to sum to get Total.Cost
   data$Total.Cost <- rowSums(data[which(grepl(paste(pattern,collapse="|"), names(data)))]) #sum above columns by row
   
   return(data)
@@ -673,6 +706,8 @@ optimal_cost <- function(data, ideal_ref) {
     ideal_ref <- opcost_ideal_ref
   }
   
+  ideal_ref <- ideal_ref[ideal_ref$Harvesting.System %in% harvest.system.cost$Harvesting.System,] #limit to harvesting systems in harvest.system.cost
+  
   og_data <- data
   
   cost_data <- estimate_all_costs(data, harvest.system.cost) #get cost data by running estimate_all_costs
@@ -703,7 +738,7 @@ optimal_cost <- function(data, ideal_ref) {
       harvesting.systems <- ideal_ref$Harvesting.System[ideal_ref$Limit.Statement == unique.limit.statement[j] & ideal_ref$ID == unique.ID[i]] #get list of harvesting systems for current limit statement and ID iteration
       cols <- which(grepl(paste(harvesting.systems,collapse="|"), names(data.limited))) #get columns from data.limited where the column name contains current harvesting system
       data.limited$j <- apply(data.limited[,c(cols)],1,which.min) #get columns number that contains minimum value for columns where column name contains current harvesting system
-      data.limited$j <- as.numeric(as.character(data.limited$j)) #convert column number to numeric
+      data.limited$j <- suppressWarnings(as.numeric(as.character(data.limited$j))) #convert column number to numeric
       data.limited$Optimal.Harvest.System <- gsub("Estimate.","",names(data.limited)[cols[data.limited$j]]) #convert column number to column name and remove "Estimate." (so it returns harvest system name)
       
       #The Optimal.Harvest.System column now contains the harvest system name of the column with the minimum cost value according to ideal_ref stipulations/limitations
@@ -726,7 +761,7 @@ optimal_cost <- function(data, ideal_ref) {
     
     
     optimal.cost <- estimate_cost(optimal.analysis, harvest.system.cost) #run cost analysis for optimal.analysis (with Optimal.Harvesting.System)
-    pattern <- c("Stand", "Harvesting.System", "Harvesting.Cost", "Move.In.Cost", "Move.In.Cost.LB", "Total.Cost") #cost columns to pull from new estimate_cost table
+    pattern <- c("Stand", "Harvesting.System", "Machine.Cost.Per.Acre", "Move.In.Cost", "Move.In.Cost.LB", "Total.Cost") #cost columns to pull from new estimate_cost table
     optimal.cost2 <- optimal.cost[grepl(paste(pattern,collapse="|"), names(optimal.cost))] #pull new cost columns
     names(optimal.cost2) <- paste0("Optimal.", names(optimal.cost2)) #rename columns to have "Optimal." in front
     
@@ -745,6 +780,7 @@ optimal_cost <- function(data, ideal_ref) {
 }
 
 optimal.cost.data <- optimal_cost(all)
+
 
 optimal1 <- optimal.cost.data[[1]]
 
@@ -769,12 +805,12 @@ secondary_chippingcost <- function(data, chip2) {
 
 opcost_master <- secondary_chippingcost(optimal1)
 
-pattern <- c("Stand", "YearCostCalc", "Harvesting.Cost", "Harvesting.Chipping.Cost2", "Move.In.Cost.LB", "Move.In.Cost","Harvesting.System", "RxPackage_Rx_RxCycle", "biosum_cond_id",
-             "RxPackage", "Rx", "RxCycle") #columns to pull from opcost_master to recreate original Opcost_Output table
+pattern <- c("Stand", "YearCostCalc", "Machine.Cost.Per.Acre", "Harvesting.Chipping.Cost2", "Move.In.Cost.LB", "Move.In.Cost","Harvesting.System", "RxPackage_Rx_RxCycle", "biosum_cond_id",
+             "RxPackage", "Rx", "RxCycle", "Total.Cost") #columns to pull from opcost_master to recreate original Opcost_Output table
 
 opcost_output <- opcost_master[,c(which(names(opcost_master) %in% pattern))] #pull columns
 
-pattern2 <- c("Stand", "YearCostCalc", "Optimal.Harvesting.Cost", "Optimal.Chipping.Cost2", "Optimal.Move.In.Cost.LB", "Optimal.Move.In.Cost", "Optimal.Harvesting.System", "RxPackage_Rx_RxCycle", "biosum_cond_id",
+pattern2 <- c("Stand", "YearCostCalc", "Optimal.Machine.Cost.Per.Acre", "Optimal.Chipping.Cost2", "Optimal.Move.In.Cost.LB", "Optimal.Move.In.Cost", "Optimal.Harvesting.System", "Optimal.Total.Cost", "RxPackage_Rx_RxCycle", "biosum_cond_id",
              "RxPackage", "Rx", "RxCycle", "MatchesOriginalSystem") #columns to pull from opcost_master to recreate original Opcost_Ideal_Output table
 opcost_ideal_output <- opcost_master[,c(which(names(opcost_master) %in% pattern2))]
 
@@ -795,11 +831,16 @@ library("reshape2")
 library("ggplot2")
 library("dplyr")
 graph_analyses <- function(data, ref) {
+  
+  if (missing(ref)) {
+    ref <- opcost_ref[opcost_ref$Use.Equation. == "Y",]
+  }
+  
   unique.machines <- unique(ref$Machine)
 
   for (i in 1:length(unique.machines)) {
-    values <- ref[gsub('[[:digit:]]+',"",ref$Machine) == gsub('[[:digit:]]+',"",unique.machines[i]),]
-    values.data <- compare_harvest_methods(data = data, analysis = unique.machines[i], allCols = TRUE, ref = values)
+    values <- ref[as.character(ref$Machine) == as.character(unique.machines[i]),]
+    values.data <- compare_harvest_methods(data = data, machine = unique.machines[i], allCols = TRUE, ref = values)
     b <- ncol(values.data)
     a <- ncol(data) + 1
     df2 <- melt(values.data, id.vars = c(a:b), measure.vars = names(values.data)[a:b])
@@ -816,4 +857,4 @@ graph_analyses <- function(data, ref) {
   }
 }
 
-graph_analyses(m, ref = ref)
+graph_analyses(m)
