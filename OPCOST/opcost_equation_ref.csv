@@ -1,13 +1,13 @@
-Equation.ID,Name,Machine,Equation,Units,Limiting Parameter,Limit Type,Limiting Parameter Value,Old_Time Per Acre Conversions,Old_Equation,Old_Function,Comment,Default.Use.Equation?,RefNum
+Equation.ID,Name,Machine,Equation,Units,Limiting Parameter,Limit Type,Limiting Parameter Value,Old Time Per Acre Conversions,Old Equation,Old Function,Comment,DefaultUseEquation?,RefNum
 SAW_01,akay,Chainsaw,56.62*log(twitchVolM)+322.09,,,,,,56.62*(log(twitchVolM(m)))+322.09,akaySaw,Not sure why a single grip harvester equation would be in a Chainsaw section; not sure this eqn is ever accessed,,143
 SAW_02,behjou,Chainsaw,(-2.80 + (0.051 * (25.4 * dbh) + (0.039 * (distBetweenTrees/3.28084)))),min/tree,dbh.cm,>,40,"ifelse(dbh.cm(m)>40.00, ((treesRemoved(m)*behjouSaw(m))/60), NA)", -2.80+(0.051*(25.4*dbh(m)))+(0.039*(distBetweenTrees(m)/3.28084)),behjouSaw,,Y,90
-SAW_03,ghaf,Chainsaw,(-1.582+(0.099*dbh.cm)),unknown3,dbh.cm,>,25,"ifelse(dbh.cm(m)>25, ((ghafSaw(m)*treesRemoved(m))/180), NA)",(-1.582+(0.099*dbh.cm(m))),ghafSaw,not found in the article with the other eqns from this author,Y,??
+SAW_03,ghaf,Chainsaw,(-1.582+(0.099*dbh.cm)),min/tree,dbh.cm,>,25,"ifelse(dbh.cm(m)>25, ((ghafSaw(m)*treesRemoved(m))/180), NA)",(-1.582+(0.099*dbh.cm(m))),ghafSaw,not found in the article with the other eqns from this author,Y,??
 SAW_04,hartsough,Chainsaw,0.1 + 0.0111 * (dbh^1.496),min/tree,,,,(hartsoughSaw(m)*treesRemoved(m))/60,0.1+0.0111*(dbh(m)^1.496),hartsoughSaw,,Y,43
 SAW_05,klepac,Chainsaw,24.796 + 0.331419 * (dbh^2),sec/tree,,,,,24.796+0.331419*(dbh(m)^2),klepacSaw,,,54
 SAW_06,kluender,Chainsaw,(0.016 * ((dbh * 2.54)^1.33)) * (distBetweenTrees^0.083)*(.5^0.196),min/tree,,,,(kluenderSaw(m)*treesRemoved(m))/60,"(0.016*((dbh(m)*2.54)^1.33))*
     (distBetweenTrees(m)^0.083)*(.5^0.196)",kluenderSaw,Is distance between trees in OC metric?,Y,57
 SAW_07,spinelli,Chainsaw,30.04 + 0.2*(dbh^2)+ 8.3,,,,,,30.04 + 0.2*((dbh(m))^2)+ 8.3,spinelliSaw,Same as adebayo,,??
-CHIP_01,bolding,Chipper,0.001*(totalVol*25),min/acre,,,,(boldingChip(m))/60,0.001*(totalVol(m)*25),boldingChip,This info is not found in REF 094,Y,150
+CHIP_01,bolding,Chipper,0.0015 * ChipFeedstockWeight,min/acre,,,,(boldingChip(m))/60,0.001*(totalVol(m)*25),boldingChip,This info is not found in REF 094,Y,150
 CHIP_02,hansill,Chipper,2.32 + (-0.42 * 1.79)+(1.83 * dbh.cm),sec/chip,dbh.cm,<,76,"ifelse(dbh.cm(m)<76, ((chipTrees(m)*hansillChip(m))/60/60), NA)",2.32+(-0.42*1.79)+(1.83*dbh.cm(m)),hansillChip,,Y,
 CHIP_03,hansill,Chipper,2.4 + (-0.32 * 1.4)+(1.3 * dbh.cm),min/chip,dbh.cm,<,76,"ifelse(dbh.cm(m)<76, ((chipTrees(m)*hansillChip2(m))/60), NA)",2.4+(-0.32*1.4)+(1.3*dbh.cm(m)),hansillChip2,this gets raised to ^0.8 for some reason later on?,Y,
 FB_01,adebayo,Feller Buncher,30.04 + 0.2*(dbh^2)+ 8.3,,,,,,30.04 + 0.2*((dbh(m))^2)+ 8.3,adebayoFB,,,88
@@ -47,14 +47,14 @@ HAR_09,klepac,Harvester,abs((0.0076197 * One.way.Yarding.Distance - 0.6073183873
       (0.0121066*m$""One.way.Yarding.Distance""-1.651069636)
   )",klepacHar,,Y,55
 HAR_10,hiesl,HarvesterCord2,exp((-0.826+.309 * (dbh)) + 0.386*sppgrp),Cords/PMH,,,,cordsPerAcre(m)/hieslHarCord2(m),exp((-0.826+.309*(dbh(m)))+0.386*sppgrp(m)),hieslHarCord2,,,45
-HELI_01,akay,Helicopter,1.3721152 + (0.0126924*Percent.Slope) + (0.00246741*One.way.Yarding.Distance) + (0.031200*(3)) + (0.000060987 * (totalVol/12))-(0.000050837 * (totalVol/36)),,,,,," 1.3721152+(0.0126924*m$""Percent.Slope"")+(0.00246741*m$""One.way.Yarding.Distance"")+
-    (0.031200*(3))+(0.000060987*(totalVol(m)/12))-(0.000050837*(totalVol(m)/36))",akayHeli,"nominal page 26, document page 31",,146
-HELI_02,curtis,Helicopter,abs(23.755 + 2.7716 * treesRemoved - 0.63694 * One.way.Yarding.Distance),min/acre,dbh.cm,>,20,"ifelse(dbh.cm(m)>20, curtisHeli(m)/60, NA)","23.755 + 2.7716*treesRemoved(m)-0.63694*(m$""One.way.Yarding.Distance"")",curtisHeli,"added abs() - this was added later as part of the average time calculation under the heliTime equation, but this equation is the only helicopter one that yields negative values",Y,144
-HELI_03,dykstra,Helicopter,1.3721152 + (0.0126924 * Percent.Slope) + (0.00246741 * One.way.Yarding.Distance) + (0.031200 * (3)) + (0.000060987*(totalVol/12)) - (0.000050837*(totalVol/36)),unknown2,twitchWeight,<,2900," ifelse((twitchWeight(m)<2900),
+HELI_01,akay,Helicopter,(1.3721152 + (0.0126924*Percent.Slope) + (0.00246741*One.way.Yarding.Distance) + (0.031200*(3)) + (0.000060987 * (totalVol/12))-(0.000050837 * (totalVol/36)))*1.2,,,,,," 1.3721152+(0.0126924*m$""Percent.Slope"")+(0.00246741*m$""One.way.Yarding.Distance"")+
+    (0.031200*(3))+(0.000060987*(totalVol(m)/12))-(0.000050837*(totalVol(m)/36))",akayHeli,"nominal page 26, document page 31 (with * 1.2 adjuster)",,146
+HELI_02,curtis,Helicopter,(abs(23.755 + 2.7716 * treesRemoved - 0.63694 * One.way.Yarding.Distance))*1.2,min/acre,dbh.cm,>,20,"ifelse(dbh.cm(m)>20, curtisHeli(m)/60, NA)","23.755 + 2.7716*treesRemoved(m)-0.63694*(m$""One.way.Yarding.Distance"")",curtisHeli, (with * 1.2 adjuster),Y,144
+HELI_03,dykstra,Helicopter,(1.3721152 + (0.0126924 * Percent.Slope) + (0.00246741 * One.way.Yarding.Distance) + (0.031200 * (3)) + (0.000060987*(totalVol/12)) - (0.000050837*(totalVol/36)))*1.2,unknown2,twitchWeight,<,2900," ifelse((twitchWeight(m)<2900),
          (((((totalVol(m)/3)*(m$""Large.log.trees.per.acre""+m$""Small.log.trees.per.acre""))/190)*dykstraHeli(m))/60),
          NA)","  1.3721152+(0.0126924*m$""Percent.Slope"")+(0.00246741*m$""One.way.Yarding.Distance"")+
-    (0.031200*(3))+(0.000060987*(totalVol(m)/12))-(0.000050837*(totalVol(m)/36))",dykstraHeli,,Y,146
-HELI_04,flatten,Helicopter,40.737274 + (0.0168951 * One.way.Yarding.Distance)+((totalWeight/12)*2.052894)+(22.658839),sec/acre,twitchWeight,<,2900,"ifelse((twitchWeight(m)<2900), flattenHeli(m)/3600, NA)","40.737274+(0.0168951*m$""One.way.Yarding.Distance"")+((totalWeight(m)/12)*2.052894)+(22.658839)",flattenHeli,in section 5.5.4.2; choker delivery is costed as happening with each turn-- correct?,Y,32
+    (0.031200*(3))+(0.000060987*(totalVol(m)/12))-(0.000050837*(totalVol(m)/36))",dykstraHeli, (with * 1.2 adjuster),Y,146
+HELI_04,flatten,Helicopter,(40.737274 + (0.0168951 * One.way.Yarding.Distance)+((totalWeight/12)*2.052894)+(22.658839))*1.2,sec/acre,twitchWeight,<,2900,"ifelse((twitchWeight(m)<2900), flattenHeli(m)/3600, NA)","40.737274+(0.0168951*m$""One.way.Yarding.Distance"")+((totalWeight(m)/12)*2.052894)+(22.658839)",flattenHeli, (with * 1.2 adjuster),Y,32
 SKID_01,akay,Skidder,(-0.1971+(1.1287*5)+((0.0045*twitchVolM*5))+(0.0063*(One.way.Yarding.Distance*2))),unknown1,One.way.Yarding.Distance,<,3500,"ifelse(m$""One.way.Yarding.Distance""<3500, akaySkid(m)*.4, NA)","-0.1971+(1.1287*5)+((0.0045*twitchVolM(m)*5))+(0.0063*(m$""One.way.Yarding.Distance""*2))",akaySkid,,Y,143
 SKID_02,akay,Skidder,(-0.1971+(1.1287*5)+((0.0045*twitchVolM*5))+(0.0063*(One.way.Yarding.Distance*2))),,,,,,"(-0.1971+(1.1287*5)+((0.0045*twitchVolM(m)*5))+(0.0063*(m$""One.way.Yarding.Distance""*2)))",akaySkid2,"akaySkid2 was assigned twice, one matches akaySkid",,143
 SKID_03,akay,Skidder,0.012*(One.way.Yarding.Distance^-0.399)*(dbh^2.041)*(5^0.766),,,,,," 0.012*(m$""One.way.Yarding.Distance""^-0.399)*(dbh(m)^2.041)*(5^0.766)",akaySkid2,"akay wrote JF (via John Sessions) that ""I looked for the third equation for skidder and found out that it was slightly modified version of  Kluender et al. (1997). I attached that paper (Equation 5). """,,145
@@ -72,10 +72,10 @@ SKID_10,tin,Skidder,sqrt(3.3 * (7.3 + One.way.Yarding.Distance)),,,,,,"sqrt(3.3*
 SBP_01,ghaf,Slide Boom Processor,23.297/twitchVolM,min/acre,twitchVolM,<,3,"ifelse(twitchVolM(m)<3, ghafLoad(m)/60, NA)",23.297/twitchVolM(m),ghafLoad,,Y,37
 SBP_02,hartsough,Slide Boom Processor,0.141 + 0.0298 * dbh,unknown4,,,,hartsoughSlide(m)*30,  0.141+0.0298*dbh(m),hartsoughSlide,,Y,43
 SBP_03,suchomel,Slide Boom Processor,twitchVolM/19.8,,,,,suchomelSlide(m),twitchVolM(m)/19.8,suchomelSlide,,Y,148
-TETH_01,,TetheredForwarderTimeDueToWeight,"ifelse(Percent.Slope < 40, 10, 20)",,Percent.Slope,<,90,,,,,,
-TETH_02,,TetheredForwarderTimeDueToDistance,"ifelse(Percent.Slope < 40, 10, 20)",,,,,,,,,,
-TETH_03,,TetheredForwarderTimeDueToLoad,"ifelse(Percent.Slope < 40, 10, 20)",,,,,,,,,,
-TETH_04,,TetheredHarvester,"ifelse(Percent.Slope < 40, 30, 40)",,Percent.Slope,<,90,,,,,,
+TETH_01,petitmermet,Forwarder_WT,FT_wt_CT + FT_wt_SL + FT_wt_LL,min/acre,Percent.Slope,<,90,,,,For tethered systems; Forwarder Time Due to Weight,,
+TETH_02,petitmermet,Forwarder_DIST,"0.01 * One.way.Yarding.Distance/3.28 * ifelse(Percent.Slope < 40, 1, 5)",min/acre,Percent.Slope,<,90,,,,For tethered systems; Forwarder Time Due to Distance,,
+TETH_03,petitmermet,Forwarder_LOAD,((MerchWtTonnes_Loader * 0.9)/59.42) + ((MerchWtTonnes_Loader*0.1)/35.29),,Percent.Slope,<,90,,,,For tethered systems; Forwarder Time Due to Loader,,
+TETH_04,petitmermet,Harvester,(1.43 *MerchWtTonnes_Harvester+ 0.25 * 531),min/acre,Percent.Slope,<,90,,,,For tethered systems,,
 YARD_01,aulerich,Yarder,0.826 + 0.006*(One.way.Yarding.Distance)+0.032*(One.way.Yarding.Distance)+0.897*(treesRemoved),,,,,,"  0.826+0.006*(m$One.way.Yarding.Distance)+0.032*(
     m$One.way.Yarding.Distance)+0.897*(treesRemoved(m))",aulerichYard,,,
 YARD_02,aulerich,Yarder,1.925 + 0.002 * (One.way.Yarding.Distance) + 0.017*(One.way.Yarding.Distance) + 0.909*(treesRemoved),,,,,,"  1.925+0.002*(m$One.way.Yarding.Distance)+0.017*(
@@ -89,3 +89,13 @@ YARD_06,dykstra,Yarder,2.39219 + 0.0019426 * Percent.Slope + One.way.Yarding.Dis
 YARD_07,fisher,Yarder,2.374 + (0.00841141 * One.way.Yarding.Distance + (0.72548570*1.35)),Turn time minutes,,,,"((((m$""Small.log.trees.per.acre""+m$""Large.log.trees.per.acre"")/1.35)*fisherYarder(m))/120)","2.374+(0.00841141*(m$""One.way.Yarding.Distance""))+(0.72548570*(1.35))",fisherYarder,this gets raised to ^0.85 for some reason later on?,Y,147
 YARD_08,iff,Yarder,1.054 + .00234 * One.way.Yarding.Distance + 0.01180 * 97 + 0.980 * treesRemoved + .00069 * totalWeight,,,,,,"  1.054+.00234*(m$One.way.Yarding.Distance)+0.01180*(97)+0.980*(
     treesRemoved(m))+.00069*(totalWeight(m))",iffYard,,,??
+BC_01,,MechBrushCut,"ifelse(BrushCutAvgVol < 4, BrushCutTPA/10, BrushCutTPA/5)",min/acre,,,,,,,,,
+BC_02,,ManualBrushCut,"ifelse(BrushCutAvgVol < 4, BrushCutTPA, BrushCutTPA/2)",min/acre,,,,,,,,,
+SAW_08,akay,Chainsaw,56.62*log(twitchVolM)+322.09 + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,,,,,,56.62*(log(twitchVolM(m)))+322.09,akaySaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,,143
+SAW_09,behjou,Chainsaw,(-2.80 + (0.051 * (25.4 * dbh) + (0.039 * (distBetweenTrees/3.28084))))  + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,min/tree,dbh.cm,>,40,"ifelse(dbh.cm(m)>40.00, ((treesRemoved(m)*behjouSaw(m))/60), NA)", -2.80+(0.051*(25.4*dbh(m)))+(0.039*(distBetweenTrees(m)/3.28084)),behjouSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,Y,90
+SAW_10,ghaf,Chainsaw,(-1.582+(0.099*dbh.cm))  + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,min/tree,dbh.cm,>,25,"ifelse(dbh.cm(m)>25, ((ghafSaw(m)*treesRemoved(m))/180), NA)",(-1.582+(0.099*dbh.cm(m))),ghafSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,Y,??
+SAW_11,hartsough,Chainsaw,0.1 + 0.0111 * (dbh^1.496)  + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,min/tree,,,,(hartsoughSaw(m)*treesRemoved(m))/60,0.1+0.0111*(dbh(m)^1.496),hartsoughSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,Y,43
+SAW_12,klepac,Chainsaw,24.796 + 0.331419 * (dbh^2)  + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,sec/tree,,,,,24.796+0.331419*(dbh(m)^2),klepacSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,,54
+SAW_13,kluender,Chainsaw,(0.016 * ((dbh * 2.54)^1.33)) * (distBetweenTrees^0.083)*(.5^0.196)  + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,min/tree,,,,(kluenderSaw(m)*treesRemoved(m))/60,"(0.016*((dbh(m)*2.54)^1.33))*
+    (distBetweenTrees(m)^0.083)*(.5^0.196)",kluenderSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,Y,57
+SAW_14,spinelli,Chainsaw,30.04 + 0.2*(dbh^2)+ 8.3 + (Small.log.trees.per.acre+Large.log.trees.per.acre)*0.013333,,,,,,30.04 + 0.2*((dbh(m))^2)+ 8.3,spinelliSaw,Added adjustment based on small/large TPA for Cable Manual WT/Log & Ground-Based Manual Log systems,,??

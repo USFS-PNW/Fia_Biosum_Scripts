@@ -1,18 +1,18 @@
-Machine.Cost,Default.CPH,Idaho.CPH,Washington.CPH,Oregon.CPH,Limit.Parameter,Limit.Parameter.Type,Limit.Parameter.Value
-Feller Buncher,210.1,210.1,190.1,175.1,,,
-Forwarder,170,170,170,180,,,
-Harvester,180,180,170,175,,,
-GrappleSkidderLarge,110,110,155,150,,,
-CableSkidderLarge,149.8,149.8,190,150.9,,,
-WheelFellerBuncher,205.1,205.1,195.1,190.1,,,
-CrawlerFellerBuncher,185.6,185.6,180.6,162.6,,,
-Yarder,299,299,305,303,,,
-Slideboom,200,200,200,200,,,
-Chainsaw,90,90,90,90,,,
-Chipper,100,100,100,100,,,
-Helicopter,1500,,,,,,
-Shovel,186,,,,,,
-TetheredHarvester,"ifelse(Percent.Slope > 40, 278.95, 212.47)",,,,Percent.Slope,>,40
-TetheredHarvester,212.47,,,,Percent.Slope,<=,40
-TetheredForwarder,198.11,,,,Percent.Slope,>,40
-TetheredForwarder,177.22,,,,Percent.Slope,<=,40
+Machine.Cost,Default.CPH,Idaho.CPH,Washington.CPH,Oregon.CPH
+Feller Buncher,210.1,210.1,190.1,175.1
+Forwarder,170,170,170,180
+Harvester,180,180,170,175
+GrappleSkidderLarge,110,110,155,150
+CableSkidderLarge,149.8,149.8,190,150.9
+WheelFellerBuncher,205.1,205.1,195.1,190.1
+CrawlerFellerBuncher,185.6,185.6,180.6,162.6
+Yarder,299,299,305,303
+Slideboom,200,200,200,200
+Chainsaw,90,90,90,90
+Chipper,100,100,100,100
+Helicopter,1500,,,
+Shovel,186,,,
+Forwarder_DIST,"ifelse(Percent.Slope < 40, 177.22, 198.11)",,,
+Forwarder_LOAD,213.22,,,
+Forwarder_WT,"ifelse(Percent.Slope < 40, 177.22, 198.11)",,,
+TetheredHarvester,"ifelse(Percent.Slope < 40, 212.47, 278.95)",,,
