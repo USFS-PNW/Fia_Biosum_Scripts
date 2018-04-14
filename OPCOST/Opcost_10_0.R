@@ -14,7 +14,7 @@ package.check <- lapply(packages, FUN = function(x) {
 
 args=(commandArgs(TRUE))
 
-#args <- "OPCOST_8_7_9_Input_CA_P001_100_100_100_100_2018-01-03_08_32_45_AM.ACCDB"
+#args <- "OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM"
 
 print(args)
 con<-odbcConnectAccess2007(args)
@@ -25,11 +25,10 @@ print("m data.frame opcost_input SqlFetch:OK")
 odbcCloseAll()
 
 #Get Opcost_Input table
-setwd('H:/cec_20170915/OPCOST/Input/')
-con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P001_100_100_100_100_2018-01-03_08_32_45_AM.ACCDB") #Change the text after "DBH=" to the correct directory for your project
-m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
-# og_wd <- getwd()
-# print(getwd())
+# setwd('H:/cec_20170915/OPCOST/Input/')
+# con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM.accdb") #Change the text after "DBH=" to the correct directory for your project
+# m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
+
 
 # #####BRING IN REFERENCE TABLES######
 # setwd('..')
@@ -67,7 +66,7 @@ opcost_ideal_ref <- opcost_ideal_ref[-1,]
 
 odbcCloseAll()
 
-#####BRING IN REFERENCE TABLES -- THIS IS FOR IF YOU"RE NOT USING THE ACCESS DATABASE VERSION ABOVE AND NEED TO BRING IN THE CSVS######
+#####BRING IN REFERENCE TABLES -- THIS IS FOR IF YOU'RE NOT USING THE ACCESS DATABASE VERSION ABOVE AND NEED TO BRING IN THE CSVS######
 # setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
 # opcost_equation_ref <- read.csv("opcost_equation_ref.csv")
 # # opcost_equation_ref <- opcost_equation_ref[!opcost_equation_ref$Equation.ID %in% c(45,67,68),]
@@ -801,26 +800,30 @@ optimal_harvesting.system <- function(data, all) {
     
     for(j in 1:length(unique.limit.statement)) { #Loop for each unique limit statement value in the current ID iteration
       limit.statement <- paste0("with(data,",unique.limit.statement[j],")") #create limit.statement equation from current limit statement iteration
+      
       data.limited<- data[eval(parse(text = limit.statement)),] #limit data based on current limit statement iteration
       
-      harvesting.systems <- ideal_ref$harvest.system2[ideal_ref$Limit.Statement == unique.limit.statement[j] & ideal_ref$ID == unique.ID[i]] #get list of harvesting systems for current limit statement and ID iteration
-      cols <- which(grepl(paste(harvesting.systems,collapse="|"), names(data.limited))) #get columns from data.limited where the column name contains current harvesting system
-      if (length(cols) > 1) {
-        data.limited$j <- apply(data.limited[,c(cols)],1,which.min) #get columns number that contains minimum value for columns where column name contains current harvesting system
-        data.limited$j <- suppressWarnings(as.numeric(as.character(data.limited$j))) #convert column number to numeric
-        data.limited$Optimal.Harvest.System <- gsub(".Total_CPA","",names(data.limited)[cols[data.limited$j]]) #convert column number to column name and remove ".Total_CPA" (so it returns harvest system name)
+      if(nrow(data[eval(parse(text = limit.statement)),]) > 0){
+        harvesting.systems <- ideal_ref$harvest.system2[ideal_ref$Limit.Statement == unique.limit.statement[j] & ideal_ref$ID == unique.ID[i]] #get list of harvesting systems for current limit statement and ID iteration
+        cols <- which(grepl(paste(harvesting.systems,collapse="|"), names(data.limited))) #get columns from data.limited where the column name contains current harvesting system
+        if (length(cols) > 1) {
+          data.limited$j <- apply(data.limited[,c(cols)],1,which.min) #get columns number that contains minimum value for columns where column name contains current harvesting system
+          data.limited$j <- suppressWarnings(as.numeric(as.character(data.limited$j))) #convert column number to numeric
+          data.limited$Optimal.Harvest.System <- gsub(".Total_CPA","",names(data.limited)[cols[data.limited$j]]) #convert column number to column name and remove ".Total_CPA" (so it returns harvest system name)
+        } else {
+          data.limited$Optimal.Harvest.System <-  gsub(".Total_CPA", "", names(data.limited)[cols])
+        }
       } else {
-        data.limited$Optimal.Harvest.System <-  gsub(".Total_CPA", "", names(data.limited)[cols])
+        data.limited <- NA
       }
-      
-      
-      
       #The Optimal.Harvest.System column now contains the harvest system name of the column with the minimum cost value according to ideal_ref stipulations/limitations
-      
       mylist.j[[j]] <- data.limited #store for this iteration 
+      
+      
     }
     
     data1 <- Reduce(rbind, mylist.j) #merge results for each iteration of unique.limit.statement and ID back into single data frame
+    data1 <- data1[complete.cases(data1),]
     data1$j <- NULL
     
     if (nrow(data1) < nrow(og_data)) {
