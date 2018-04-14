@@ -25,24 +25,25 @@ print("m data.frame opcost_input SqlFetch:OK")
 odbcCloseAll()
 
 #Get Opcost_Input table
-# setwd('H:/cec_20170915/OPCOST/Input/')
-# con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P001_100_100_100_100_2018-01-03_08_32_45_AM.ACCDB") #Change the text after "DBH=" to the correct directory for your project
+setwd('H:/cec_20170915/OPCOST/Input/')
+con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P001_100_100_100_100_2018-01-03_08_32_45_AM.ACCDB") #Change the text after "DBH=" to the correct directory for your project
+m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
+# og_wd <- getwd()
+# print(getwd())
 
-og_wd <- getwd()
-print(getwd())
-
-#####BRING IN REFERENCE TABLES######
-setwd('..')
-print(getwd())
-setwd('..')
-print(getwd())
-setwd('./db')
-print(getwd())
-
+# #####BRING IN REFERENCE TABLES######
+# setwd('..')
+# print(getwd())
+# setwd('..')
+# print(getwd())
+# setwd('./db')
+# print(getwd())
+# 
+setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
 ref <- "opcost_ref.ACCDB"
 ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", getwd(), "/", ref)
 
-con2 <- odbcDriverConnect(ref2) 
+con2 <- odbcDriverConnect(ref2)
 
 opcost_equation_ref<- sqlFetch(con2, "opcost_equation_ref", as.is = TRUE)
 names(opcost_equation_ref) <- opcost_equation_ref[1,]
@@ -81,7 +82,7 @@ opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Ha
 opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
 m$Harvesting.System <- "Tethered"
 
-setwd(og_wd)
+# setwd(og_wd)
 
 #Convert to Data Frame and set "NaN' to NA
 m <- data.frame(m)
@@ -843,10 +844,8 @@ optimal1 <- optimal[[1]]
 
 optimal_cost <- calculate_costs_for_input(optimal1, optimal = TRUE)
 
-optimal_cost$rownames <- seq(1:nrow(optimal_cost))
 
-opcost_output <- data.frame("rownames" = optimal_cost$rownames, 
-                            "stand" = optimal_cost$Stand, 
+opcost_output <- data.frame("stand" = optimal_cost$Stand, 
                             "rx_year" = optimal_cost$YearCostCalc, 
                             "harvest_cpa" = optimal_cost$Total_CPA, 
                             "chip_cpa" = optimal_cost$Chipper.Chipper_CPA, 
@@ -858,8 +857,7 @@ opcost_output <- data.frame("rownames" = optimal_cost$rownames,
                             "Rx" = optimal_cost$Rx, 
                             "RxCycle" = optimal_cost$RxCycle)
 
-opcost_ideal_output <- data.frame("rownames" = optimal_cost$rownames, 
-                            "stand" = optimal_cost$Stand, 
+opcost_ideal_output <- data.frame("stand" = optimal_cost$Stand, 
                             "rx_year" = optimal_cost$YearCostCalc, 
                             "harvest_cpa" = optimal_cost$Optimal.Total_CPA,
                             "MatchesOriginalSystem" = optimal_cost$MatchesOriginalSystem,
@@ -873,8 +871,8 @@ opcost_ideal_output <- data.frame("rownames" = optimal_cost$rownames,
                             "RxCycle" = optimal_cost$RxCycle)
 
 con<-odbcConnectAccess2007(args)
-sqlSave(conn, opcost_output, tablename="OpCost_Output", safer=FALSE)
-sqlSave(conn, opcost_ideal_output, tablename="OpCost_Ideal_Output", safer=FALSE)
+sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
+sqlSave(con, opcost_ideal_output, tablename="OpCost_Ideal_Output", safer=FALSE)
 
 
 odbcCloseAll()
