@@ -9,7 +9,7 @@ SAW_06,kluender,Chainsaw,(0.016 * ((dbh * 2.54)^1.33)) * (distBetweenTrees^0.083
 SAW_07,spinelli,Chainsaw,30.04 + 0.2*(dbh^2)+ 8.3,,,,,,30.04 + 0.2*((dbh(m))^2)+ 8.3,spinelliSaw,Same as adebayo,,??
 CHIP_01,bolding,Chipper,0.0015 * ChipFeedstockWeight,min/acre,,,,(boldingChip(m))/60,0.001*(totalVol(m)*25),boldingChip,This info is not found in REF 094,Y,150
 CHIP_02,hansill,Chipper,2.32 + (-0.42 * 1.79)+(1.83 * dbh.cm),sec/chip,dbh.cm,<,76,"ifelse(dbh.cm(m)<76, ((chipTrees(m)*hansillChip(m))/60/60), NA)",2.32+(-0.42*1.79)+(1.83*dbh.cm(m)),hansillChip,,Y,
-CHIP_03,hansill,Chipper,2.4 + (-0.32 * 1.4)+(1.3 * dbh.cm),min/chip,dbh.cm,<,76,"ifelse(dbh.cm(m)<76, ((chipTrees(m)*hansillChip2(m))/60), NA)",2.4+(-0.32*1.4)+(1.3*dbh.cm(m)),hansillChip2,this gets raised to ^0.8 for some reason later on?,Y,
+CHIP_03,hansill,Chipper,2.4 + (-0.32 * 1.4)+(1.3 * dbh.cm),sec/chip,dbh.cm,<,76,"ifelse(dbh.cm(m)<76, ((chipTrees(m)*hansillChip2(m))/60), NA)",2.4+(-0.32*1.4)+(1.3*dbh.cm(m)),hansillChip2,this gets raised to ^0.8 for some reason later on?,Y,
 FB_01,adebayo,Feller Buncher,30.04 + 0.2*(dbh^2)+ 8.3,,,,,,30.04 + 0.2*((dbh(m))^2)+ 8.3,adebayoFB,,,88
 FB_02,akay,Feller Buncher,56.62*(log(twitchVolM))+322.09,m^3/PMH,twitchVolM,<,0.2,"ifelse(twitchVolM(m)<.2, (totalVolM(m))/akayFB(m), NA)",56.62*(log(twitchVolM(m)))+322.09,akayFB,,Y,143
 FB_03,behjou,Feller Buncher,(-2.80 + (0.051 * (25.4 * dbh) + (0.039 * (distBetweenTrees/3.28084)))),,,,,,(-2.80+(0.051*(25.4*dbh(m)))+(0.039*(distBetweenTrees(m)/3.28084))),behjouFB,"CAUTION: This article is for Chainsaw felling, not feller-buncher; BUT, may have been used for large log trees in stands where feller-buncher was used for smaller trees?",,90

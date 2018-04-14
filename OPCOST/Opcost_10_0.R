@@ -24,7 +24,7 @@ print("m data.frame opcost_input SqlFetch:OK")
 
 odbcCloseAll()
 
-#Get Opcost_Input table
+# #Get Opcost_Input table
 # setwd('H:/cec_20170915/OPCOST/Input/')
 # con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM.accdb") #Change the text after "DBH=" to the correct directory for your project
 # m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
@@ -77,9 +77,9 @@ odbcCloseAll()
 # opcost_ideal_ref <- read.csv("opcost_ideal_ref.csv")
 
 #Run tethered only
-opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered",]
-opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
-m$Harvesting.System <- "Tethered"
+# opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered",]
+# opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
+# m$Harvesting.System <- "Tethered"
 
 # setwd(og_wd)
 
@@ -467,7 +467,7 @@ all_harvesting_systems <- function(data) {
   return(mylist)
 }
 
-#all <- all_harvesting_systems(data = m)
+# all <- all_harvesting_systems(data = m)
 
 #tethered_all <- as.data.frame(all$Tethered) #convert list to data frame
 
@@ -941,9 +941,10 @@ odbcCloseAll()
 #     df2 <- merge(df4, df3, by = "variable")
 #     # df2$variable <- gsub(unique.machines[i],"",df2$variable)
 #     # df4$variable <- gsub(unique.machines[i],"",df4$variable)
-#     ylim1 <- boxplot.stats(df2$value)$stats[c(1, 5)]
+#     # ylim1 <- boxplot.stats(df2$value)$stats[c(1, 5)]
 #     graph <- ggplot(df2, aes(variable, value)) + geom_boxplot() + labs(x=unique.harvest.system[i], y="Hours Per Acre") +
-#       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n")) + coord_cartesian(ylim = ylim1*3)
+#       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n")) 
+#     # coord_cartesian(ylim = ylim1*3)
 #     assign("graph", graph, envir = .GlobalEnv)
 #     ggsave(filename = paste0(filename1, ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.1 > 6, nrow(df4)*1.1, 6),)
 #   }
