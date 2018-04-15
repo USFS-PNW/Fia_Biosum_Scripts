@@ -38,7 +38,11 @@ odbcCloseAll()
 # setwd('./db')
 # print(getwd())
 # 
-setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
+#setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
+###CarlinFix Below is awkwardly structured wrt slash directions but it appears to work; perhaps you can refine? JSF
+uhome <- paste(Sys.getenv("USERPROFILE"),"/AppData/Roaming/FIABiosum",sep='')
+setwd(uhome)
+
 ref <- "opcost_ref.ACCDB"
 ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", getwd(), "/", ref)
 
