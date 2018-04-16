@@ -24,7 +24,7 @@ print("m data.frame opcost_input SqlFetch:OK")
 
 odbcCloseAll()
 
-# #Get Opcost_Input table
+# # #Get Opcost_Input table
 # setwd('H:/cec_20170915/OPCOST/Input/')
 # con <- odbcConnectAccess2007("H:/cec_20170915/OPCOST/Input/OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM.accdb") #Change the text after "DBH=" to the correct directory for your project
 # m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
@@ -38,11 +38,7 @@ odbcCloseAll()
 # setwd('./db')
 # print(getwd())
 # 
-#setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
-###CarlinFix Below is awkwardly structured wrt slash directions but it appears to work; perhaps you can refine? JSF
-uhome <- paste(Sys.getenv("USERPROFILE"),"/AppData/Roaming/FIABiosum",sep='')
-setwd(uhome)
-
+setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
 ref <- "opcost_ref.ACCDB"
 ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", getwd(), "/", ref)
 
@@ -81,9 +77,9 @@ odbcCloseAll()
 # opcost_ideal_ref <- read.csv("opcost_ideal_ref.csv")
 
 #Run tethered only
-# opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered",]
-# opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
-# m$Harvesting.System <- "Tethered"
+opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered",]
+opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
+m$Harvesting.System <- "Tethered"
 
 # setwd(og_wd)
 
@@ -814,8 +810,10 @@ optimal_harvesting.system <- function(data, all) {
           data.limited$j <- apply(data.limited[,c(cols)],1,which.min) #get columns number that contains minimum value for columns where column name contains current harvesting system
           data.limited$j <- suppressWarnings(as.numeric(as.character(data.limited$j))) #convert column number to numeric
           data.limited$Optimal.Harvest.System <- gsub(".Total_CPA","",names(data.limited)[cols[data.limited$j]]) #convert column number to column name and remove ".Total_CPA" (so it returns harvest system name)
+          data.limited$Optimal.Harvest.System <-  ideal_ref$Harvesting.System[match(data.limited$Optimal.Harvest.System, ideal_ref$harvest.system2)]
         } else {
           data.limited$Optimal.Harvest.System <-  gsub(".Total_CPA", "", names(data.limited)[cols])
+          data.limited$Optimal.Harvest.System <-  ideal_ref$Harvesting.System[match(data.limited$Optimal.Harvest.System, ideal_ref$harvest.system2)]
         }
       } else {
         data.limited <- NA
