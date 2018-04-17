@@ -16,8 +16,8 @@ args=(commandArgs(TRUE))
 
 #args <- "OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM"
 
-print(args)
-con<-odbcConnectAccess2007(args)
+print(args[1])
+con<-odbcConnectAccess2007(args[1])
 print("odbc Connection:OK")
 m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
 print("m data.frame opcost_input SqlFetch:OK")
@@ -38,9 +38,9 @@ odbcCloseAll()
 # setwd('./db')
 # print(getwd())
 # 
-setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
-ref <- "opcost_ref.ACCDB"
-ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", getwd(), "/", ref)
+# setwd("G:/Dropbox/Carlin/Berkeley/biosum/OPCOST")
+# ref <- "opcost_ref.ACCDB"
+ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", args[2])
 
 con2 <- odbcDriverConnect(ref2)
 
