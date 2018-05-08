@@ -121,6 +121,21 @@ PRE_FVS_SUMMARY <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE)
 POST_FVS_SUMMARY <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
 odbcCloseAll()
 
+#manage NA values
+
+NA_fix <- function(data) {
+  data$SurvVolRatio[is.na(data$SurvVolRatio)] <- 1
+  data$PERRESBA[is.na(data$PERRESBA)] <- 1
+  data$CBH[is.na(data$CBH)] <- 31
+  
+  return(data)
+}
+
+PRE_FVS_SUMMARY_NA <- NA_fix(PRE_FVS_SUMMARY)
+POST_FVS_SUMMARY_NA <- NA_fix(POST_FVS_SUMMARY)
+
+any(is.na(PRE_FVS_SUMMARY_NA$SurvVolRatio))
+any(is.na(POST_FVS_SUMMARY_NA$SurvVolRatio))
 
 score_it <- function(x) {
   #Calculate Fire Resistance Score by scoring each ofthe above 4 variable from 0-3 and then summing the scores. 
@@ -226,15 +241,12 @@ score_it <- function(x) {
   return(x)
 }
 
-pre_scored <- score_it(PRE_FVS_SUMMARY)
-post_scored <- score_it(POST_FVS_SUMMARY)
+pre_scored <- score_it(PRE_FVS_SUMMARY_NA)
+post_scored <- score_it(POST_FVS_SUMMARY_NA)
 
 all <- rbind(pre_scored, post_scored)
 
 write.csv(all, "all_data_20180416.csv")
-
-# empty_stands <- subset(all, Tpa == 0)
-# nonempty_null_stands <- subset(all, is.na(PERRESBA) & Tpa != 0)
 
 create_avg_table <- function(pre, post) {
   pre.relevant.data <- data.frame("biosum_cond_id" = pre$biosum_cond_id, "rxpackage" = pre$rxpackage, "rx" = pre$rx, "rxcycle" = pre$rxcycle, "Year" = pre$Year,
@@ -261,8 +273,8 @@ create_avg_table <- function(pre, post) {
   return(relevant.data2)
 }
 
-# avg_table <- create_avg_table(PRE_FVS_SUMMARY_FRS_HS, POST_FVS_SUMMARY_FRS_HS)
-avg_table <- create_avg_table(pre_scored, post_scored)
+
+avg_table <- create_avg_table(pre_scored, post_scored) #create average table
 
 # write.csv(avg_table, "avg_table.csv")
 # 
@@ -272,56 +284,37 @@ avg_table <- create_avg_table(pre_scored, post_scored)
 # write.csv(pre_test_avg, "pre_test_avg.csv")
 # write.csv(post_test_avg, "post_test_avg.csv")
 
-# 
-# POST_FVS_SUMMARY9$HS_sev <- NULL
 
-PRE_FVS_GROWONLY <- subset(avg_table, rxpackage == "031")
+PRE_FVS_GROWONLY <- subset(avg_table, rxpackage == "031") #get grow only stand data from avg_table
 PRE_FVS_GROWONLY$rxpackage <- NULL
 PRE_FVS_GROWONLY$rx <- NULL 
 
-POST_FVS_SUMMARY2 <- merge(POST_FVS_SUMMARY, avg_table, by = c("biosum_cond_id", "rxpackage", "rx"))
-PRE_FVS_SUMMARY2 <- merge(PRE_FVS_SUMMARY, PRE_FVS_GROWONLY, by = c("biosum_cond_id"))
+POST_FVS_SUMMARY2 <- merge(POST_FVS_SUMMARY_NA, avg_table, by = c("biosum_cond_id", "rxpackage", "rx")) #merge post summary and average table
+PRE_FVS_SUMMARY2 <- merge(PRE_FVS_SUMMARY_NA, PRE_FVS_GROWONLY, by = c("biosum_cond_id")) #merge pre summary and grow only table
+
+
+##Add in econ data from core. You must run core once to get the #s and then add max_nr_dpa and re-run it.
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/core/scenario20180418_2/db/scenario_results.mdb") #Change the text after "DBH=" to the correct directory for your project
+products <- sqlFetch(conn, "product_yields_net_rev_costs_summary_by_rxpackage", as.is = TRUE) 
+odbcCloseAll()
+
+pattern <- c("biosum_cond_id", "rxpackage", "max_nr_dpa")
+netrev.table <- products[,which(grepl(paste0(pattern, collapse = "|"), names(products)))]
+
+pre2 <- merge(PRE_FVS_SUMMARY2, netrev.table, all= TRUE)
+post2 <- merge(POST_FVS_SUMMARY2, netrev.table, all = TRUE)
 
 conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB")
-# PRE_FVS_SUMMARY <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
-# POST_FVS_SUMMARY <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
-sqlQuery(conn, 'SELECT * INTO PRE_FVS_SUMMARY_OLD FROM PRE_FVS_SUMMARY')
-sqlQuery(conn, 'DROP TABLE PRE_FVS_SUMMARY')
-sqlSave(conn, dat = PRE_FVS_SUMMARY2, tablename = "PRE_FVS_SUMMARY", rownames = FALSE)
+sqlSave(conn, dat = pre2, tablename = "PRE_FVS_SUMMARY", rownames = FALSE)
 
-sqlQuery(conn, 'SELECT * INTO POST_FVS_SUMMARY_OLD FROM POST_FVS_SUMMARY')
-sqlQuery(conn, 'DROP TABLE POST_FVS_SUMMARY')
-sqlSave(conn, dat = POST_FVS_SUMMARY2, tablename = "POST_FVS_SUMMARY", rownames = FALSE)
+# sqlQuery(conn, 'SELECT * INTO POST_FVS_SUMMARY_OLD FROM POST_FVS_SUMMARY')
+# sqlQuery(conn, 'DROP TABLE POST_FVS_SUMMARY')
+sqlSave(conn, dat = post2, tablename = "POST_FVS_SUMMARY", rownames = FALSE)
 
-sqlQuery(conn, 'DROP TABLE avg_table')
-sqlSave(conn, dat = avg_table, tablename = "avg_table", rownames = FALSE)
-
+# sqlQuery(conn, 'DROP TABLE avg_table')
+# sqlSave(conn, dat = avg_table, tablename = "avg_table", rownames = FALSE)
+# 
 
 odbcCloseAll()
 
-
-
-# conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB")
-# PRE_FVS_SUMMARY <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
-# POST_FVS_SUMMARY <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
-# 
-# sqlQuery(conn, 'SELECT * INTO PRE_FVS_SUMMARY_OLD FROM PRE_FVS_SUMMARY')
-# sqlQuery(conn, 'DROP TABLE PRE_FVS_SUMMARY')
-# sqlSave(conn, dat = PRE_FVS_SUMMARY8, tablename = "PRE_FVS_SUMMARY", rownames = FALSE)
-# 
-# sqlQuery(conn, 'SELECT * INTO POST_FVS_SUMMARY_OLD FROM POST_FVS_SUMMARY')
-# sqlQuery(conn, 'DROP TABLE POST_FVS_SUMMARY')
-# sqlSave(conn, dat = POST_FVS_SUMMARY8, tablename = "POST_FVS_SUMMARY", rownames = FALSE)
-# 
-# 
-# odbcCloseAll()
-# 
-# conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=E:/Dropbox/cec20170915/PREPOST_FVS_SUMMARY (2)/PREPOST_FVS_SUMMARY.ACCDB")
-# PRE_FVS_SUMMARY8 <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
-# POST_FVS_SUMMARY8 <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE)
-# 
-# 
-# PRE_FVS_SUMMARY8$Fire_Resistance_Score <- NULL
-# POST_FVS_SUMMARY8$Fire_Resistance_Score <- NULL
-# odbcCloseAll()
 
