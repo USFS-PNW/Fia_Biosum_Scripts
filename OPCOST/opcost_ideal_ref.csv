@@ -3,9 +3,9 @@ ID,Harvesting.System,Limiting.Parameter,Limit.Type,Limiting.Parameter.Value
 1,Cable Manual WT/Log,Percent.Slope,>,40
 1,Cable Manual Log,Percent.Slope,>,40
 1,Cable CTL,Percent.Slope,>,40
-1,Tethered,Percent.Slope,>,40
+1,Tethered CTL,Percent.Slope,>,40
 1,Ground-Based Manual WT,Percent.Slope,<=,40
 1,Ground-Based Mech WT,Percent.Slope,<=,40
 1,Ground-Based CTL,Percent.Slope,<=,40
 1,Shovel Logging,Percent.Slope,<=,40
-1,Tethered,Percent.Slope,<=,40
+1,Tethered CTL,Percent.Slope,<=,40
