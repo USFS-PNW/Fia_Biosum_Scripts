@@ -12,7 +12,7 @@ library("RODBC")
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #create a master_package database that has the BA, less, and QMD thresholds for cutting
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/fvsmaster.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
 package_labels <- sqlFetch(conn, "PkgLabels", as.is = TRUE) #import package labels table from fvsmaster.mdb NOTE: this table was manually added earlier
 odbcCloseAll()
 
@@ -43,15 +43,17 @@ master_package$ATBA_ReductionPct <- as.numeric(master_package$ATBA_ReductionPct)
 
 master_package <- master_package[-c(20,21,27,28),]
 
-# The function below checks 4 things:
-# 1. Checks for cuts being made in a non cut-year (problem_wrong_cut)
-# 2. Checks for cut-year cycles where BA was greater than the BA threshold for cutting
+# The function below checks:
+# 1. Prints the number of rows in FVS_Cases (these should all match)
+# 2. Checks for cuts being made in a non cut-year (problem_wrong_cut)
+# 3. Checks for cut-year cycles where BA was greater than the BA threshold for cutting
 #    but there was no harvest in that year (accounting for cut-years where there was a cut
 #    in the previous cycle, thus making this cut-year ineligible for cutting) (problem_didnt_cut)
-# 3. Checks that the amount of BA cut was approximately equivalent to the starting BA
-#    multipled by the less % from master_package for that package within threshold defined 
+# 4. Checks that the amount of BA cut was approximately equivalent to the starting BA
+#    multipled by the less % from master_package for that package within threshold defined
 #    by the user (BA_threshold) (problem_wrong_cut_amt)
-# 4. Checks that cuts only took place every other cut cycle (20 years between cuts) (problem_wrong_cut_int)
+# 5. Checks that cuts only took place every other cut cycle (20 years between cuts) (problem_wrong_cut_int)
+# 6. Checks that SurvVolRatio table exists (i.e. that the MortCalc.R script has been run)
 
 fvs_qa <- function(directory, variantname, BA_threshold) {
   setwd(directory)#sets the working directory to the directory variable
