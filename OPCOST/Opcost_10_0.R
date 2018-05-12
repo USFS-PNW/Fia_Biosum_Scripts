@@ -25,6 +25,7 @@ print("m data.frame opcost_input SqlFetch:OK")
 odbcCloseAll()
 
 ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", args[2])
+#ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST/opcost_ref.accdb")
 
 con2 <- odbcDriverConnect(ref2)
 
