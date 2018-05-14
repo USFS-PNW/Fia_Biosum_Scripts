@@ -231,8 +231,7 @@ _bBA     = SPMCDBH(2,  0, 0.,4.)
 _FIRBA   = SPMCDBH(2, FIR, 0.,4) 
 _sBA     = SPMCDBH(2,  0, 0.,  4, _UD)
 _lBA     = SPMCDBH(2,  0, 0.,_UD, 999) 
-_aBA     = SPMCDBH(2,  0, 0.,  4, 999)
-smBA     = SPMCDBH(2,  0, 0.,  1, 4)
+_smBA     = SPMCDBH(2,  0, 0.,  1, 4)
 _TBA     = _bBA * 0.667 
 _LESSBA  = _bBA - _TBA
 _TFIR    = MAX(_FIRBA/2, _FIRBA-_LESSBA)
@@ -260,7 +259,7 @@ ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
 EndIF
 
 IF          0  
-_lBA LE _TBA AND _aBA GE _TBA  AND CYCLE EQ 1 AND _bBA GT _CRT   
+_lBA LE _TBA AND CYCLE EQ 1 AND _bBA GT _CRT   
 THEN
 ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
 EndIF

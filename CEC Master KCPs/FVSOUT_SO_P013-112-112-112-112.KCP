@@ -225,7 +225,7 @@ _FIRBA   = SPMCDBH(2, FIR, 0.,4)
 _sBA     = SPMCDBH(2,  0, 0.,  4, _UD)
 _lBA     = SPMCDBH(2,  0, 0.,_UD, 999) 
 _aBA     = SPMCDBH(2,  0, 0.,  4, 999)
-smBA     = SPMCDBH(2,  0, 0.,  1, 4)
+_smBA     = SPMCDBH(2,  0, 0.,  1, 4)
 _TBA     = _bBA * 0.667 
 _LESSBA  = _bBA - _TBA
 _TFIR    = MAX(_FIRBA/2, _FIRBA-_LESSBA)
@@ -236,7 +236,7 @@ ENDIF
 
 
 !!YardLoss - Set Yardloss parameter for  every cycle here
-YardLoss           0     Parms(0.05, .5, 1.)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 
 
 !! ************** CYCLE 1
