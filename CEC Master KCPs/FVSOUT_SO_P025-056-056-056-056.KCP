@@ -223,7 +223,6 @@ _FIRBA   = SPMCDBH(2, FIR, 0.,4)
 _sBA     = SPMCDBH(2,  0, 0.,  4, _UD)
 _lBA     = SPMCDBH(2,  0, 0.,_UD, 999) 
 _aBA     = SPMCDBH(2,  0, 0.,  4, 999) 
-_smBA    = SPMCDBH(2,  0, 0.,  1, 4)
 _TBA     = _bBA * 0.667 
 _LESSBA  = _bBA - _TBA
 _TFIR    = MAX(_bBA - _FIRBA, _FIRBA-_LESSBA)

@@ -221,12 +221,12 @@ IF          0
 CYCLE GT 0
 THEN
 COMPUTE     0
-_bBA     = SPMCDBH(2,  0, 0.,4.)
+_bBA     = SPMCDBH(2,  0, 0.,4.) 
 _FIRBA   = SPMCDBH(2, FIR, 0.,4) 
 _sBA     = SPMCDBH(2,  0, 0.,  4, _UD)
 _lBA     = SPMCDBH(2,  0, 0.,_UD, 999) 
 _aBA     = SPMCDBH(2,  0, 0.,  4, 999)
-_smBA     = SPMCDBH(2,  0, 0.,  1, 4)
+smBA     = SPMCDBH(2,  0, 0.,  1, 4)
 _TBA     = _bBA * 0.667 
 _LESSBA  = _bBA - _TBA
 _TFIR    = MAX(_FIRBA/2, _FIRBA-_LESSBA)
@@ -235,15 +235,12 @@ END
 ENDIF
 
 
-
 !!YardLoss - Set Yardloss parameter for  every cycle here
 YardLoss           0     Parms(0.05, 0.5, 0.05)
 
 
 
-
 !! ************** CYCLE 1
-
 IF          0            
 CYCLE EQ 1 AND _bBA GT _CRT AND _OWN EQ 46
 THEN
@@ -263,7 +260,7 @@ ThinDBH            0     Parms(4., _UD, 1., FIR, 0,_TFIR)
 ENDIF
 
 IF          0             
-_lBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT
+_lBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT 
 THEN
 ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
 EndIF
@@ -283,7 +280,7 @@ _CUT1 = 1
 END
 ENDIF
 
-IF
+IF          0
 CUT EQ 0 AND CYCLE EQ 1
 THEN
 COMPUTE     0
@@ -312,13 +309,13 @@ ThinDBH            0     Parms(4., _UD, 1., FIR, 0,_TFIR)
 ENDIF
 
 IF          0              
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
+_lBA GT _TBA AND _bBA GT _CRT AND _aBA GE _TBA AND CYCLE EQ 4 AND _CUT1 NE 1
 THEN
 ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
 EndIF
 
 IF          0             
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
+_lBA LE _TBA AND _bBA GT _CRT AND _aBA GE _TBA AND CYCLE EQ 4 AND _CUT1 NE 1
 THEN
 !!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
 ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
@@ -362,13 +359,13 @@ ThinDBH            0     Parms(4., _UD, 1., FIR, 0,_TFIR)
 ENDIF
 
 IF          0             
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
+_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1
 THEN
 ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
 EndIF
 
 IF          0              
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
+_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1
 THEN
 !!*                 Arguments: SmDBH, LgDBH, CutEff, Species, ResTPA, ResBA
 ThinDBH            0     Parms(4.,_UD, 1., All, 0., _dtBA)
@@ -411,7 +408,7 @@ ThinDBH            0     Parms(4., _UD, 1., FIR, 0,_TFIR)
 ENDIF
 
 IF          0              
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1 
+_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1
 THEN
 ThinDBH            0     Parms(4., _UD, 1., ALL, 0, 0.)
 EndIF

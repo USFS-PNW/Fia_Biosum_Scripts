@@ -236,7 +236,6 @@ _dtBA    = _TBA - _lBA
 END
 ENDIF
 
-!! ************** CYCLE 1
 IF          0            
 CYCLE EQ 1 AND _bBA GT _CRT AND _OWN EQ 46
 THEN
@@ -349,7 +348,7 @@ _CUT2 = 0
 END
 ENDIF
 
-!!************* CYCLE 3
+
 IF          0            
 CYCLE EQ 7 AND _bBA GT _CRT AND _OWN EQ 46 AND _CUT2 NE 1
 THEN
@@ -405,7 +404,7 @@ _CUT3 = 0
 END
 ENDIF
 
-!!************* CYCLE 4
+
 IF          0            
 CYCLE EQ 10 AND _bBA GT _CRT AND County EQ 46 AND _CUT3 NE 1
 THEN

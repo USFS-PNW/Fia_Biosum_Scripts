@@ -208,48 +208,42 @@ _CRT=115.
 END
 ENDIF
 
-SpGroup    FIR
-WF RF
+!!YardLoss - Set Yardloss parameter for  every cycle here
+YardLoss           0     Parms(0.05, 0.5, 0.05)
+
 
 IF          0  
 CYCLE GE 1
 THEN
 COMPUTE     0
 _bBA     = SPMCDBH(2,  0, 0.,  4., 999) 
-_FIRBA   = SPMCDBH(2, FIR, 0.,4) 
-_sBA    = SPMCDBH(2,  0, 0.,  4., _UD) 
-_lBA    = SPMCDBH(2,  0, 0.,_UD, 999) 
-_aBA     = SPMCDBH(2, 0, 0,  4, 999)
-_smBA     = SPMCDBH(2, 0, 0,  1, 4)
+_bsBA    = SPMCDBH(2,  0, 0.,  4., _UD) 
+_blBA    = SPMCDBH(2,  0, 0.,_UD, 999) 
 _TBA     = SPMCDBH(2,  0, 0.,  4., 999)  * 0.667 
-_dtBA    = _TBA - _lBA
-_LESSBA  = _bBA - _TBA
-_TFIR    = MAX(_FIRBA/2, _FIRBA-_LESSBA)
+_dtBA    = _TBA - _blBA 
 END
 ENDIF
 
 
-!!YardLoss - Set Yardloss parameter for  every cycle here
-YardLoss           0     Parms(0.05, 0.5, 0.05)
-
-
-!! ************** CYCLE 1
-
-IF          0             
-_lBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT
+IF          0  
+_blBA GT _TBA AND CYCLE EQ 1 AND _bBA GT _CRT 
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0            
-_lBA LE _TBA AND CYCLE EQ 1 AND _bBA GT _CRT
+IF          0  
+_blBA LE _TBA AND CYCLE EQ 1 AND _bBA GT _CRT  
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0
+IF          0  
 CUT EQ 1 AND CYCLE EQ 1
 THEN
 COMPUTE     0
@@ -257,32 +251,34 @@ _CUT1 = 1
 END
 ENDIF
 
-IF
-CUT EQ 0 AND CYCLE EQ 1
+IF          0  
+CUT NE 1 AND CYCLE EQ 1
 THEN
 COMPUTE     0
 _CUT1 = 0
 END
 ENDIF
 
-
 ! ************* CYCLE 2
-
-IF          0              
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
+IF          0  
+_blBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0             
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1 
+IF          0  
+_blBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 4 AND _CUT1 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0
+IF          0  
 CUT EQ 1 AND CYCLE EQ 4
 THEN
 COMPUTE     0
@@ -290,8 +286,7 @@ _CUT2 = 1
 END
 ENDIF
 
-
-IF          0
+IF          0  
 CUT EQ 0 AND CYCLE EQ 4
 THEN
 COMPUTE     0
@@ -299,24 +294,27 @@ _CUT2 = 0
 END
 ENDIF
 
-
-!!************* CYCLE 3
-
-IF          0             
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
+! ************* CYCLE 3
+IF          0           
+_blBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0              
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1 
+IF          0  
+_blBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 7 AND _CUT2 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0
+IF          0  
 CUT EQ 1 AND CYCLE EQ 7
 THEN
 COMPUTE     0
@@ -324,7 +322,7 @@ _CUT3 = 1
 END
 ENDIF
 
-IF          0
+IF          0  
 CUT EQ 0 AND CYCLE EQ 7
 THEN
 COMPUTE     0
@@ -332,23 +330,26 @@ _CUT3 = 0
 END
 ENDIF
 
-
-!!************* CYCLE 4
-IF          0              
-_lBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1 
+! ************* CYCLE 4
+IF          0   
+_blBA GT _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(0, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0             
-_lBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1
+IF          0  
+_blBA LE _TBA AND _bBA GT _CRT AND CYCLE EQ 10 AND _CUT3 NE 1
 THEN
-!!* Arguments: ResBA, CutEff, SmDBH, LgDBH, SmHt, LgHt
+YardLoss           0     Parms(1, 1, 1)
+ThinDBH            0     Parms(1.,4., 1., All, 0., 0)
+YardLoss           0     Parms(0.05, 0.5, 0.05)
 ThinBBA            0     Parms(_dtBA, 1., 4., _UD, 0., 999.)
 EndIF
 
-IF          0
+IF          0  
 CUT EQ 1 AND CYCLE EQ 10
 THEN
 COMPUTE     0
@@ -356,13 +357,12 @@ _CUT4 = 1
 END
 ENDIF
 
-IF          0
+IF          0  
 CUT EQ 0 AND CYCLE EQ 10
 THEN
 COMPUTE     0
 _CUT4 = 0
 END
 ENDIF
-
 
 !******************END OF CUTS
