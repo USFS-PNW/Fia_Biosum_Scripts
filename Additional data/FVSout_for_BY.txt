@@ -1,0 +1,22 @@
+Option Compare Database
+Option Explicit
+
+Sub FM_BY()
+    Dim cdb As DAO.Database, qdf As DAO.QueryDef
+    Set cdb = CurrentDb
+    
+    '203
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_Summary.Year = FVS_StrClass.Year) AND (FVS_Summary.StandID = FVS_StrClass.StandID) SET FVS_StandInit.FM_BY = 203 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)>=65) AND ((FVS_StrClass.Total_Cover)>=26) AND ((FVS_Summary.Tpa)>=236));")
+    '202
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_StrClass.Year = FVS_Summary.Year) AND (FVS_Summary.StandID = FVS_StrClass.StandID) SET FVS_StandInit.FM_BY = 202 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)>=152) AND ((FVS_StrClass.Total_Cover)>=94) AND ((FVS_Summary.Tpa)<236));")
+    '165
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_StrClass.Year = FVS_Summary.Year) AND (FVS_Summary.StandID = FVS_StrClass.StandID) SET FVS_StandInit.FM_BY = 165 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)>=152) AND ((FVS_StrClass.Total_Cover)<94) AND ((FVS_Summary.Tpa)<236));")
+    '189
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_Summary.Year = FVS_StrClass.Year) AND (FVS_Summary.StandID = FVS_StrClass.StandID) SET FVS_StandInit.FM_BY = 189 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)>=65 And (FVS_Summary.BA)<152) AND ((FVS_StrClass.Total_Cover)>=26) AND ((FVS_Summary.Tpa)<236));")
+    '162
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_Summary.StandID = FVS_StrClass.StandID) AND (FVS_Summary.Year = FVS_StrClass.Year) SET FVS_StandInit.FM_BY = 162 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)>=65) AND ((FVS_StrClass.Total_Cover)<26));")
+    '142
+    DoCmd.RunSQL ("UPDATE (FVS_StandInit INNER JOIN FVS_Summary ON FVS_StandInit.Stand_ID = FVS_Summary.StandID) INNER JOIN FVS_StrClass ON (FVS_Summary.StandID = FVS_StrClass.StandID) AND (FVS_Summary.Year = FVS_StrClass.Year) SET FVS_StandInit.FM_BY = 142 WHERE (((FVS_StrClass.Removal_Code)=0) AND ((FVS_StrClass.Year)=1) AND ((FVS_Summary.BA)<65));")
+    
+    Set cdb = Nothing
+End Sub

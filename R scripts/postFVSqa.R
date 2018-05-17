@@ -314,7 +314,7 @@ fvs_qa <- function(directory, variantname, BA_threshold) {
 
 CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
 NC_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC","NC",10))
-SO_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO","SO",10))
+SO_problem <- data.frame(fvs_qa("H:/cec_20170915 - Copy/fvs/data/SO","SO",10))
 WS_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 

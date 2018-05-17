@@ -1,0 +1,12 @@
+SpGroup    Preferred
+WL PP JP RF SP DF
+
+Compute            0
+!!PreBADF=SPMCDBH(2,DF,0,5.,999.,0.,500.,0,0.)
+!!PstBADF=SPMCDBH(2,DF,0,5.,999.,0.,500.,3,0.)
+PreBAP=SPMCDBH(2,Preferred,0,5.,999.,0.,500.,0,0.)
+PstBAP=SPMCDBH(2,Preferred,0,5.,999.,0.,500.,3,0.)
+PreBAall=SPMCDBH(2,0,0,5.,999.,0.,500.,0,0.)
+PstBAall=SPMCDBH(2,0,0,5.,999.,0.,500.,3,0.)
+PerResBA=PstBAP/PstBAall
+End
