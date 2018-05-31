@@ -16,7 +16,7 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 #Set project directory location
-project.location <- "H:/cec_20180517"
+project.location <- "H:/cec_20180529"
 
 fix_FVSIn <- function(project.location) {
   variants <- list.files(file.path(project.location, "fvs", "data"))
@@ -52,13 +52,4 @@ fix_FVSIn <- function(project.location) {
 
 
 fix_FVSIn(project.location)
-#Fix tree ID - NOT SURE IF THIS NEEDS TO BE DONE; THERE IS NO PLOT ID AND TREE ID IS NOW 4 CHARACTERS
-# sqlQuery(conn, 'ALTER TABLE FVS_TreeInit ADD COLUMN Tree_Id_Old NUMERIC')
-# sqlQuery(conn, 'UPDATE FVS_TreeInit SET FVS_TreeInit.Tree_Id_Old = [FVS_TreeInit].[Tree_Id];')
-# Modifies the tree_id column such as that the tree_id column values are a total of 7 characters.
-# treeinit$Plot_ID.four <- sprintf("%04d", treeinit$Plot_ID)
-# treeinit$Tree_ID.three <- 
-# The first four character represent plot_id and the remaining three character represents tree_id
-# If tree_id is less than three character long, a number of '0's are  concatenated to the left of tree_id.
-# If plot_id is less than four character long, a number of '0's are concatenated to the left of plot_id.
 

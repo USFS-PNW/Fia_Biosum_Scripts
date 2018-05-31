@@ -18,9 +18,10 @@ options(scipen = 999) #this is important for making sure your stand IDs do not g
 #Location of additional data files on github:
 additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data"
 master.kcps <-  "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/CEC Master KCPs"
+gis_travel_times <- "G:/Dropbox/Carlin/Berkeley/biosum/gis_travel_times.mdb"
 
 #Project root location:
-project.location <- "H:/cec_20180517"
+project.location <- "H:/cec_20180529"
 
 ####PROJECT SETUP####
 #This should be run after you have appended the FIA data into your biosum project
@@ -29,7 +30,7 @@ project.location <- "H:/cec_20180517"
 project.setup <- function(additional.data, master.kcps, overwrite){
   #copy over gis data
   file.copy(file.path(additional.data, "plot_near.txt"), file.path(project.location, "gis", "db"))
-  file.copy(file.path(additional.data, "gis_travel_times.mdb"), file.path(project.location, "gis", "db"), overwrite = TRUE)
+  file.copy(file.path(gis_travel_times), file.path(project.location, "gis", "db"), overwrite = TRUE)
   
   #copy over treatment info
   fvsmasterCEC.location <- file.path(additional.data, "fvs_master_CEC.mdb")
@@ -41,10 +42,9 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   PkgLabels_new <- sqlFetch(conn, "PkgLabels", as.is = TRUE)
   odbcCloseAll()
   
-  master.location <- file.path(project.location, "db", "fvsmaster.mdb")
-  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", master.location)
+  fvs.master.location <- file.path(project.location, "db", "fvsmaster.mdb")
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", fvs.master.location)
   conn <- odbcDriverConnect(conn.path)
-  
   sqlQuery(conn, 'DROP TABLE rx')
   sqlQuery(conn, 'DROP TABLE rx_harvest_cost_columns')
   sqlQuery(conn, 'DROP TABLE rxpackage')
@@ -54,8 +54,19 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   sqlSave(conn, dat = rx_harvest_cost_columns_new, tablename = "rx_harvest_cost_columns", rownames = FALSE)
   sqlSave(conn, dat = rx_package_new, tablename = "rxpackage", rownames = FALSE)
   sqlSave(conn, dat = PkgLabels_new, tablename = "PkgLabels", rownames = FALSE)
-  variants <- list.files(file.path(project.location, "fvs", "data"))
+  
+  odbcCloseAll()
+  master.location <- file.path(project.location, "db", "master.mdb")
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", master.location)
+  conn <- odbcDriverConnect(conn.path)
+  plot <- sqlFetch(conn, "plot", as.is = TRUE)
+  variants <- unique(plot$fvs_variant)
   variants <- variants[!variants %in% "CR"]
+  odbcCloseAll()
+  
+  for (k in 1:length(variants)) {
+    dir.create(file.path(project.location, "fvs", "data", variants[k]), showWarnings = FALSE)
+  }
   
   #copy over info into variant folders
   for (i in 1:length(variants)) {
@@ -79,7 +90,6 @@ project.setup <- function(additional.data, master.kcps, overwrite){
     cloneKCP(oldvariant = "SO", newvariant = variant)
     
     #Copy over variant KCPs
-    browser()
     variant.KCPs <- list.files(path = master.kcps, pattern = glob2rx(paste0("*", variant,"*")))
     for (j in 1:length(variant.KCPs)) {
       file.copy(file.path(master.kcps, variant.KCPs[j]), file.path(variant.location), overwrite = overwrite)
@@ -126,4 +136,4 @@ project.setup <- function(additional.data, master.kcps, overwrite){
 
 project.setup(additional.data, master.kcps, FALSE)
 
-#NOTE: you  may get warning for the CR variant; you can ignore it
+#NOTE: you may get warning for the CR variant; you can ignore it

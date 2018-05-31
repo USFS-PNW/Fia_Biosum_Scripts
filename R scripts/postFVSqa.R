@@ -7,12 +7,22 @@
 
 setwd("G:/Dropbox/Carlin/Berkeley/biosum/")
 
-library("dplyr") #if you do not have these packages installed, enter "install.packages("packagename") into the console, then load them using this line.
-library("RODBC")
+packages <- c("RODBC", "dplyr")
+
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
-#create a master_package database that has the BA, less, and QMD thresholds for cutting
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/fvsmaster.mdb")
+project.location <- "H:/cec_20180529"
+
+#create a master_package database that has the BA and less for cutting
+conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "db", "fvsmaster.mdb"))
+conn <- odbcDriverConnect(conn.path)
 package_labels <- sqlFetch(conn, "PkgLabels", as.is = TRUE) #import package labels table from fvsmaster.mdb NOTE: this table was manually added earlier
 odbcCloseAll()
 
@@ -312,10 +322,10 @@ fvs_qa <- function(directory, variantname, BA_threshold) {
   return(problem)
 }
 
-CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA", BA_threshold = 10))
-NC_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC","NC",10))
-SO_problem <- data.frame(fvs_qa("H:/cec_20170915 - Copy/fvs/data/SO","SO",10))
-WS_problem <- data.frame(fvs_qa("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS","WS",10))
+CA_problem <- data.frame(fvs_qa(directory = "H:/cec_20180529/fvs/data/CA", variantname = "CA", BA_threshold = 10))
+NC_problem <- data.frame(fvs_qa("H:/cec_20180529/fvs/data/NC","NC",10))
+SO_problem <- data.frame(fvs_qa("H:/cec_20180529/fvs/data/SO","SO",10))
+WS_problem <- data.frame(fvs_qa("H:/cec_20180529/fvs/data/WS","WS",10))
 #BA_threshold is the allowable difference between after treatment BA compared to pre-treatment BA multipled by less %
 
 

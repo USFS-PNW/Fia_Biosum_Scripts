@@ -86,9 +86,10 @@ FIR_check <- function(directory, variantname, packagenum) {
 }
 
 
-output <- FIR_check("H:/cec_20170915/fvs/data/CA","CA", "004")
+output <- FIR_check("H:/cec_20170915/fvs/data/CA","CA", "008")
+output <- FIR_check("H:/cec_20180517/fvs/data/CA","CA", "008")
 
-problem <- data.frame(output$problem)
+problem2 <- data.frame(output$problem)
 problem_tfir_not_correct <- data.frame(output$problem_tfir_not_correct)
 problem_wrong_fir_amt <- data.frame(output$problem_wrong_fir_amt)
 problem_tfir_gt_medfir <- data.frame(output$problem_tfir_gt_medfir)

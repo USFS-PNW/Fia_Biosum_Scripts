@@ -3,7 +3,7 @@
 #file in FVS Suppose uses the correct corresponding package KCP. 
 
 #Project root location:
-project.location <- "H:/cec_20180517"
+project.location <- "H:/cec_20180529"
 
 #NOTE: Before running, make sure all the variant KCP files follow the same name format. They should begin with the 
 #variant name then end with ".kcp" (the extension MUST be lowercase). For example, "CA_SDImax.kcp" will work, but 
@@ -42,6 +42,8 @@ test <- function(project.location, variantname) {
   }
   testresult <- data.frame(unlist(filename), final)
   addfilenames <- list.files(path = ".", pattern = glob2rx(paste(variantname, "*.kcp", sep = "")))
+  addfilenames2 <- list.files(path = ".", pattern = glob2rx(paste(variantname, "*.KCP", sep = "")))
+  addfilenames <- c(addfilenames, addfilenames2)
   colnames(testresult) <- c("key file", "package KCP", addfilenames)
   return(testresult)
 }

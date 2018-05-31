@@ -15,7 +15,7 @@
 
 #install & load missing packages
 
-packages <- c("RODBC", "dplyr", "reshape2", "sqldf", "tcltk2", "gdata", "plyr")
+packages <- c("RODBC", "dplyr")
 
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
@@ -28,12 +28,11 @@ package.check <- lapply(packages, FUN = function(x) {
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #Project root location:
-project.location <- "H:/cec_20180517"
+project.location <- "H:/cec_20180529"
 
 create_SDImax <- function(project.location) {
   variants <- list.files(file.path(project.location, "fvs", "data"))
   variants <- variants[!variants %in% "CR"]
-  
   for(i in 1:length(variants)) {
     #read in tables from FVS_SDImax_out
     setwd(file.path(project.location, "fvs", "data", variants[i]))
@@ -45,28 +44,32 @@ create_SDImax <- function(project.location) {
     summary <- sqlFetch(conn, "FVS_Summary", as.is = TRUE)
     odbcCloseAll()
     
-    #SQL query to select variables of interest from each table into dataframe compile.  Only select stands that have a dominant
+    #select variables of interest from each table into dataframe compile.  Only select stands that have a dominant
     #species with >80% of total basal area
-    compile <-sqldf("SELECT compute.Year, compute.PERBA1, structure.Stratum_1_Species_1, summary.SDI, cases.Variant
-                FROM ((compute INNER JOIN structure ON (compute.Year = structure.Year) AND (compute.StandID = structure.StandID)) 
-                INNER JOIN summary ON (structure.Year = summary.Year) AND (structure.StandID = summary.StandID)) 
-                INNER JOIN cases ON compute.CaseID = cases.CaseID
-                WHERE (((compute.Year)=2014) AND ((compute.PERBA1)>0.8));")
+    mylist <- list(mode = "vector", length = 4)
+    mylist[[1]] <- cases[,c(which(names(cases) %in% c("StandID", "Variant")))]
+    mylist[[2]] <- compute[,c(which(names(compute) %in% c("StandID", "Year", "PERBA1")))]
+    mylist[[3]] <- structure[,c(which(names(structure) %in% c("StandID", "Year", "Stratum_1_Species_1")))]
+    mylist[[4]] <- summary[,c(which(names(summary) %in% c("StandID", "Year", "SDI")))]
     
-    #group by variant and species type
-    groupColumns = c("Variant","Stratum_1_Species_1")
+    all <- Reduce(merge, mylist)
+    compile <- all[all$Year == 2014 & all$PERBA1 > 0.8,]
     
     #calculate summary stats: 98%, 95%, and 90%, count of records in group
-    stats<-ddply(compile, groupColumns, summarise, Max = max(SDI), SDI98 = quantile(SDI, .98), SDI95 = quantile(SDI, .95),
-                 SDI90 = quantile(SDI, .90),  SDI85=round(SDI95*.85), freq=length(Variant))
+    stats <- compile %>% dplyr::group_by(Variant, Stratum_1_Species_1) %>% dplyr::summarise(max = max(SDI),
+                                                                           SDI98 = quantile(SDI, .98), 
+                                                                           SDI95 = quantile(SDI, .95), 
+                                                                           SDI90 = quantile(SDI, .90),
+                                                                           SDI85 = round(quantile(SDI, .95) * 0.85),
+                                                                           freq = n()) 
     
     #subset data to only species with 100+ counts and remove -- species
-    stats100<-subset(stats, stats$freq>=100 & stats$Stratum_1_Species_1!="--")
+    stats100 <- stats[stats$freq>=100 & stats$Stratum_1_Species_1!="--",]
     
     #create variant specific tables. Make sure to change "WC" to whatever variant you are running. 
     #For example, if you are running the CA variant: CA_stats<-subset(stats100, stats100$Variant=="CA")
     
-    stats2<-subset(stats100, stats100$Variant==variants[i])
+    stats2<- stats100[stats100$Variant==variants[i],]
     
     #function to write variant KCP SDImax files
     f <- function(x, output) {
@@ -85,3 +88,4 @@ create_SDImax <- function(project.location) {
 }
 
 create_SDImax(project.location)
+

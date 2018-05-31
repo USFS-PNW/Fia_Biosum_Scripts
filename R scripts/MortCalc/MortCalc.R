@@ -7,74 +7,82 @@
 #Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
 
-#Set the working directory to the location of all_variants.
-setwd("G:/Dropbox/Carlin/Berkeley/biosum/MortCalc")
+packages <- c("RODBC", "dplyr", "reshape2")
 
-library("dplyr") #if you do not have these packages installed, enter "install.packages("packagename") into the console, then load them using this line.
-library("RODBC")
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
+
+#Set the working directory to the location of all_variants.
+setwd("G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/R scripts/MortCalc")
 
 #Connect to the master.mdb database. To set to your master.mdb location, change the 
 #text following "DBQ=" in the command below (e.g. D:/cec_20170915/db/master.mdb). Make
 #sure your slashes are facing the correct direction. 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/master.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20180529/db/master.mdb")
 master_tree <- sqlFetch(conn, "tree", as.is = TRUE) #import tree table from master.mdb
+master_cond <- sqlFetch(conn, "cond", as.is = TRUE) #import cond table from master.mdb
+master_plot <- sqlFetch(conn, "plot", as.is = TRUE) #import cond table from master.mdb
 odbcCloseAll()
 
 #Connect to refmaster.mdb usnig the same method as above
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/db/ref_master.mdb")
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20180529/db/ref_master.mdb")
 FVS_WesternTreeSpeciesTranslator <- sqlFetch(conn, "FVS_WesternTreeSpeciesTranslator", as.is = TRUE) #import species crosswalk table from master.mdb
 odbcCloseAll()
 
+pattern <- c("biosum_cond_id", "biosum_plot_id", "fvs_variant")
+plot.xwalk <- master_plot[,which(grepl(paste0(pattern, collapse = "|"), names(master_plot)))]
+cond.xwalk <- master_cond[,which(grepl(paste0(pattern, collapse = "|"), names(master_cond)))]
+
+var.xwalk <- merge(plot.xwalk, cond.xwalk)
+var.xwalk$biosum_plot_id <- NULL
+
+master_tree <- merge(master_tree, var.xwalk) #add var
 #The section below takes the master_tree table and uses the first two characters of fvs_tree_id to determine the variant.
-master <- data.frame("biosum_cond_id" = master_tree$biosum_cond_id,
-                          "spcd" = master_tree$spcd,
-                          "DBH" = master_tree$dia,
-                          "HT" = master_tree$ht,
-                          "CRNRATIO" = master_tree$cr,
-                          "FVS_VARIANT" = substr(master_tree$fvs_tree_id, 0,2))
+pattern <- c("biosum_cond_id", "spcd","dia", "ht", "cr", "fvs_variant", "fvs_tree_id")
+master <- master_tree[,which(grepl(paste0(pattern, collapse = "|"), names(master_tree)))]
+master$diahtcd <- NULL
+master$actualht <- NULL
+master$htcd <- NULL
+names(master) <- c("StandID", "spcd", "DBH", "HT", "CRNRATIO", "TreeId", "FVS_VARIANT")
+
 problem_master_nas <- subset(master, !complete.cases(master)) #these are values with NAs. They will not work for the process below.
-master <- na.omit(master) #remove NAs; these either do not have a matching cond_id/plot_id or they have NULL DBH/CR/HT values. 
-master$Species <- sprintf("%03d", master$spcd) #convert spcd to 3 digit "Species" value
-unique_spcd <- master[,c(6,7)] #trim table to just Species and FVS_VARIANT
-unique_spcd <- unique(unique_spcd[,c("FVS_VARIANT", "Species")]) #limit to unique FVS_VARIANT & Species combinations
+master2 <- na.omit(master) #remove NAs; these either do not have a matching cond_id/plot_id or they have NULL DBH/CR/HT values. 
+master2$spcd <- as.numeric(master2$spcd)
+master2$Species <- sprintf("%03d", master2$spcd) #convert spcd to 3 digit "Species" value
+pattern <- c("Species", "FVS_VARIANT")
+master3 <- master2[,which(grepl(paste0(pattern, collapse = "|"), names(master2)))]
+unique_spcd <- unique(master3)#limit to unique FVS_VARIANT & Species combinations
 
 #The section below takes the FVS Western Species Translator data and puts it into 
 #a format that allows for linking the USDA_PLANTS_SYMBOL code used by FOFEM and translate
 #it to a 2-letter FVS_SPECIES code by variant. OG_FVS_SPECIES is the default FVS species code for 
 #that USDA_PLANTS_SYMBOL code, which changes depending on the variant.
-species_crosswalk <- read.csv("species_crosswalk.csv")
-species_crosswalk <- FVS_WesternTreeSpeciesTranslator[,c(1,2,3,8,15,18,22)] #trim to relevant columns
-species_crosswalk <- subset(species_crosswalk, complete.cases(species_crosswalk[,2])) #remove NA values for FIA_SPCD
-names(species_crosswalk)[1] <- "USDA_PLANTS_SYMBOL" #rename columns 
-names(species_crosswalk)[2] <- "Species"
-names(species_crosswalk)[3] <- "OG_FVS_SPECIES"
+#species_crosswalk <- read.csv("species_crosswalk.csv")
+pattern <- c("USDA_PLANTS_SYMBOL", "FIA_SPCD", "FVS_ALPHACODE", "CA_Mapped_To", "NC_Mapped_To", "SO_Mapped_To", "WS_Mapped_To")
+species_crosswalk <- FVS_WesternTreeSpeciesTranslator[,which(grepl(paste0(pattern, collapse = "|"), names(FVS_WesternTreeSpeciesTranslator)))]
+#species_crosswalk <- FVS_WesternTreeSpeciesTranslator[,c(1,2,3,8,15,18,22)] #trim to relevant columns
+species_crosswalk <- subset(species_crosswalk, complete.cases(species_crosswalk$FIA_SPCD)) #remove NA values for FIA_SPCD
+col.names <- c("USDA_PLANTS_SYMBOL", "Species", "OG_FVS_Species", "CA", "NC", "SO", "WS")
+names(species_crosswalk) <- col.names
+
 species_crosswalk$Species <- as.numeric(species_crosswalk$Species)
 species_crosswalk$Species <- sprintf("%03d", species_crosswalk$Species) #convert Species to 3-digits
 
-
 #Convert "variant_mapped_to" columns to a column with variant name and the FVS_SPECIES code
-species_crosswalk_CA <- species_crosswalk[,c(1:4)] 
-species_crosswalk_CA$FVS_VARIANT <- "CA"
-names(species_crosswalk_CA)[4] <- "FVS_SPECIES"
+species_crosswalk <- melt(species_crosswalk, id.vars = c("USDA_PLANTS_SYMBOL", "Species", "OG_FVS_Species"))
+names(species_crosswalk)[which(grepl("variable", names(species_crosswalk)))] <- "FVS_VARIANT"
+names(species_crosswalk)[which(grepl("value", names(species_crosswalk)))] <- "FVS_SPECIES"
 
-species_crosswalk_NC <- species_crosswalk[,c(1:3,5)]
-species_crosswalk_NC$FVS_VARIANT <- "NC"
-names(species_crosswalk_NC)[4] <- "FVS_SPECIES"
-
-species_crosswalk_SO <- species_crosswalk[,c(1:3,6)]
-species_crosswalk_SO$FVS_VARIANT <- "SO"
-names(species_crosswalk_SO)[4] <- "FVS_SPECIES"
-
-species_crosswalk_WS <- species_crosswalk[,c(1:3,7)]
-species_crosswalk_WS$FVS_VARIANT <- "WS"
-names(species_crosswalk_WS)[4] <- "FVS_SPECIES"
-
-species_crosswalk <- rbind(species_crosswalk_CA, species_crosswalk_NC, species_crosswalk_SO, species_crosswalk_WS) #bind variant tables back together
 
 #The section below imports MortCalc data from the ALL_VARIANTs file and trims it
 all_mort <- read.csv("ALL VARIANT_MORTALITY 2 TO 8FTFL.csv")
-all_mort <- all_mort[,c(1,2,3,4,6,7,8)]
+all_mort <- all_mort[,c(1:8)]
 names(all_mort)[1] <- "FVS_VARIANT"
 names(all_mort)[2] <- "USDA_PLANTS_SYMBOL"
 names(all_mort)[3] <- "DBH_CLASS"
@@ -86,6 +94,7 @@ all_mort$CBH <- round(((100 - all_mort$CRNRATIO) * all_mort$HT/100),1) #calculat
 #USDA_PLANTS_SYMBOL values to the list of species in this project
 all_species <- unique_spcd
 all_species$ID <- 1
+names(all_species)[1] <- "FVS_VARIANT"
 all_species_usda <- merge(all_species, species_crosswalk, by = c("Species", "FVS_VARIANT"), all = TRUE) #merge all_species and the species_crosswalk to get USDA_PLANTS_SYMBOL linked with Species
 all_species_usda <- subset(all_species_usda, all_species_usda$FVS_VARIANT != "CR")
 all_species_usda <- subset(all_species_usda, all_species_usda$ID == 1)
@@ -97,7 +106,6 @@ all_species_usda$DBH_CLASS <- 1:7 #populate DBH_CLASS column with 1:7
 
 all_species_usda$OG_USDA_PLANTS_SYMBOL <- all_species_usda$USDA_PLANTS_SYMBOL #store original USDA_PLANTS_SYMBOL as OG_USDA_PLANTS_SYMBOL
 all_species_usda$USDA_PLANTS_SYMBOL <- NULL #set USDA_PLANTS_SYMBOL to null
-#all_species_usda$USDA_PLANTS_SYMBOL <- as.character(all_species_usda$USDA_PLANTS_SYMBOL) 
 all_species_usda$OG_USDA_PLANTS_SYMBOL <- as.character(all_species_usda$OG_USDA_PLANTS_SYMBOL)
 
 #Translate species without USDA_PLANTS_SYMBOL (problem_no_usda_plants_symbol)
@@ -309,6 +317,8 @@ unassigned <- subset(unassigned, (unassigned$USDA_PLANTS_SYMBOL %in% all_mort$US
 #and uses that to select the "best" variant. This is assigned to a new MORT_VARIANT value, 
 #which is then used to determine MORTRATE.
 master_dbh <- master
+master_dbh$Species <- sprintf("%03d", master_dbh$spcd)
+master_dbh$spcd <- NULL
 
 master_dbh$DBH_CLASS[master_dbh$DBH < 5 & master_dbh$DBH >= 1 ] <- 1 #assign DBH classes
 master_dbh$DBH_CLASS[master_dbh$DBH < 10 & master_dbh$DBH >= 5 ] <- 2
@@ -319,16 +329,13 @@ master_dbh$DBH_CLASS[master_dbh$DBH < 40 & master_dbh$DBH >= 30 ] <- 6
 master_dbh$DBH_CLASS[master_dbh$DBH < 999 & master_dbh$DBH >= 40 ] <- 7
 
 #get average DBH, HT, and CRNRATIO by DBH_CLASS
-master_dbh_grouped <- group_by(master_dbh, FVS_VARIANT, Species, DBH_CLASS)
-master_dbh_summary <- summarise(master_dbh_grouped, AvgDBH = mean(DBH), AvgHT = mean(HT), AvgCRNRATIO = mean(CRNRATIO))
+master_dbh_summary <- master_dbh %>% group_by(FVS_VARIANT, Species, DBH_CLASS) %>% summarise(AvgDBH = mean(DBH), 
+                                                                                             AvgHT = mean(HT), 
+                                                                                             AvgCRNRATIO = mean(CRNRATIO))
 
 master_dbh_class <- master_dbh_summary
-names(master_dbh_class)[1] <- "FVS_VARIANT"
-names(master_dbh_class)[2] <- "Species"
-names(master_dbh_class)[3] <- "DBH_CLASS"
-names(master_dbh_class)[4] <- "DBH"
-names(master_dbh_class)[5] <- "HT"
-names(master_dbh_class)[6] <- "CRNRATIO"
+col.names <- c("FVS_VARIANT", "Species", "DBH_CLASS", "DBH", "HT", "CRNRATIO")
+names(master_dbh_class) <- col.names
 
 master_dbh_class$DBH <- round(master_dbh_class$DBH, 1)
 master_dbh_class$HT <- round(master_dbh_class$HT, 1)
@@ -350,8 +357,8 @@ all_mort$USDA_PLANTS_SYMBOL <- as.character(all_mort$USDA_PLANTS_SYMBOL)
 
 master_dbh_class$FVS_VARIANT <- as.character(master_dbh_class$FVS_VARIANT)
 
-iterations <- nrow(unassigned) 
-for (i in 1:iterations) {
+
+for (i in 1:nrow(unassigned)) {
   #matchedrows are all rows from the unassigned table that match the row iteration's USDA_PLANT_SYMBOL and DBH_CLASS values. 
   #make sure the columns selected match the selections (they should, but it's good to double check)
   matchedrows <- all_mort[all_mort$USDA_PLANTS_SYMBOL == unassigned[i,2] &
@@ -392,7 +399,7 @@ for (i in 1:iterations) {
 
 names(unassigned)[12] <- "MORT_VARIANT" #create MORT_VARIANT column to show which variant was used for MORTRATE
 
-unassigned_premerge <- unassigned[,c(1:4,6,12)] #get rid of DBH/HT/CRNRATIO/CBH columns
+unassigned_premerge <- unassigned[,c(1:6,12)] #get rid of DBH/HT/CRNRATIO/CBH columns
 problem_no_mortrate_for_dbh_class <- subset(unassigned, !complete.cases(unassigned[,12]) & unassigned$FVS_VARIANT != "CR")
 
 names(all_mort)[1] <- "MORT_VARIANT"
@@ -402,7 +409,7 @@ assigned$MORT_VARIANT <- assigned$FVS_VARIANT
 assigned$OG_FVS_SPECIES <- NULL
 
 mortrate_final <-  rbind(assigned, unassigned2)
-mortprobgroup_species <- mortrate_final[,c(2:4,6)]
+mortprobgroup_species <- mortrate_final[,c(2:4,6:7)]
 
 #Use these files below to write the "problem" tables to csv files. If your 
 #"problem" tables have 0 rows, congratulations, you don't need to do anything!
@@ -413,16 +420,6 @@ mortprobgroup_species <- mortrate_final[,c(2:4,6)]
 #write.csv(problem_no_mortrate_for_dbh_class, "problem_no_mortrate_for_dbh_class.csv")
 #write.csv(problem_no_usda_plants_symbol, "problem_no_usda_plants_symbol.csv")
 #write.csv(problem_master_nas, "problem_master_nas.csv") #Note these may not be of any concern
-
-#Prepare the master_tree table for iteration by package
-master_tree_trim <- master_tree[,c(1,10,57)]
-master_tree_trim$TreeId <- substr(master_tree_trim$fvs_tree_id,3,9)
-master_tree_trim$TreeId <- substr(master_tree_trim$TreeId,regexpr("[^0]",master_tree_trim$TreeId),nchar(master_tree_trim$TreeId))
-master_tree_trim$FVS_VARIANT <- substr(master_tree_trim$fvs_tree_id,0,2)
-master_tree_trim <- subset(master_tree_trim, complete.cases(master_tree_trim$TreeId))
-master_tree_trim$fvs_tree_id <- NULL
-names(master_tree_trim)[1] <- "StandID"
-master_tree_trim$TreeId <- as.character(master_tree_trim$TreeId)
 
 
 #The function below will carry out MORTCALC calculations for all packages in the variant
@@ -438,7 +435,8 @@ master_tree_trim$TreeId <- as.character(master_tree_trim$TreeId)
 CreateSurvVolRatioTable <- function(directory, variantname) {
   setwd(directory)#sets the working directory to the directory variable
   path <- list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", variantname, "_P0", "*.MDB", sep = ""))) #lists all the files in the directory that begin with FVSOUT_{variantname}_P0 and end with .MDB (case sensitive)
-  master_tree_trim <- subset(master_tree_trim, FVS_VARIANT == variantname)
+  master_tree_trim <- master[master$FVS_VARIANT == variantname,]
+  master_tree_trim$DBH <- NULL
   rows <- as.numeric(0)
   numfiles <- nrow(data.frame(path)) #calculates the number of package MDB files based on the path variable above
   for (i in 1:numfiles) {
@@ -450,7 +448,7 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
     #together (e.g. 298 and 998)
     FVS_TreeList <- sqlFetch(conn, "FVS_TreeList", as.is = TRUE)
     FVS_TreeList <- FVS_TreeList[,c(2:3,5,7,8,11,13,22)] #trim table for efficiency
-    FVS_TreeList <- subset(FVS_TreeList, TreeVal != 9) #remove trees with TreeVal = 9
+    FVS_TreeList <- FVS_TreeList[FVS_TreeList$TreeVal != 9,]#remove trees with TreeVal = 9
     FVS_TreeList$TreeVal <- NULL
     FVS_TreeList$OG_Species <- FVS_TreeList$Species
     FVS_TreeList$Species <- NULL
@@ -463,7 +461,7 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
     FVS_TreeList$spcd2 <- as.numeric(FVS_TreeList$spcd2)
     FVS_TreeList$Species <- sprintf("%03d", FVS_TreeList$spcd2)
     FVS_TreeList$spcd2 <- NULL
-    
+
     #DBH_CLASS assignments must be made manually. 
     FVS_TreeList$DBH_CLASS[FVS_TreeList$DBH < 5 & FVS_TreeList$DBH >= 1 ] <- 1
     FVS_TreeList$DBH_CLASS[FVS_TreeList$DBH < 10 & FVS_TreeList$DBH >= 5 ] <- 2
@@ -473,14 +471,13 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
     FVS_TreeList$DBH_CLASS[FVS_TreeList$DBH < 40 & FVS_TreeList$DBH >= 30 ] <- 6
     FVS_TreeList$DBH_CLASS[FVS_TreeList$DBH < 999 & FVS_TreeList$DBH >= 40 ] <- 7
     
-    FVS_TreeList <- subset(FVS_TreeList, complete.cases(FVS_TreeList[,9])) #remove trees below minimum DBH_CLASS
+    FVS_TreeList <- FVS_TreeList[complete.cases(FVS_TreeList$DBH_CLASS),] #remove trees below minimum DBH_CLASS
     
     #Merges the FVS_TreeList and mortprob tables by DBH Class, Variant, and Species code
     FVS_TreeList$Species <- as.character(FVS_TreeList$Species)
     mortprobgroup_species$Species <- as.character(mortprobgroup_species$Species)
     mortprobgroup_species <- subset(mortprobgroup_species, FVS_VARIANT == variantname)
-    FVS_TreeList <- merge(FVS_TreeList, mortprobgroup_species, by = c("DBH_CLASS", "FVS_VARIANT", "Species"), all = TRUE)
-    FVS_TreeList <- FVS_TreeList[complete.cases(FVS_TreeList[,4:10]),] #remove NAs
+    FVS_TreeList <- merge(FVS_TreeList, mortprobgroup_species, by = c("DBH_CLASS", "FVS_VARIANT", "Species"), all.x = TRUE)
     
     #Calculations for Volume and Survival Volume 
     FVS_TreeList$Vol <- FVS_TreeList$TCuFt * FVS_TreeList$TPA
@@ -488,27 +485,16 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
     
     #Move and trim data from FVS_TreeList to new MC_SURV_VOL_TREE table, 
     #remove NA MORTRATE rows, and sum SurvVol by stand and year
-    #MC_SURV_VOL_TREE <- FVS_TreeList[,c(2,5,3,6,7,1,13,8,9,11,15,16)]
     MC_SURV_VOL_TREE <- FVS_TreeList
-    MC_SURV_VOL_TREE1 <- MC_SURV_VOL_TREE[complete.cases(MC_SURV_VOL_TREE[,10]),]
-    MC_SURV_VOL_TREE2 <- group_by(MC_SURV_VOL_TREE1, StandID, Year)
-    MC_SURV_VOL_TREE3 <- summarise(MC_SURV_VOL_TREE2, SurvVolSum = sum(SurvVol))
-    
-    #Sum Volume by stand from FVS_TreeList data into new MC_VOL_ALL table
-    MC_VOL_ALL <- group_by(FVS_TreeList, StandID, Year)
-    MC_VOL_ALL2 <- summarise(MC_VOL_ALL, VolSum = sum(Vol))
-    
-    #Merge the Volume by stand data with the MC_SURV_VOL_TREE table 
-    MC_VOL_ALL3 <- merge(MC_VOL_ALL2, MC_SURV_VOL_TREE3, by = c("StandID", "Year"))
-    
-    #Calculate SurvVolRatio. This takes Survival Volume values and divides it by non-zero
-    #stand volume sums. If the stand volume is 0, SurvVolRatio is set to 1.
-    MC_VOL_ALL3$SurvVolRatio <- ifelse(MC_VOL_ALL3$VolSum > 0, MC_VOL_ALL3$SurvVolSum/MC_VOL_ALL3$VolSum, 1)
-    
-    #Turn MC_VOL_ALL3 into new SurvVolRatio table and save to access database
-    SurvVolRatio <- MC_VOL_ALL3
+    MC_SURV_VOL_TREE1 <- MC_SURV_VOL_TREE[complete.cases(MC_SURV_VOL_TREE$SurvVol),] #get rid of NAs
+    MC_SURV_VOL_TREE1 <- MC_SURV_VOL_TREE1[complete.cases(MC_SURV_VOL_TREE1$Vol),] #get rid of NAs
+    SurvVolRatio <- MC_SURV_VOL_TREE1 %>% group_by(StandID, Year) %>% summarise(SurvVolSum = sum(SurvVol), 
+                                                                                     VolSum = sum(Vol),
+                                                                                     SurvVolRatio2 = ifelse(VolSum > 0, SurvVolSum/VolSum, 1))
+
     SurvVolRatio$MortVol_FOFEM <- SurvVolRatio$VolSum-SurvVolRatio$SurvVolSum
-    sqlSave(conn, dat = SurvVolRatio, tablename = "SurvVolRatio", rownames = FALSE)
+    
+    sqlSave(conn, dat = SurvVolRatio, tablename = "SurvVolRatio", rownames = FALSE)#save SurVolRatio to the database
     
     #add new SurvVolRatio column to FVS_Summary, join on StandID and add SurvVolRatio
     sqlQuery(conn, 'ALTER TABLE FVS_Summary ADD COLUMN SurvVolRatio NUMERIC')
@@ -527,10 +513,10 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
 
 #Run the CreateSurvVol function. Change the directory location and variantname
 #as needed.
-CreateSurvVolRatioTable(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA")
-CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC", "NC")
-CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO", "SO")
-CreateSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS", "WS")
+CreateSurvVolRatioTable(directory = "H:/cec_20180529/fvs/data/CA", variantname = "CA")
+CreateSurvVolRatioTable("H:/cec_20180529/fvs/data/NC", "NC")
+CreateSurvVolRatioTable("H:/cec_20180529/fvs/data/SO", "SO")
+CreateSurvVolRatioTable("H:/cec_20180529/fvs/data/WS", "WS")
 
 #The function below will delete the SurvVolRatio table and all the columns added to FVS_Summary by the 
 #CreateSurvVolRatioTable function above. This is useful in case you need to re-run your calculations after making
@@ -556,7 +542,7 @@ DeleteSurvVolRatioTable <- function (directory, variantname) {
   }
 }
 
-DeleteSurvVolRatioTable(directory = "H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/CA", variantname = "CA")
-DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/NC", "NC")
+DeleteSurvVolRatioTable(directory = "H:/cec_20180529/fvs/data/CA", variantname = "CA")
+DeleteSurvVolRatioTable("H:/cec_20180529/fvs/data/NC", "NC")
 DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/SO", "SO")
-DeleteSurvVolRatioTable("H:/cec_20170915_preFVSoutput_preprocessor5.8.0/cec_20170915_20171204 preFVSoutputbackup/cec_20170915/fvs/data/WS", "WS")
+DeleteSurvVolRatioTable("H:/cec_20180529/fvs/data/WS", "WS")
