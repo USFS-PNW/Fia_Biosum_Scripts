@@ -9,12 +9,12 @@ package.check <- lapply(packages, FUN = function(x) {
 
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
-project1.location <- "H:/cec_20180529"
+project1.location <- "H:/cec_20180517"
 # project2.location <- "H:/cec_20180517"
 project2.location <- "H:/cec_20170915"
-variantname <- "WS"
+variantname <- "CA"
 comparison <- "package"
-#packagenum <- 27
+packagenum <- 27
 
 setwd(file.path(project1.location, "fvs", "data", variantname))#sets the working directory to the project1.location variable
 
@@ -24,6 +24,9 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
     path2 <- list.files(path = file.path(project1.location, "fvs", "data", variantname), pattern = glob2rx(paste("FVSOUT_", variantname, "_P0", "*.MDB", sep = ""))) #lists all the files in the directory that begin with FVSOUT_{variantname}_P0 and end with .MDB (case sensitive)
     path <- path1[path1 %in% path2]
     
+    path <- c(path1[8], path1[10])
+  }
+    
     if (missing(packagenum)) {
       packagenum <- NA
     }
@@ -32,7 +35,7 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
       path <- path[which(grepl(sprintf("%03d", packagenum), path))]
     }
     
-  }
+  } 
   
   if (comparison == "master") {
     path1 <- file.path(project1.location, "db", "master.mdb")
@@ -175,7 +178,7 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
     }
     
     # old_summary2 <- old_summary[,which(grepl(paste0(names(new_summary), collapse = "|"), names(old_summary)))]
-    #names(old_summary)[which(grepl("MortVol", names(old_summary)))] <- "MortVol_FOFEM"
+    names(old_summary)[which(grepl("MortVol", names(old_summary)))] <- "MortVol_FOFEM"
     
     # new_summary <- old_summary[,which(grepl(paste0(names(old_summary), collapse = "|"), names(new_summary)))]
     
@@ -284,97 +287,97 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
       all4 <- melt(all3, id.vars = "variable")
       names(all4)[2] <- "var"
       
-      # acc.true.stands <- acc.test2[acc.test2$diffpct == TRUE,]
-      # mort.true.stands <- mort.test2[mort.test2$diffpct == TRUE,]
-      # 
-      # 
-      # acc.true.summary <- rbind(new_summary[new_summary$StandID %in% acc.true.stands$StandID,], old_summary[old_summary$StandID %in% acc.true.stands$StandID,])
-      # mort.true.summary <- rbind(new_summary[new_summary$StandID %in% mort.true.stands$StandID,], old_summary[old_summary$StandID %in% mort.true.stands$StandID,])
-      # 
-      # conn.path1 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project1.location, "fvs", "data", variantname), "/", path[i])
-      # conn.path2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project2.location, "fvs", "data", variantname),"/",  path[i])
-      # 
-      # conn <- odbcDriverConnect(conn.path1)
-      # new_trees<- sqlFetch(conn, "FVS_TreeList", as.is = TRUE)
-      # odbcCloseAll()
-      # 
-      # conn <- odbcDriverConnect(conn.path2)
-      # old_trees<- sqlFetch(conn, "FVS_TreeList", as.is = TRUE)
-      # odbcCloseAll()
-      # 
-      # new_trees$Status <- "new"
-      # old_trees$Status <- "old"
-      # 
-      # all <- rbind(new_trees, old_trees)
-      # 
-      # all <- all[all$Year == 1,]
+      acc.true.stands <- acc.test2[acc.test2$diffpct == TRUE,]
+      mort.true.stands <- mort.test2[mort.test2$diffpct == TRUE,]
       
-      # acc.trees <- all[all$StandID %in% acc.true.stands$StandID,]
-      # mort.trees <- all[all$StandID %in% mort.true.stands$StandID,]
-      # 
-      # acc.trees2 <- melt(acc.trees, id.vars = c("StandID", "CaseID", "Year", "PrdLen", "TreeId", "TreeIndex", "TreeVal", "Status", "DBH", "Ht", "Species"))
-      # mort.trees2 <- melt(mort.trees, id.vars = c("StandID", "CaseID", "Year", "PrdLen", "TreeId", "TreeIndex", "TreeVal", "Status", "DBH", "Ht", "Species"))
-      # 
-      # acc.trees3 <- aggregate(value ~ StandID + DBH + Ht + Species + TreeVal + variable, data = acc.trees2, FUN = diff)
-      # acc.trees3$value <- as.numeric(as.character(acc.trees3$value))
-      # acc.trees3$value <- abs(acc.trees3$value)
-      # 
-      # mort.trees3 <- aggregate(value ~ StandID + DBH + Ht + Species + TreeVal + variable, data = mort.trees2, FUN = diff)
-      # mort.trees3$value <- as.numeric(as.character(mort.trees3$value))
-      # mort.trees3$value <- abs(mort.trees3$value)
-      # 
-      # write.csv(acc.trees3, "acc.diff.fvs.treelist.year.1.csv")
-      # write.csv(mort.trees3, "mort.diff.fvs.treelist.year.1.csv")
-      # 
-      # acc.variable.diff.tally <- acc.trees3[acc.trees3$value > 0,] %>% group_by(variable) %>% tally()
-      # names(acc.variable.diff.tally)[2] <- "Acc.tally"
-      # mort.variable.diff.tally <- mort.trees3[mort.trees3$value > 0,] %>% group_by(variable) %>% tally()
-      # names(mort.variable.diff.tally)[2] <- "Mort.tally"
-      # 
-      # tally.var <- merge(acc.variable.diff.tally, mort.variable.diff.tally)
-      # 
-      # write.csv(tally.var, "tally.csv")
-      # 
-      # 
-      # rel_trees <- all[all$biosum_cond_id %in% acc.vars.with.diff1$StandID | all$biosum_cond_id %in% mort.vars.with.diff1,]
-      # rel_trees2 <- melt(rel_trees[,c(which(names(rel_trees) %in% c("biosum_cond_id", "invyr", "countycd", "subp", "tree", "spcd", "dia",
-      #                                                               "ht", "cr", "stocking", "tpacurr", "tpa_unadj", "Status")))],
-      #                    id.vars = c("biosum_cond_id", "countycd", "subp", "tree", "invyr", "Status"))
-      # 
-      # rel_trees_test <- rel_trees2 %>% dplyr::group_by(biosum_cond_id, invyr, countycd, subp, tree, variable) %>% tally()
-      # rel_trees2$value <- as.numeric(rel_trees2$value)
-      # 
-      # agg.trees <- aggregate(value ~ biosum_cond_id + invyr + countycd + subp + tree + variable, data = rel_trees2, FUN = diff)
-      # agg.trees$value <- as.numeric(as.character(agg.trees$value))
-      # #acc.trees$value <- as.numeric(acc.trees$value)
-      # agg.trees <- aggregate(value ~ StandID + Year + variable + Species + DBH, data = acc.trees, FUN = diff)
-      # 
-      # ######
-      # rel_trees <- all_trees[all_trees$StandID %in% acc.vars.with.diff1$StandID | all_trees$StandID %in% mort.vars.with.diff1,]
-      # rel_trees2 <- melt(rel_trees[,c(which(names(rel_trees) %in% c("StandID", "Year", "TreeId", "TreeIndex", "Species",
-      #                                                               "TPA", "MortPA", "DBH", "DG", "Ht", "HtG", "PctCr", "CrWidth", "MistCD",
-      #                                                               "BAPctile", "PtBAL", "TCuFt", "MCuFt", "BdFt", "ActPt", "Ht2TDCF", "Ht2TDBF",
-      #                                                               "Status")))],
-      #                    id.vars = c("StandID", "Year", "TreeId", "TreeIndex", "Species", "Status"))
-      # 
-      # rel_trees_test <- rel_trees2 %>% dplyr::group_by(StandID, Year, TreeId, TreeIndex, Species, Status) %>% tally()
-      # rel_trees2$value <- as.numeric(rel_trees2$value)
-      # 
-      # agg.trees <- aggregate(value ~ StandID + Year + variable + Status, data = rel_trees2, FUN = sum)
-      # agg.trees1<- agg.trees[agg.trees$Year == 1,]
-      # 
-      # sumdiff <- aggregate(value ~ StandID + Year + variable, data = agg.trees1, FUN = diff)
-      # sumdiff$value <- abs(sumdiff$value)
-      # agg.trees$value <- as.numeric(as.character(agg.trees$value))
-      # #acc.trees$value <- as.numeric(acc.trees$value)
-      # agg.trees <- aggregate(value ~ StandID + Year + variable + Species + DBH, data = acc.trees, FUN = diff)
-      # 
-      # all4 <- melt(acc.true.summary, id.vars = c("StandID", "CaseID", "Year", "Age", "Status"))
-      # all4 <- melt(mort.true.summary, id.vars = c("StandID", "CaseID", "Year", "Age", "Status"))
-      # all5 <- aggregate(value ~ StandID + Year + variable, data = all4, FUN = diff)
-      # 
-      # vars.with.diff <- all5[all5$value > 0,]
-      # vars.with.diff1 <- vars.with.diff[vars.with.diff$Year == 1,]
+      
+      acc.true.summary <- rbind(new_summary[new_summary$StandID %in% acc.true.stands$StandID,], old_summary[old_summary$StandID %in% acc.true.stands$StandID,])
+      mort.true.summary <- rbind(new_summary[new_summary$StandID %in% mort.true.stands$StandID,], old_summary[old_summary$StandID %in% mort.true.stands$StandID,])
+      
+      conn.path1 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project1.location, "fvs", "data", variantname), "/", path[i])
+      conn.path2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project2.location, "fvs", "data", variantname),"/",  path[i])
+      
+      conn <- odbcDriverConnect(conn.path1)
+      new_trees<- sqlFetch(conn, "FVS_TreeList", as.is = TRUE)
+      odbcCloseAll()
+      
+      conn <- odbcDriverConnect(conn.path2)
+      old_trees<- sqlFetch(conn, "FVS_TreeList", as.is = TRUE)
+      odbcCloseAll()
+      
+      new_trees$Status <- "new"
+      old_trees$Status <- "old"
+      
+      all <- rbind(new_trees, old_trees)
+      
+      all <- all[all$Year == 1,]
+      
+      acc.trees <- all[all$StandID %in% acc.true.stands$StandID,]
+      mort.trees <- all[all$StandID %in% mort.true.stands$StandID,]
+      
+      acc.trees2 <- melt(acc.trees, id.vars = c("StandID", "CaseID", "Year", "PrdLen", "TreeId", "TreeIndex", "TreeVal", "Status", "DBH", "Ht", "Species"))
+      mort.trees2 <- melt(mort.trees, id.vars = c("StandID", "CaseID", "Year", "PrdLen", "TreeId", "TreeIndex", "TreeVal", "Status", "DBH", "Ht", "Species"))
+      
+      acc.trees3 <- aggregate(value ~ StandID + DBH + Ht + Species + TreeVal + variable, data = acc.trees2, FUN = diff)
+      acc.trees3$value <- as.numeric(as.character(acc.trees3$value))
+      acc.trees3$value <- abs(acc.trees3$value)
+      
+      mort.trees3 <- aggregate(value ~ StandID + DBH + Ht + Species + TreeVal + variable, data = mort.trees2, FUN = diff)
+      mort.trees3$value <- as.numeric(as.character(mort.trees3$value))
+      mort.trees3$value <- abs(mort.trees3$value)
+      
+      write.csv(acc.trees3, "acc.diff.fvs.treelist.year.1.csv")
+      write.csv(mort.trees3, "mort.diff.fvs.treelist.year.1.csv")
+      
+      acc.variable.diff.tally <- acc.trees3[acc.trees3$value > 0,] %>% group_by(variable) %>% tally()
+      names(acc.variable.diff.tally)[2] <- "Acc.tally"
+      mort.variable.diff.tally <- mort.trees3[mort.trees3$value > 0,] %>% group_by(variable) %>% tally()
+      names(mort.variable.diff.tally)[2] <- "Mort.tally"
+      
+      tally.var <- merge(acc.variable.diff.tally, mort.variable.diff.tally)
+      
+      write.csv(tally.var, "tally.csv")
+
+      
+      rel_trees <- all[all$biosum_cond_id %in% acc.vars.with.diff1$StandID | all$biosum_cond_id %in% mort.vars.with.diff1,]
+      rel_trees2 <- melt(rel_trees[,c(which(names(rel_trees) %in% c("biosum_cond_id", "invyr", "countycd", "subp", "tree", "spcd", "dia",
+                                                                    "ht", "cr", "stocking", "tpacurr", "tpa_unadj", "Status")))],
+                         id.vars = c("biosum_cond_id", "countycd", "subp", "tree", "invyr", "Status"))
+
+      rel_trees_test <- rel_trees2 %>% dplyr::group_by(biosum_cond_id, invyr, countycd, subp, tree, variable) %>% tally()
+      rel_trees2$value <- as.numeric(rel_trees2$value)
+
+      agg.trees <- aggregate(value ~ biosum_cond_id + invyr + countycd + subp + tree + variable, data = rel_trees2, FUN = diff)
+      agg.trees$value <- as.numeric(as.character(agg.trees$value))
+      #acc.trees$value <- as.numeric(acc.trees$value)
+      agg.trees <- aggregate(value ~ StandID + Year + variable + Species + DBH, data = acc.trees, FUN = diff)
+
+      ######
+      rel_trees <- all_trees[all_trees$StandID %in% acc.vars.with.diff1$StandID | all_trees$StandID %in% mort.vars.with.diff1,]
+      rel_trees2 <- melt(rel_trees[,c(which(names(rel_trees) %in% c("StandID", "Year", "TreeId", "TreeIndex", "Species",
+                                                                    "TPA", "MortPA", "DBH", "DG", "Ht", "HtG", "PctCr", "CrWidth", "MistCD",
+                                                                    "BAPctile", "PtBAL", "TCuFt", "MCuFt", "BdFt", "ActPt", "Ht2TDCF", "Ht2TDBF",
+                                                                    "Status")))],
+                         id.vars = c("StandID", "Year", "TreeId", "TreeIndex", "Species", "Status"))
+
+      rel_trees_test <- rel_trees2 %>% dplyr::group_by(StandID, Year, TreeId, TreeIndex, Species, Status) %>% tally()
+      rel_trees2$value <- as.numeric(rel_trees2$value)
+
+      agg.trees <- aggregate(value ~ StandID + Year + variable + Status, data = rel_trees2, FUN = sum)
+      agg.trees1<- agg.trees[agg.trees$Year == 1,]
+
+      sumdiff <- aggregate(value ~ StandID + Year + variable, data = agg.trees1, FUN = diff)
+      sumdiff$value <- abs(sumdiff$value)
+      agg.trees$value <- as.numeric(as.character(agg.trees$value))
+      #acc.trees$value <- as.numeric(acc.trees$value)
+      agg.trees <- aggregate(value ~ StandID + Year + variable + Species + DBH, data = acc.trees, FUN = diff)
+
+      all4 <- melt(acc.true.summary, id.vars = c("StandID", "CaseID", "Year", "Age", "Status"))
+      all4 <- melt(mort.true.summary, id.vars = c("StandID", "CaseID", "Year", "Age", "Status"))
+      all5 <- aggregate(value ~ StandID + Year + variable, data = all4, FUN = diff)
+
+      vars.with.diff <- all5[all5$value > 0,]
+      vars.with.diff1 <- vars.with.diff[vars.with.diff$Year == 1,]
 
       # graph <- ggplot(all4, aes(variable, value, group = Status, color = Status, fill = Status)) +
       #   geom_bar(stat = "identity", position = "dodge") + facet_wrap(~ StandID)
@@ -399,7 +402,6 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
       filename <- paste0(pathname, ".png")
       
       old_wd <- getwd()
-      suppressWarnings(dir.create(file.path(getwd(), "compare_result")))
       suppressWarnings(dir.create(file.path(getwd(), "compare_result", comparison)))
       setwd(file.path(getwd(), "compare_result", comparison))
       
@@ -414,30 +416,31 @@ create_sensitivity_graphs <- function(comparison, project1.location, project2.lo
 
 create_sensitivity_graphs(comparison, project1.location, project2.location, variantname)
 #comparison, project1.location, project2.location, variantname, packagenum, specific.variable, specific.sensitivity
-# package8 <- create_sensitivity_graphs("package", project1.location, project2.location, "CA", 8)
-# 
-# tree1$standtree <- paste0(tree1$biosum_cond_id, tree1$tree)
-# tree1$status <- "new"
-# tree2$status <- "old"
-# 
-# tree1.in.both <- tree1[tree1$standtree %in% tree2$standtree,]
-# tree1.not.in.both <- tree1[!tree1$standtree %in% tree2$standtree,]
-# tree1.not.in.both <- tree1.not.in.both[tree1.not.in.both$biosum_cond_id %in% cond1$biosum_cond_id,]
-# 
-# tree2.in.both <- tree2[tree2$standtree %in% tree1$standtree,]
-# tree2.not.in.both <- tree2[!(tree2$standtree %in% tree1$standtree),]
-# tree2.not.in.both <- tree2.not.in.both[tree2.not.in.both$biosum_cond_id %in% cond2$biosum_cond_id,]
-# 
-# write.csv(tree2.not.in.both, "trees from earlier project not in current.csv")
-# 
-# conn.path1 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project1.location, "fvs", "data", variantname), "/", path1)
-# conn.path2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project2.location, "fvs", "data", variantname),"/",  path2)
-# 
-# conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/CAaccdb/CA.accdb")
-# CA_tree <- sqlFetch(conn, "TREE", as.is = TRUE)
-# odbcCloseAll()
-# 
-# tree2.not.in.both$plot <- substr(tree2.not.in.both$biosum_cond_id, 17,21)
-# tree2.not.in.both$plottree <- paste0(tree2.not.in.both$plot, tree2.not.in.both$tree)
-# CA_tree$plottree <- paste0(CA_tree$PLOT, CA_tree$TREE)
-# tree2.not.in.both.in.CA.tree <- tree2.not.in.both[tree2.not.in.both$plottree %in% CA_tree$plottree,]
+package8 <- create_sensitivity_graphs("package", project1.location, project2.location, "CA", 8)
+
+tree1$standtree <- paste0(tree1$biosum_cond_id, tree1$tree)
+tree1$status <- "new"
+tree2$status <- "old"
+
+tree1.in.both <- tree1[tree1$standtree %in% tree2$standtree,]
+tree1.not.in.both <- tree1[!tree1$standtree %in% tree2$standtree,]
+tree1.not.in.both <- tree1.not.in.both[tree1.not.in.both$biosum_cond_id %in% cond1$biosum_cond_id,]
+
+
+tree2.in.both <- tree2[tree2$standtree %in% tree1$standtree,]
+tree2.not.in.both <- tree2[!(tree2$standtree %in% tree1$standtree),]
+tree2.not.in.both <- tree2.not.in.both[tree2.not.in.both$biosum_cond_id %in% cond2$biosum_cond_id,]
+
+write.csv(tree2.not.in.both, "trees from earlier project not in current.csv")
+
+conn.path1 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project1.location, "fvs", "data", variantname), "/", path1)
+conn.path2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project2.location, "fvs", "data", variantname),"/",  path2)
+
+conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/CAaccdb/CA.accdb")
+CA_tree <- sqlFetch(conn, "TREE", as.is = TRUE)
+odbcCloseAll()
+
+tree2.not.in.both$plot <- substr(tree2.not.in.both$biosum_cond_id, 17,21)
+tree2.not.in.both$plottree <- paste0(tree2.not.in.both$plot, tree2.not.in.both$tree)
+CA_tree$plottree <- paste0(CA_tree$PLOT, CA_tree$TREE)
+tree2.not.in.both.in.CA.tree <- tree2.not.in.both[tree2.not.in.both$plottree %in% CA_tree$plottree,]

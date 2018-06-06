@@ -12,13 +12,13 @@
 #newvariant directory. 
 
 
-setwd("G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/CEC Master KCPs") #set the working directory
+setwd("G:/Dropbox/Carlin/Berkeley/biosum/CEC Master KCPs") #set the working directory
 
 #The text below is for the cloneKCP function and will not return any result until the function is called
 cloneKCP <- function(oldvariant, newvariant) {
   end <- length(list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", oldvariant, "_P0*.KCP", sep = ""))))
   for(i in 1:end) {
-  x <- readLines(list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", oldvariant, "_P0*.KCP", sep = "")))[i], warn = FALSE) #opens the .KCP file
+  x <- readLines(list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", oldvariant, "_P0*.KCP", sep = "")))[i]) #opens the .KCP file
   y <- gsub(paste("FVSOUT_", oldvariant, substr(list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", oldvariant, "_P0*.KCP", sep = "")))[i], 10, 30), ".MDB", sep = ""), 
             paste("FVSOUT_", newvariant, substr(list.files(path = ".", pattern = glob2rx(paste("FVSOUT_", oldvariant, "_P0*.KCP", sep = "")))[i], 10, 30), ".MDB", sep = ""), 
             x) #find and replace the {packagename}.MDB file text in the .KCP file
@@ -28,6 +28,6 @@ cloneKCP <- function(oldvariant, newvariant) {
 }
 
 #The function is called below by changing the variant names. 
-cloneKCP(oldvariant = "SO", newvariant = "CA")
+cloneKCP(oldvariant = "SO", newvariant = "WS")
 
 

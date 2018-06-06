@@ -1,0 +1,28 @@
+Package,FVS Style,BA Threshold,Max Private DBH,Max Public DBH,Min DBH,Residual BA (less amt),Species Pressure,Surface fuel method,Harvest System
+1,ThinDBH,115,36,30,4,33.33%,WF,Rx Fire,WT
+2,ThinDBH,115,36,30,4,33.33%,WF,Pile/burn,WT
+3,ThinDBH,115,36,30,4,33.33%,WF,Masticate,WT
+4,ThinDBH,115,36,30,4,33.33%,WF,Lop/scatter,WT
+5,ThinDBH,115,36,30,4,33.33%,none,Rx Fire,WT
+6,ThinDBH,115,36,30,4,33.33%,none,Lop/scatter,WT
+7,ThinDBH,115,36,36,4,33.33%,WF,Lop/scatter,WT
+8,ThinDBH,135,36,30,4,33.33%,WF,Lop/scatter,WT
+9,ThinDBH,150,36,30,4,33.33%,WF,Lop/scatter,WT
+10,ThinDBH,150,36,30,4,33.33%,WF,Rx Fire,WT
+11,ThinDBH,180,36,30,4,33.33%,WF,Lop/scatter,WT
+12,ThinDBH,115,36,30,4,33.33%,WF,Rx Fire,CTL
+13,ThinDBH,115,36,30,4,33.33%,WF,Pile/burn,CTL
+14,ThinDBH,115,36,30,9,33.33%,WF,Lop/scatter,WT
+15,ThinDBH,115,36,30,9,33.33%,WF,Rx Fire,WT
+17,ThinDBH,115,36,21,4,33.33%,WF,Lop/scatter,WT
+18,ThinDBH,180,36,30,4,20%,WF,Lop/scatter,WT
+19,ThinBBA,115,36,30,4,33.33%,WF,Lop/scatter,WT
+20,ThinBBA,115,36,30,4,33.33%,WF,Rx Fire,WT
+23,ThinBBA,135,36,30,4,33.33%,WF,Lop/scatter,WT
+24,ThinBBA,150,36,30,4,33.33%,WF,Rx Fire,WT
+25,ThinBBA,150,36,30,4,33.33%,WF,Lop/scatter,WT
+26,ThinBBA,180,36,30,4,33.33%,WF,Lop/scatter,WT
+27,ThinBBA,150,36,30,4,33.33%,none,Lop/scatter,WT
+31,GrowOnly,NA,NA,,NA,NA,NA,NA,NA
+32,Clearcut,150,36,30,NA,NA,NA,Pile/burn,WT
+33,Clearcut,150,36,30,NA,NA,NA,Lop/scatter,WT

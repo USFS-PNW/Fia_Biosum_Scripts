@@ -1,0 +1,52 @@
+﻿fortypcd,MEANING,CEC_type,TargetType
+184,Juniper woodland,Other conifer,0
+185,Pinyon / juniper woodland,Other conifer,0
+201,Douglas-fir,Douglas-fir,1
+202,Port-Orford-cedar,Other conifer,0
+221,Ponderosa pine,Pine,1
+222,Incense-cedar,Pine,1
+225,Jeffrey pine,Pine,1
+226,Coulter pine,Pine,1
+241,Western white pine,Other conifer,0
+261,White fir,True fir,1
+262,Red fir,True fir,1
+267,Grand fir,True fir,1
+270,Mountain hemlock,Other conifer,0
+281,Lodgepole pine,Other conifer,0
+301,Western hemlock,Other conifer,0
+305,Sitka spruce,Other conifer,0
+341,Redwood,Redwood,1
+342,Giant sequoia,Other conifer,0
+361,Knobcone pine,Other conifer,0
+363,Bishop pine,Other conifer,0
+364,Monterey pine,Other conifer,0
+365,Foxtail pine / bristlecone pine,Other conifer,0
+366,Limber pine,Other conifer,0
+367,Whitebark pine,Other conifer,0
+368,Miscellaneous western softwoods,Other conifer,0
+369,Western juniper,Other conifer,0
+371,California mixed conifer,Mixed conifer,1
+703,Cottonwood,Hardwood,0
+706,Sugarberry / hackberry / elm / green ash,Hardwood,0
+709,Cottonwood / willow,Hardwood,0
+901,Aspen,Hardwood,0
+911,Red alder,Hardwood,0
+912,Bigleaf maple,Hardwood,0
+921,Gray pine,Hardwood,0
+922,California black oak,Hardwood,0
+923,Oregon white oak,Hardwood,0
+924,Blue oak,Hardwood,0
+931,Coast live oak,Hardwood,0
+933,Canyon live oak,Hardwood,0
+934,Interior live oak,Hardwood,0
+935,California white oak (valley oak),Hardwood,0
+941,Tanoak,Hardwood,0
+942,California laurel,Hardwood,0
+943,Giant chinkapin,Hardwood,0
+961,Pacific madrone,Hardwood,0
+962,Other hardwoods,Hardwood,0
+972,Evergreen oak woodland,Hardwood,0
+974,Cercocarpus (mountain brush) woodland,Hardwood,0
+976,Miscellaneous woodland hardwoods,Hardwood,0
+993,Eucalyptus,Hardwood,0
+999,Nonstocked,Nonstocked,0

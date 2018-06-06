@@ -18,7 +18,6 @@ options(scipen = 999) #this is important for making sure your stand IDs do not g
 #Location of additional data files on github:
 additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data"
 master.kcps <-  "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/CEC Master KCPs"
-gis_travel_times <- "G:/Dropbox/Carlin/Berkeley/biosum/gis_travel_times.mdb"
 
 #Project root location:
 project.location <- "H:/cec_20180529"
@@ -29,9 +28,26 @@ project.location <- "H:/cec_20180529"
 #The script copies over all the master info you will need for the project for quick setup. 
 project.setup <- function(additional.data, master.kcps, overwrite){
   #copy over gis data
-  file.copy(file.path(additional.data, "plot_near.txt"), file.path(project.location, "gis", "db"))
-  file.copy(file.path(gis_travel_times), file.path(project.location, "gis", "db"), overwrite = TRUE)
   
+  #Put together gis_travel_times.mdb
+  plot <- read.csv(file.path(additional.data, "plot.csv"), colClasses = c(rep("character",9), rep("numeric", 1), rep("character", 3), "integer", rep("character", 6), rep("numeric", 9), rep("character", 4)))
+  processing_sites <- read.csv(file.path(additional.data, "processing_sites.csv"), colClasses = c(rep("character",8), rep("numeric", 2), rep("character", 3), rep("character", 6), rep("numeric", 4), rep("character", 5)))
+  travel_times <- read.csv(file.path(additional.data, "travel_times.csv"), colClasses = c(rep("character",7), rep("numeric", 1), rep("character", 1)))
+  
+  #copy over blank gis_travel_times.mdb database from Additional Data
+  file.copy(file.path(additional.data, "gis_travel_times.mdb"), file.path(project.location, "gis", "db"), overwrite = TRUE)
+  
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "gis", "db","gis_travel_times.mdb"))
+  conn <- odbcDriverConnect(conn.path)
+  sqlSave(conn, plot, tablename="plot", safer=FALSE)
+  sqlSave(conn, processing_sites, tablename="processing_site", safer=FALSE)
+  sqlSave(conn, travel_times, tablename="travel_time", safer=FALSE)
+  
+  odbcCloseAll()
+  
+  #copy over plot_near
+  file.copy(file.path(additional.data, "plot_near.txt"), file.path(project.location, "gis", "db"))
+
   #copy over treatment info
   fvsmasterCEC.location <- file.path(additional.data, "fvs_master_CEC.mdb")
   conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", fvsmasterCEC.location)
@@ -40,6 +56,8 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   rx_harvest_cost_columns_new <- sqlFetch(conn, "rx_harvest_cost_columns", as.is = TRUE)
   rx_package_new <- sqlFetch(conn, "rxpackage", as.is = TRUE)
   PkgLabels_new <- sqlFetch(conn, "PkgLabels", as.is = TRUE)
+  rx_pkg_xwalk <- sqlFetch(conn, "rx_pkg_xwalk", as.is = TRUE)
+  fvs_output_prepost_seqnum <- sqlFetch(conn, "fvs_output_prepost_seqnum", as.is = TRUE)
   odbcCloseAll()
   
   fvs.master.location <- file.path(project.location, "db", "fvsmaster.mdb")
@@ -49,13 +67,17 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   sqlQuery(conn, 'DROP TABLE rx_harvest_cost_columns')
   sqlQuery(conn, 'DROP TABLE rxpackage')
   sqlQuery(conn, 'DROP TABLE PkgLabels')
+  sqlQuery(conn, 'DROP TABLE fvs_output_prepost_seqnum')
   
   sqlSave(conn, dat = rx_new, tablename = "rx", rownames = FALSE)
   sqlSave(conn, dat = rx_harvest_cost_columns_new, tablename = "rx_harvest_cost_columns", rownames = FALSE)
   sqlSave(conn, dat = rx_package_new, tablename = "rxpackage", rownames = FALSE)
   sqlSave(conn, dat = PkgLabels_new, tablename = "PkgLabels", rownames = FALSE)
+  sqlSave(conn, dat = rx_pkg_xwalk, tablename = "rx_pkg_xwalk", rownames = FALSE)
+  sqlSave(conn, dat = fvs_output_prepost_seqnum, tablename = "fvs_output_prepost_seqnum", rownames = FALSE)
   
   odbcCloseAll()
+  
   master.location <- file.path(project.location, "db", "master.mdb")
   conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", master.location)
   conn <- odbcDriverConnect(conn.path)
@@ -112,6 +134,9 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   yard_dist_2017$NEAR_DIST <- NULL
   yard_dist_2017$biosum_plot_id <- NULL
   
+  #Pull in CEC-ftype
+  CEC_ftype <- read.csv(file.path(additional.data, "CEC_ftype.csv"))
+  
   #connect to master.mdb
   file <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "db"), "/master.mdb")
   conn <- odbcDriverConnect(file) #set to your project master directory location
@@ -126,9 +151,12 @@ project.setup <- function(additional.data, master.kcps, overwrite){
   
   sqlSave(conn, dat = conditions.to.remove, tablename = "conditions_to_remove", rownames = FALSE)
   sqlSave(conn, dat = yard_dist_2017, tablename = "yard_dist", rownames = FALSE)
+
   
   sqlQuery(conn, 'DELETE cond.*, cond.biosum_cond_id FROM cond WHERE (((cond.biosum_cond_id) In (Select conditions_to_remove.[biosum_cond_id] from conditions_to_remove)));')
   sqlQuery(conn, 'UPDATE plot INNER JOIN yard_dist ON (plot.fvs_variant = yard_dist.fvs_varian) AND (plot.measyear = yard_dist.measyear) AND (plot.invyr = yard_dist.invyr) AND (plot.plot = yard_dist.plot) SET plot.gis_yard_dist = [yard_dist].[gis_yard_dist];')
+  
+  sqlSave(conn, dat = CEC_ftype, tablename = "CEC_ftype", rownames = FALSE)
   
   odbcCloseAll()
 }
@@ -136,4 +164,3 @@ project.setup <- function(additional.data, master.kcps, overwrite){
 
 project.setup(additional.data, master.kcps, FALSE)
 
-#NOTE: you may get warning for the CR variant; you can ignore it

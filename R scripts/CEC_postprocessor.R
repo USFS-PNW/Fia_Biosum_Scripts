@@ -1,27 +1,38 @@
 #This script was created by Carlin Starrs in 2018
-#The script calculates Fire Resistance Score and Hazard Score using method created by Jeremy Fried.
-#This script pulls in all the necessary parameters from the various PREPOST tables and then runs the 
-#calculations and adds it all to the PREPOST_FVS_SUMMARY database. Be warned, it is slow. 
+#The script calculates Fire Resistance Score, Hazard Score, and Canopy Base Height
+#using method created by Jeremy Fried/Terri Jaine..
 
-#The canopy_dist.R script should be run before running this script
+#This script pulls in all the necessary parameters from the various PREPOST tables and then runs the 
+#calculations and adds it all to the PREPOST_FVS_SUMMARY database. 
 
 #Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
+packages <- c("RODBC", "dplyr")
 
-library("dplyr")
-library("RODBC")
-options(scipen = 999)
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
+options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
+
+
+#Project root location:
+project.location <- "H:/cec_20180529"
 
 #Pull in Canopy bulk density from PRE_FVS_POTFIRE and POST_FVS_POTFIRE tables. 
-
 #Start by getting PREPOST_FVS_SUMMARY in 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB") #Change the text after "DBH=" to the correct directory for your project
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_SUMMARY.ACCDB"))
+conn <- odbcDriverConnect(conn.path)
 PRE_FVS_SUMMARY <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
 POST_FVS_SUMMARY <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
 odbcCloseAll()
 
 #Pull in PREPOST_FVS_POTFIRE
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_POTFIRE.ACCDB") #Change the text after "DBH=" to the correct directory for your project
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_POTFIRE.ACCDB"))
+conn <- odbcDriverConnect(conn.path)
 PRE_FVS_POTFIRE <- sqlFetch(conn, "PRE_FVS_POTFIRE", as.is = TRUE) 
 POST_FVS_POTFIRE <- sqlFetch(conn, "POST_FVS_POTFIRE", as.is = TRUE) 
 odbcCloseAll()
@@ -56,7 +67,8 @@ PRE_FVS_SUMMARY <- merge(PRE_FVS_SUMMARY, pre_potfire, by = c("biosum_cond_id", 
 POST_FVS_SUMMARY <- merge(POST_FVS_SUMMARY, post_potfire, by = c("biosum_cond_id", "rxpackage", "rx", "fvs_variant", "rxcycle"), all = TRUE)
 
 #Pull in Percent Resistant Basal Area from PRE_FVS_COMPUTE and POST_FVS_COMPUTE tables. 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_COMPUTE.ACCDB") #Change the text after "DBH=" to the correct directory for your project 
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_COMPUTE.ACCDB"))
+conn <- odbcDriverConnect(conn.path)
 PRE_FVS_COMPUTE <- sqlFetch(conn, "PRE_FVS_COMPUTE", as.is = TRUE) 
 POST_FVS_COMPUTE <- sqlFetch(conn, "POST_FVS_COMPUTE", as.is = TRUE) 
 odbcCloseAll()
@@ -83,46 +95,112 @@ POST_FVS_SUMMARY <- merge(POST_FVS_SUMMARY, post_compute, by = c("biosum_cond_id
 
 #SurvVolRatio should already be in FVS_SUMMARY
 
-#Pull in Percent Resistant Basal Area from PRE_FVS_COMPUTE and POST_FVS_COMPUTE tables. 
-#MAKE SURE YOU HAVE RUN canopy_dist.R first!
+###Canopy Base Height calculation (formerly canopy_dist.R)
+#Pull in the PREPOST_FVS_STRCLASS database from fvs/db
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_STRCLASS.ACCDB"))
+conn <- odbcDriverConnect(conn.path)
+PRE_FVS_STRCLASS <- sqlFetch(conn, "PRE_FVS_STRCLASS", as.is = TRUE)  #pull in tables from PREPOST_FVS_STRCLASS
+POST_FVS_STRCLASS <- sqlFetch(conn, "POST_FVS_STRCLASS", as.is = TRUE) 
 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_STRCLASS.ACCDB") #Change the text after "DBH=" to the correct directory for your project 
-PRECBH <- sqlFetch(conn, "PRECBH", as.is = TRUE)  
-POSTCBH <- sqlFetch(conn, "POSTCBH", as.is = TRUE) 
+#Trim tables to just relevant data
+pre_STRCLASS <- data.frame("biosum_cond_id" = PRE_FVS_STRCLASS$biosum_cond_id, 
+                           "rxpackage"= PRE_FVS_STRCLASS$rxpackage, 
+                           "rx" =  PRE_FVS_STRCLASS$rx, 
+                           "fvs_variant" = PRE_FVS_STRCLASS$fvs_variant, 
+                           "rxcycle" = PRE_FVS_STRCLASS$rxcycle, 
+                           "Stratum_1_Nom_Ht" = PRE_FVS_STRCLASS$Stratum_1_Nom_Ht,
+                           "Stratum_1_Crown_Base" = PRE_FVS_STRCLASS$Stratum_1_Crown_Base,
+                           "Stratum_1_Status_Code" = PRE_FVS_STRCLASS$Stratum_1_Status_Code,
+                           "Stratum_2_Nom_Ht" = PRE_FVS_STRCLASS$Stratum_2_Nom_Ht,
+                           "Stratum_2_Crown_Base" = PRE_FVS_STRCLASS$Stratum_2_Crown_Base,
+                           "Stratum_2_Status_Code" = PRE_FVS_STRCLASS$Stratum_2_Status_Code,
+                           "Stratum_3_Nom_Ht" = PRE_FVS_STRCLASS$Stratum_3_Nom_Ht,
+                           "Stratum_3_Crown_Base" = PRE_FVS_STRCLASS$Stratum_3_Crown_Base,
+                           "Stratum_3_Status_Code" = PRE_FVS_STRCLASS$Stratum_3_Status_Code)
+
+post_STRCLASS <- data.frame("biosum_cond_id" = POST_FVS_STRCLASS$biosum_cond_id, 
+                            "rxpackage" = POST_FVS_STRCLASS$rxpackage, 
+                            "rx" =  POST_FVS_STRCLASS$rx, 
+                            "fvs_variant" = POST_FVS_STRCLASS$fvs_variant, 
+                            "rxcycle" = POST_FVS_STRCLASS$rxcycle, 
+                            "Stratum_1_Nom_Ht" = POST_FVS_STRCLASS$Stratum_1_Nom_Ht,
+                            "Stratum_1_Crown_Base" = POST_FVS_STRCLASS$Stratum_1_Crown_Base,
+                            "Stratum_1_Status_Code" = POST_FVS_STRCLASS$Stratum_1_Status_Code,
+                            "Stratum_2_Nom_Ht" = POST_FVS_STRCLASS$Stratum_2_Nom_Ht,
+                            "Stratum_2_Crown_Base" = POST_FVS_STRCLASS$Stratum_2_Crown_Base,
+                            "Stratum_2_Status_Code" = POST_FVS_STRCLASS$Stratum_2_Status_Code,
+                            "Stratum_3_Nom_Ht" = POST_FVS_STRCLASS$Stratum_3_Nom_Ht,
+                            "Stratum_3_Crown_Base" = POST_FVS_STRCLASS$Stratum_3_Crown_Base,
+                            "Stratum_3_Status_Code" = POST_FVS_STRCLASS$Stratum_3_Status_Code)
+
+# #Add dist and CBH columns
+pre_STRCLASS$dist1 <- NA
+pre_STRCLASS$dist2 <- NA
+pre_STRCLASS$dist3 <- NA
+pre_STRCLASS$CBH <- NA
+post_STRCLASS$dist1 <- NA
+post_STRCLASS$dist2 <- NA
+post_STRCLASS$dist3 <- NA
+post_STRCLASS$CBH<- NA
+
+#Calculate CBH. The section below defines the canopy_dist function. For information on how this was 
+#developed, see the documentation in the Additional Data folder on Github (CBH Illustration, Fire resistance score email...)
+canopy_dist <- function(data) {
+  data$dist1[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0] <- data$Stratum_1_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0] - data$Stratum_2_Nom_Ht[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0]
+  data$dist1[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_1_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code > 0] - data$Stratum_3_Nom_Ht[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code > 0]
+  data$dist1[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code == 0] <- data$Stratum_1_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code == 0]
+  data$dist1[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_2_Crown_Base[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] - data$Stratum_3_Nom_Ht[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0]
+  data$dist1[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code == 0] <- data$Stratum_2_Crown_Base[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code == 0]
+  data$dist1[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code == 0] <- data$Stratum_3_Crown_Base[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code == 0]
+  
+  data$dist2[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_2_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] - data$Stratum_3_Nom_Ht[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0]
+  data$dist2[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code == 0] <- data$Stratum_2_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code == 0]
+  data$dist2[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_3_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code == 0 & data$Stratum_3_Status_Code > 0]  
+  data$dist2[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_3_Crown_Base[data$Stratum_1_Status_Code == 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0]
+  
+  data$dist3[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0] <- data$Stratum_3_Crown_Base[data$Stratum_1_Status_Code > 0 & data$Stratum_2_Status_Code > 0 & data$Stratum_3_Status_Code > 0]
+  
+  data$CBH <- apply(data[,c(15:17)], 1, function(x) max(x, na.rm = TRUE))
+  
+  return(data)
+}
+
+
+pre_STRCLASS <- canopy_dist(pre_STRCLASS)
+post_STRCLASS <- canopy_dist(post_STRCLASS)
+
+
+#Save to new tables in the PREPOST_FVS_STRCLASS database. This may take a few minutes as well.
+sqlSave(conn, dat = pre_STRCLASS, tablename = "PRECBH", rownames = FALSE)
+sqlSave(conn, dat = post_STRCLASS, tablename = "POSTCBH", rownames = FALSE)
+
+#Disconnect from database
 odbcCloseAll()
 
+PRECBH <- pre_STRCLASS
+POSTCBH <- post_STRCLASS
 
+#Pull in Percent Resistant Basal Area from PRE_FVS_COMPUTE and POST_FVS_COMPUTE tables. 
 #Create new tables with just relevant data from STRCLASS
 pre_CBH <- data.frame("biosum_cond_id" = PRECBH$biosum_cond_id, 
-                          "rxpackage"= PRECBH$rxpackage, 
-                          "rx" =  PRECBH$rx, 
-                          "fvs_variant" = PRECBH$fvs_variant, 
-                          "rxcycle" = PRECBH$rxcycle, 
-                          "CBH" = PRECBH$CBH)
+                      "rxpackage"= PRECBH$rxpackage, 
+                      "rx" =  PRECBH$rx, 
+                      "fvs_variant" = PRECBH$fvs_variant, 
+                      "rxcycle" = PRECBH$rxcycle, 
+                      "CBH" = PRECBH$CBH)
 
 post_CBH <- data.frame("biosum_cond_id" = POSTCBH$biosum_cond_id, 
-                           "rxpackage" = POSTCBH$rxpackage, 
-                           "rx" =  POSTCBH$rx, 
-                           "fvs_variant" = POSTCBH$fvs_variant, 
-                           "rxcycle" = POSTCBH$rxcycle, 
-                           "CBH" = POSTCBH$CBH)
+                       "rxpackage" = POSTCBH$rxpackage, 
+                       "rx" =  POSTCBH$rx, 
+                       "fvs_variant" = POSTCBH$fvs_variant, 
+                       "rxcycle" = POSTCBH$rxcycle, 
+                       "CBH" = POSTCBH$CBH)
 
-#Merge them with FVS_SUMMARY
+#Merge with FVS_SUMMARY
 PRE_FVS_SUMMARY <- merge(PRE_FVS_SUMMARY, pre_CBH, by = c("biosum_cond_id", "rxpackage", "rx", "fvs_variant", "rxcycle"), all = TRUE)
 POST_FVS_SUMMARY <- merge(POST_FVS_SUMMARY, post_CBH, by = c("biosum_cond_id", "rxpackage", "rx", "fvs_variant", "rxcycle"), all = TRUE)
 
-names(PRE_FVS_SUMMARY)[38] <- "MortVol_FOFEM"
-names(POST_FVS_SUMMARY)[38] <- "MortVol_FOFEM"
-
-
-
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=F:/20180320 test files/PREPOST_FVS_SUMMARY.ACCDB") #Change the text after "DBH=" to the correct directory for your project
-PRE_FVS_SUMMARY <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
-POST_FVS_SUMMARY <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
-odbcCloseAll()
-
 #manage NA values
-
 NA_fix <- function(data) {
   data$SurvVolRatio[is.na(data$SurvVolRatio)] <- 1
   data$PERRESBA[is.na(data$PERRESBA)] <- 1
@@ -245,8 +323,8 @@ pre_scored <- score_it(PRE_FVS_SUMMARY_NA)
 post_scored <- score_it(POST_FVS_SUMMARY_NA)
 
 all <- rbind(pre_scored, post_scored)
-
-write.csv(all, "all_data_20180416.csv")
+setwd(project.location)
+write.csv(all, paste0("fvs_summary_all_postprocessor", format(Sys.Date(),"%Y%m%d"), ".csv"))
 
 create_avg_table <- function(pre, post) {
   pre.relevant.data <- data.frame("biosum_cond_id" = pre$biosum_cond_id, "rxpackage" = pre$rxpackage, "rx" = pre$rx, "rxcycle" = pre$rxcycle, "Year" = pre$Year,
@@ -255,9 +333,9 @@ create_avg_table <- function(pre, post) {
                                   "MortVolPct2_Mod_Score" = pre$MortVolPct2_Mod_Score, "Surf_Flame_Sev_Score" = pre$Surf_Flame_Sev_score, "HS_Sev" = pre$HS_Sev, "HS_Mod" = pre$HS_Mod)
   
   post.relevant.data <- data.frame("biosum_cond_id" = post$biosum_cond_id, "rxpackage" = post$rxpackage, "rx" = post$rx, "rxcycle" = post$rxcycle, "Year" = post$Year,
-                                  "CBH_Score" = post$CBH_Score, "CBD_Score" = post$CBD_Score, "PERRESBA_score" = post$PERRESBA_score, "SurvVolRatio_score" = post$SurvVolRatio_score, "FRS" = post$FRS,
-                                  "Torch_Index_score" = post$Torch_Index_score, "PTorch_Sev_score" = post$PTorch_Sev_Score, "MortVolPct2_Sev_Score" = post$MortVolPct2_Sev_Score, 
-                                  "MortVolPct2_Mod_Score" = post$MortVolPct2_Mod_Score, "Surf_Flame_Sev_Score" = post$Surf_Flame_Sev_score, "HS_Sev" = post$HS_Sev, "HS_Mod" = post$HS_Mod)
+                                   "CBH_Score" = post$CBH_Score, "CBD_Score" = post$CBD_Score, "PERRESBA_score" = post$PERRESBA_score, "SurvVolRatio_score" = post$SurvVolRatio_score, "FRS" = post$FRS,
+                                   "Torch_Index_score" = post$Torch_Index_score, "PTorch_Sev_score" = post$PTorch_Sev_Score, "MortVolPct2_Sev_Score" = post$MortVolPct2_Sev_Score, 
+                                   "MortVolPct2_Mod_Score" = post$MortVolPct2_Mod_Score, "Surf_Flame_Sev_Score" = post$Surf_Flame_Sev_score, "HS_Sev" = post$HS_Sev, "HS_Mod" = post$HS_Mod)
   
   
   pre.relevant.data2 <- pre.relevant.data[pre.relevant.data$rxcycle != 1,]
@@ -268,22 +346,13 @@ create_avg_table <- function(pre, post) {
                                                                                             Avg_PERRESBA_Score = mean(PERRESBA_score, na.rm = TRUE), Avg_SurvVolRatio_Score = mean(SurvVolRatio_score, na.rm = TRUE),
                                                                                             Avg_FRS = mean(FRS, na.rm = TRUE), Avg_Torch_Index_Score = mean(Torch_Index_score, na.rm = TRUE), 
                                                                                             Avg_Ptorch_Sev_Score = mean(PTorch_Sev_score, na.rm = TRUE), Avg_Surf_Flame_Sev_Score = mean(Surf_Flame_Sev_Score, na.rm = TRUE),
-                                                                                           Avg_MortVolPct2_Mod_Score = mean(MortVolPct2_Mod_Score, na.rm = TRUE), Avg_MortVolPct2_Sev_Score = mean(MortVolPct2_Sev_Score, na.rm = TRUE), 
-                                                                                           Avg_HS_Sev = mean(HS_Sev, na.rm = TRUE), Avg_HS_Mod = mean(HS_Mod, na.rm = TRUE))
+                                                                                            Avg_MortVolPct2_Mod_Score = mean(MortVolPct2_Mod_Score, na.rm = TRUE), Avg_MortVolPct2_Sev_Score = mean(MortVolPct2_Sev_Score, na.rm = TRUE), 
+                                                                                            Avg_HS_Sev = mean(HS_Sev, na.rm = TRUE), Avg_HS_Mod = mean(HS_Mod, na.rm = TRUE))
   return(relevant.data2)
 }
 
 
 avg_table <- create_avg_table(pre_scored, post_scored) #create average table
-
-# write.csv(avg_table, "avg_table.csv")
-# 
-# pre_test_avg <- merge(pre_test, avg_table, by = c("biosum_cond_id", "rxpackage", "rx"))
-# post_test_avg <- merge(post_test, avg_table, by = c("biosum_cond_id", "rxpackage", "rx"))
-# 
-# write.csv(pre_test_avg, "pre_test_avg.csv")
-# write.csv(post_test_avg, "post_test_avg.csv")
-
 
 PRE_FVS_GROWONLY <- subset(avg_table, rxpackage == "031") #get grow only stand data from avg_table
 PRE_FVS_GROWONLY$rxpackage <- NULL
@@ -292,9 +361,18 @@ PRE_FVS_GROWONLY$rx <- NULL
 POST_FVS_SUMMARY2 <- merge(POST_FVS_SUMMARY_NA, avg_table, by = c("biosum_cond_id", "rxpackage", "rx")) #merge post summary and average table
 PRE_FVS_SUMMARY2 <- merge(PRE_FVS_SUMMARY_NA, PRE_FVS_GROWONLY, by = c("biosum_cond_id")) #merge pre summary and grow only table
 
+####If you get a "cannot allocate vector..." error at this point, you can use the lines below to clear the 
+#global environment. 
+#################################################################################################
+#########WARNING: THIS WILL DELETE ALL OTHER VARIABLES STORED IN THE GLOBAL ENVIRONMENT##########
+#################################################################################################
+# rm(list=setdiff(ls(), c("PRE_FVS_SUMMARY2", "POST_FVS_SUMMARY2", "project.location", "avg_table)))
+# gc()
+#################################################################################################
 
 ##Add in econ data from core. You must run core once to get the #s and then add max_nr_dpa and re-run it.
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/core/scenario20180418_2/db/scenario_results.mdb") #Change the text after "DBH=" to the correct directory for your project
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "core", "test", "db", "scenario_results.mdb"))
+conn <- odbcDriverConnect(conn.path)
 products <- sqlFetch(conn, "product_yields_net_rev_costs_summary_by_rxpackage", as.is = TRUE) 
 odbcCloseAll()
 
@@ -304,16 +382,19 @@ netrev.table <- products[,which(grepl(paste0(pattern, collapse = "|"), names(pro
 pre2 <- merge(PRE_FVS_SUMMARY2, netrev.table, all= TRUE)
 post2 <- merge(POST_FVS_SUMMARY2, netrev.table, all = TRUE)
 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB")
+conn.path <-  paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_SUMMARY.ACCDB"))
+conn <- odbcDriverConnect(conn.path)
+
+sqlQuery(conn, 'SELECT * INTO PRE_FVS_SUMMARY_OLD FROM PRE_FVS_SUMMARY')
+sqlQuery(conn, 'DROP TABLE PRE_FVS_SUMMARY')
 sqlSave(conn, dat = pre2, tablename = "PRE_FVS_SUMMARY", rownames = FALSE)
 
-# sqlQuery(conn, 'SELECT * INTO POST_FVS_SUMMARY_OLD FROM POST_FVS_SUMMARY')
-# sqlQuery(conn, 'DROP TABLE POST_FVS_SUMMARY')
+sqlQuery(conn, 'SELECT * INTO POST_FVS_SUMMARY_OLD FROM POST_FVS_SUMMARY')
+sqlQuery(conn, 'DROP TABLE POST_FVS_SUMMARY')
 sqlSave(conn, dat = post2, tablename = "POST_FVS_SUMMARY", rownames = FALSE)
 
-# sqlQuery(conn, 'DROP TABLE avg_table')
-# sqlSave(conn, dat = avg_table, tablename = "avg_table", rownames = FALSE)
-# 
+sqlSave(conn, dat = avg_table, tablename = "avg_table", rownames = FALSE)
+
 
 odbcCloseAll()
 

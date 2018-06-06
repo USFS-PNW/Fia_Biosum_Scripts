@@ -490,7 +490,7 @@ CreateSurvVolRatioTable <- function(directory, variantname) {
     MC_SURV_VOL_TREE1 <- MC_SURV_VOL_TREE1[complete.cases(MC_SURV_VOL_TREE1$Vol),] #get rid of NAs
     SurvVolRatio <- MC_SURV_VOL_TREE1 %>% group_by(StandID, Year) %>% summarise(SurvVolSum = sum(SurvVol), 
                                                                                      VolSum = sum(Vol),
-                                                                                     SurvVolRatio2 = ifelse(VolSum > 0, SurvVolSum/VolSum, 1))
+                                                                                     SurvVolRatio = ifelse(VolSum > 0, SurvVolSum/VolSum, 1))
 
     SurvVolRatio$MortVol_FOFEM <- SurvVolRatio$VolSum-SurvVolRatio$SurvVolSum
     

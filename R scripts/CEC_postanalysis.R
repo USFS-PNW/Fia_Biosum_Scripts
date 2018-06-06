@@ -1,47 +1,55 @@
-#Package Figures
-library("dplyr")
-library("RODBC")
-library("ggplot2")
-library("gridExtra")
-library("reshape2")
-options(scipen = 999)
 
+#Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
+#and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
+packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2")
 
-#####################################################################################################################
-#######################IF USING THE MortVolFigureData_Master.csv FILE SKIP DIRECTLY TO LINE 120#####################
-#####################################################################################################################
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
 
+options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
+
+#Project root location. 
+project.location <- "H:/cec_20180529"
+additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data"
+core.scenario.name <- "scenario1"
+
+#Use & set these lines if you aren't in a biosum project directory
+# project.location <- NA
+# prepost.location <- "H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB"
+# master.location <- "H:/cec_20170915/db/master.mdb"
+#core.location <- "H:/cec_20170915/core/scenario6_20180508/db/scenario_results.mdb"
 
 #Get the PREPOST data from PRE_FVS_SUMMARY and POST_FVS_SUMMARY in the fvs/db directory
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB") #Change the text after "DBH=" to the correct directory for your project
+if (!is.na(project.location)) {
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "fvs", "db", "PREPOST_FVS_SUMMARY.ACCDB"))
+} else {
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(prepost.location))
+}
+conn <- odbcDriverConnect(conn.path) 
 pre <- sqlFetch(conn, "PRE_FVS_SUMMARY", as.is = TRUE) 
 post <- sqlFetch(conn, "POST_FVS_SUMMARY", as.is = TRUE) 
 odbcCloseAll()
 
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/db/master.mdb") #Change the text after "DBH=" to the correct directory for your project
+if (!is.na(project.location)) {
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "db", "master.mdb"))
+} else {
+  conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(master.location))
+}
+conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
 master_cond <- sqlFetch(conn, "cond", as.is = TRUE) 
+ftype <- sqlFetch(conn, "CEC_ftype", as.is = TRUE)
 odbcCloseAll()
 
-#Crosswalk forest type code, Set your working directory by updating the directory in the line below or by going to 
-#"Session" -> "Set working directory" in the menu at the top. If you do that, do not run the line starting with 
-#"setwd" below. The working directory should be set to wherever the CEC-ftype.csv file is. This is also where any
-#outputs will be saved to.
-setwd("G:/Dropbox/Carlin/Berkeley/biosum")
-ftype <- read.csv("CEC_ftype.csv") #This is downloaded separately
-
+#Crosswalk forest type code
 names(ftype)[1] <- "fortypcd"
 names(ftype)[3] <- "CEC_type"
 ftype <- ftype[,c(1,3)]
 
 master_cond<- merge(master_cond, ftype)
-
-conn <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=H:/cec_20170915/core/scenario6_20180508/db/scenario_results.mdb") #Change the text after "DBH=" to the correct directory for your project
-net_rev <- sqlFetch(conn, "product_yields_net_rev_costs_summary_by_rxpackage", as.is = TRUE) 
-effective <- sqlFetch(conn, "cycle1_effective", as.is = TRUE)
-valid_combos <- sqlFetch(conn, "validcombos_fvsprepost", as.is = TRUE)
-cycle1_best_rx <- sqlFetch(conn, "cycle1_best_rx_summary", as.is = TRUE)
-stand_cr <- sqlFetch(conn, "stand_costs_revenue_volume_by_rx", as.is = TRUE)
-odbcCloseAll()
 
 ###COND DATA###
 #The section below connects to the master_cond table and pulls in forest type code and owner code values from master_cond,
@@ -50,12 +58,6 @@ pattern <- c("biosum_cond_id", "rxpackage", "fortypcd", "owncd", "owngrpcd", "ac
 cond.relevant.data <- master_cond[,c(which(grepl(paste0(pattern, collapse = "|"), names(master_cond))))]
 cond.relevant.data <- cond.relevant.data[cond.relevant.data$owncd == 11 |  cond.relevant.data$owncd == 46,]
 cond.relevant.data <- cond.relevant.data[cond.relevant.data$CEC_type %in% c("Douglas-fir", "Pine", "Mixed conifer", "True fir"),]
-
-#####Get total treated acres####
-valid.acres <- merge(cond.relevant.data, valid_combos)
-valid.acres.summary <- valid.acres %>% group_by(CEC_type, rxpackage, rxcycle, owngrpcd) %>% summarise(Treatable_Acres = sum(acres))
-treated.area <- valid.acres.summary[valid.acres.summary$rxpackage == "031" & valid.acres.summary$rxcycle == "1",]
-write.csv(treated.area, paste0("TreatedArea_Master_", format(Sys.Date(), "%Y%m%d"), ".csv"), row.names = FALSE)
 
 ####PREPOST DATA####
 #Calculate mort vol pct, change NA values to 0
@@ -156,9 +158,27 @@ NonYear1_packagestand_data <- NonYear1.data %>% group_by(biosum_cond_id, rxpacka
                                                                                                       )
 
 
-PREPOST_stand <- merge(NonYear1_packagestand_data, packagestand_level_data)
+stand_summary <- merge(NonYear1_packagestand_data, packagestand_level_data)
 
-###CORE DATA####
+#####################################################
+######CORE DATA. SKIP IF YOU HAVE NOT RUN CORE#######
+#####################################################
+conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "core", core.scenario.name, "db", "scenario_results.mdb"))
+conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
+net_rev <- sqlFetch(conn, "product_yields_net_rev_costs_summary_by_rxpackage", as.is = TRUE)
+effective <- sqlFetch(conn, "cycle1_effective", as.is = TRUE)
+valid_combos <- sqlFetch(conn, "validcombos_fvsprepost", as.is = TRUE)
+cycle1_best_rx <- sqlFetch(conn, "cycle1_best_rx_summary", as.is = TRUE)
+stand_cr <- sqlFetch(conn, "stand_costs_revenue_volume_by_rx", as.is = TRUE)
+odbcCloseAll()
+
+#####Get total treated acres####
+valid.acres <- merge(cond.relevant.data, valid_combos)
+valid.acres.summary <- valid.acres %>% group_by(CEC_type, rxpackage, rxcycle, owngrpcd) %>% summarise(Treatable_Acres = sum(acres))
+treated.area <- valid.acres.summary[valid.acres.summary$rxpackage == "031" & valid.acres.summary$rxcycle == "1",]
+write.csv(treated.area, paste0("TreatedArea_Master_", format(Sys.Date(), "%Y%m%d"), ".csv"), row.names = FALSE)
+
+
 pattern <- c("biosum_cond_id", "rxpackage", "merch_yield_gt", "chip_yield_gt", "chip_val_dpa", "merch_val_dpa", "harvest_onsite_cpa", "merch_nr_dpa", "max_nr_dpa")
 core.data <- net_rev[,c(which(grepl(paste0(pattern, collapse = "|"), names(net_rev))))]
 
@@ -185,16 +205,22 @@ core.data$rxcycle <- NULL
 core.data$rx <- NULL
 
 #merge in the other package-stand data from PREPOST
-stand_summary <- merge(PREPOST_stand, core.data, by = c("biosum_cond_id", "rxpackage"), all.x = TRUE)
+stand_summary <- merge(stand_summary, core.data, by = c("biosum_cond_id", "rxpackage"), all.x = TRUE)
+
+
+#####################################################
+#####################################################
+#####################################################
 stand_summary <- merge(stand_summary, cond.relevant.data)
-  
+
 ##This table should now contain relevant averages for all non year 1 (pre cycle 1) values only for stands that were treated at least once merged
 #with various economic variables from core and forest type code.
+setwd(project.location)
 write.csv(stand_summary, paste0("FigureData_Master_", format(Sys.Date(), "%Y%m%d"), ".csv"), row.names = FALSE)
 
 ####GRAPHING DATA####
-package_labels <- read.csv("packagelabels.csv")
-graph_data <- read.csv("graph_ref.csv")
+package_labels <- read.csv(file.path(additional.data, "packagelabels_table.csv"))
+graph_data <- read.csv(file.path(additional.data, "graph_ref.csv"))
 
 #The get_data function takes the packagestand_data3 data, limits it to the packages to set as the "packages" parameter
 #in line 150, limits it to only relevant forest types, limits it to only stands that exist in all packages, 
@@ -260,12 +286,13 @@ stands <- get_relevant_stands(stand_summary, c(4,7,17))
 
 ####PACKAGE GRAPHS####
 get_package_averages <- function(stand.data) {
+  if ("harvest_onsite_cpa" %in% names(stand.data)) {
   stand.data$harvest_onsite_cpa[is.na(stand.data$harvest_onsite_cpa)] <- 0
   stand.data$merch_nr_dpa[is.na(stand.data$merch_nr_dpa)] <- 0
   stand.data$max_nr_dpa[is.na(stand.data$max_nr_dpa)] <- 0
   stand.data$merch_val_dpa[is.na(stand.data$merch_val_dpa)] <- 0
   stand.data$chip_val_dpa[is.na(stand.data$chip_val_dpa)] <- 0
-  #gets the average values by volclass, CEC_type, Owner, Standcount values
+  
   package_average <- stand.data %>% group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
                                                                                                                           PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
                                                                                                                           PkgAvg_CBH = mean(Avg_CBH), 
@@ -280,6 +307,17 @@ get_package_averages <- function(stand.data) {
                                                                                                                           PkgSum_Period_Acc = sum(Period_Acc_sum), 
                                                                                                                           PkgSum_Period_Mort = sum(Period_Mort_sum), 
                                                                                                                           PkgSum_RTCuFt = sum(Sum_RTCuFt))
+  }
+  #gets the average values by volclass, CEC_type, Owner, Standcount values
+  package_average <- stand.data %>% group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
+                                                                                                                          PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
+                                                                                                                          PkgAvg_CBH = mean(Avg_CBH), 
+                                                                                                                          PkgAvg_Canopy_Density = mean(Avg_Canopy_Density), 
+                                                                                                                          PkgAvg_HS_Sev = mean(Avg_HS_Sev), PkgAvg_FRS = mean(Avg_FRS),
+                                                                                                                          PkgAvg_Initial.TCuFt = mean(Initial.TCuFt), 
+                                                                                                                          PkgSum_Period_Acc = sum(Period_Acc_sum), 
+                                                                                                                          PkgSum_Period_Mort = sum(Period_Mort_sum), 
+                                                                                                                          PkgSum_RTCuFt = sum(Sum_RTCuFt))
   
   package_average$rxpackage <- as.factor(package_average$rxpackage)
   
@@ -287,6 +325,11 @@ get_package_averages <- function(stand.data) {
 }
 
 package_avgs <- get_package_averages(stands)
+
+####GRAPH FUNCTION####
+#This function takes stand level averages, runs the get_package_averages function (above), 
+#then graphs the data based on parameters set in the graph_ref.csv file in the github
+#additional data file. You can add variables, change axes names, etc. using that reference.
   
 graph_package_data <- function(data, packages, graph_variable_name1, graph_variable_name2) {
   package.data <- get_package_averages(get_relevant_stands(data, packages))
@@ -329,16 +372,17 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
       final <- paste0(final, add)
     }
   }
+  
     
   create_variable_graph <- function(graph_variable_name, legend) {
       y <- as.character(graph_data$Y[graph_data$Graph_variable_name == graph_variable_name])
       if(!is.na(graph_data$YMAX[graph_data$Graph_variable_name == graph_variable_name])) {
         ymax <- as.numeric(graph_data$YMAX[graph_data$Graph_variable_name == graph_variable_name])
       } else {
-        if (ceiling(max(package.data[,c(which(names(package.data) == y))])) > 1) {
-        ymax <- ceiling(max(package.data[,c(which(names(package.data) == y))])) + max(package.data[,c(which(names(package.data) == y))]) * 0.1
+        if (ceiling(max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) > 1) {
+        ymax <- ceiling(max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) + max(package.data[,c(which(names(package.data) == y))]) * 0.1
         } else {
-          ymax <- max(package.data[,c(which(names(package.data) == y))]) + max(package.data[,c(which(names(package.data) == y))]) * 0.1
+          ymax <- max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) + max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) * 0.1
         }
       }
       
@@ -391,6 +435,7 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
 }
 
 data <- stand_summary
+
 ##MORTVOL GRAPHS
 packages_1v2v3v4 <- graph_package_data(data, c(1,2,3,4), "mortvol", "mortvolpct")
 packages_1v2v3v4 <- graph_package_data(data, packages = c(1,2,3,4), "mortvol", "mortvolpct") #comparison of post treatment surface fuel treatments
