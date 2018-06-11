@@ -12,5 +12,5 @@ chip,PkgSum_chip_val_dpa,/10^5,,Chip Volume Value,hundreds of thousands of dolla
 harvest,PkgSum_RTCuFt,/10^5,,Removed Volume,hundreds of thousands of ft^3
 growth,PkgSum_Period_Acc,/10^5,,Accretion,hundreds of thousands of ft^3
 mortality,PkgSum_Period_Mort,/10^5,,Mortality,hundreds of thousands of ft^3
-netgrowth,PkgSum_NetGrowth_TCuFt,/10^5,,Net Growth,hundreds of thousands of TCuFt
-netgrowthharvest,PkgSum_NetGrowth_Plus_Harvest_TCuFt,/10^5,,Net Growth + Harvest,hundreds of thousands of TCuFt
+netgrowth,PkgSum_NetGrowth_TCuFt,/10^5,,Net Growth,hundreds of thousands of ft^3
+netgrowthharvest,PkgSum_NetGrowth_Plus_Harvest_TCuFt,/10^5,,Net Growth + Harvest,hundreds of thousands of ft^3

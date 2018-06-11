@@ -1,6 +1,7 @@
-
 #Make sure you have the Microsoft Access Databse Engine Driver https://www.microsoft.com/en-us/download/confirmation.aspx?id=23734
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
+
+#Load in required packages. Some red warning text is normal.
 packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2")
 
 package.check <- lapply(packages, FUN = function(x) {
@@ -13,8 +14,8 @@ package.check <- lapply(packages, FUN = function(x) {
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #Project root location. 
-project.location <- "E:/cec_20180529/cec_20180529"
-additional.data <- "E:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
+project.location <- "H:/cec_20180529/"
+additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
 core.scenario.name <- "scenario1" #The name of the core scenario you would like to use to pull in core variables
 
 #Use & set these lines if you aren't in a biosum project directory or if you are using different master/core locations
@@ -64,13 +65,15 @@ cond.relevant.data <- cond.relevant.data[cond.relevant.data$CEC_type %in% c("Dou
 
 ####PREPOST DATA####
 #Calculate mort vol pct, change NA values to 0
-pre$MortVol_FOFEM[pre$MortVol_FOFEM == 0] <- 0
+pre$MortVol_FOFEM[is.na(pre$MortVol_FOFEM)] <- 0 
 pre$MortVolPct_FOFEM <- pre$MortVol_FOFEM/pre$VolSum
 pre$MortVolPct_FOFEM[pre$VolSum == 0] <- 0
+pre$MortVolPct_FOFEM[is.na(pre$VolSum)] <- 0
 
-post$MortVol_FOFEM[post$MortVol_FOFEM == 0] <- 0
+post$MortVol_FOFEM[is.na(post$MortVol_FOFEM)] <- 0 
 post$MortVolPct_FOFEM <- post$MortVol_FOFEM/post$VolSum
 post$MortVolPct_FOFEM[post$VolSum == 0] <- 0
+post$MortVolPct_FOFEM[is.na(post$VolSum)] <- 0
 
 #Get relevant columns from PREPOST and core data
 pattern <- c("biosum_cond_id", "rxpackage", "rx", "rxcycle", "Year", "fvs_variant", "TCuFt", "MortVol_FOFEM", "MortVolPct_FOFEM", "RTpa", "RTCuFt", "Acc",
@@ -317,7 +320,7 @@ get_relevant_stands <- function(data, packages) {
   return(relevant.stands)
 }
 
-stands <- get_relevant_stands(stand_summary, c(4,7,17))
+stands <- get_relevant_stands(stand_summary, c(1,2,3,4))
 
 ####PACKAGE GRAPHS####
 #This function takes stand level data/averages and calculates package level averages 
@@ -326,49 +329,50 @@ stands <- get_relevant_stands(stand_summary, c(4,7,17))
 get_package_averages <- function(stand.data) {
   if ("harvest_onsite_cpa" %in% names(stand.data)) {
     
-  #if core values are NA, set to 0 (i.e. they were not harvested, so they didn't cost anything)
-  stand.data$harvest_onsite_cpa[is.na(stand.data$harvest_onsite_cpa)] <- 0
-  stand.data$merch_nr_dpa[is.na(stand.data$merch_nr_dpa)] <- 0
-  stand.data$max_nr_dpa[is.na(stand.data$max_nr_dpa)] <- 0
-  stand.data$merch_val_dpa[is.na(stand.data$merch_val_dpa)] <- 0
-  stand.data$chip_val_dpa[is.na(stand.data$chip_val_dpa)] <- 0
-  
-  package_average <- stand.data %>% dplyr::group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% dplyr::summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
-                                                                                                                          PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
-                                                                                                                          PkgAvg_CBH = mean(Avg_CBH), 
-                                                                                                                          PkgAvg_Canopy_Density = mean(Avg_Canopy_Density), 
-                                                                                                                          PkgAvg_HS_Sev = mean(Avg_HS_Sev), PkgAvg_FRS = mean(Avg_FRS),
-                                                                                                                          PkgSum_harvest_onsite_cpa = sum(harvest_onsite_cpa), 
-                                                                                                                          PkgSum_merch_nr_dpa = sum(merch_nr_dpa),
-                                                                                                                          PkgSum_max_nr_dpa = sum(max_nr_dpa),
-                                                                                                                          PkgSum_merch_val_dpa = sum(merch_val_dpa),
-                                                                                                                          PkgSum_chip_val_dpa = sum(chip_val_dpa),
-                                                                                                                          PkgAvg_Initial.TCuFt = mean(Initial.TCuFt), 
-                                                                                                                          PkgSum_Period_Acc = sum(Period_Acc_sum), 
-                                                                                                                          PkgSum_Period_Mort = sum(Period_Mort_sum), 
-                                                                                                                          PkgSum_RTCuFt = sum(Sum_RTCuFt), 
-                                                                                                                          PkgSum_NetGrowth_TCuFt = sum(Net_Growth_TCuFt_sum),
-                                                                                                                          PkgSum_NetGrowth_Plus_Harvest_TCuFt = sum(NetGrowth_Plus_Harvest_TCuFt_sum))
+    #if core values are NA, set to 0 (i.e. they were not harvested, so they didn't cost anything)
+    stand.data$harvest_onsite_cpa[is.na(stand.data$harvest_onsite_cpa)] <- 0
+    stand.data$merch_nr_dpa[is.na(stand.data$merch_nr_dpa)] <- 0
+    stand.data$max_nr_dpa[is.na(stand.data$max_nr_dpa)] <- 0
+    stand.data$merch_val_dpa[is.na(stand.data$merch_val_dpa)] <- 0
+    stand.data$chip_val_dpa[is.na(stand.data$chip_val_dpa)] <- 0
+    
+    package_average <- stand.data %>% dplyr::group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% dplyr::summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
+                                                                                                                                          PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
+                                                                                                                                          PkgAvg_CBH = mean(Avg_CBH), 
+                                                                                                                                          PkgAvg_Canopy_Density = mean(Avg_Canopy_Density), 
+                                                                                                                                          PkgAvg_HS_Sev = mean(Avg_HS_Sev), PkgAvg_FRS = mean(Avg_FRS),
+                                                                                                                                          PkgSum_harvest_onsite_cpa = sum(harvest_onsite_cpa), 
+                                                                                                                                          PkgSum_merch_nr_dpa = sum(merch_nr_dpa),
+                                                                                                                                          PkgSum_max_nr_dpa = sum(max_nr_dpa),
+                                                                                                                                          PkgSum_merch_val_dpa = sum(merch_val_dpa),
+                                                                                                                                          PkgSum_chip_val_dpa = sum(chip_val_dpa),
+                                                                                                                                          PkgAvg_Initial.TCuFt = mean(Initial.TCuFt), 
+                                                                                                                                          PkgSum_Period_Acc = sum(Period_Acc_sum), 
+                                                                                                                                          PkgSum_Period_Mort = sum(Period_Mort_sum), 
+                                                                                                                                          PkgSum_RTCuFt = sum(Sum_RTCuFt), 
+                                                                                                                                          PkgSum_NetGrowth_TCuFt = sum(Net_Growth_TCuFt_sum),
+                                                                                                                                          PkgSum_NetGrowth_Plus_Harvest_TCuFt = sum(NetGrowth_Plus_Harvest_TCuFt_sum))
+  } else {
+    #gets the average values by volclass, CEC_type, Owner, Standcount values
+    package_average <- stand.data %>% dplyr::group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% dplyr::summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
+                                                                                                                                          PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
+                                                                                                                                          PkgAvg_CBH = mean(Avg_CBH), 
+                                                                                                                                          PkgAvg_Canopy_Density = mean(Avg_Canopy_Density), 
+                                                                                                                                          PkgAvg_HS_Sev = mean(Avg_HS_Sev), PkgAvg_FRS = mean(Avg_FRS),
+                                                                                                                                          PkgAvg_Initial.TCuFt = mean(Initial.TCuFt), 
+                                                                                                                                          PkgSum_Period_Acc = sum(Period_Acc_sum), 
+                                                                                                                                          PkgSum_Period_Mort = sum(Period_Mort_sum), 
+                                                                                                                                          PkgSum_RTCuFt = sum(Sum_RTCuFt),
+                                                                                                                                          PkgSum_NetGrowth_TCuFt = sum(Net_Growth_TCuFt_sum),
+                                                                                                                                          PkgSum_NetGrowth_Plus_Harvest_TCuFt = sum(NetGrowth_Plus_Harvest_TCuFt_sum))
   }
-  #gets the average values by volclass, CEC_type, Owner, Standcount values
-  package_average <- stand.data %>% dplyr::group_by(rxpackage, VolClass, CEC_type, Owner, StandCount, SC_to_print) %>% dplyr::summarise(PkgAvg_MortVol = mean(Avg_MortVol_FOFEM), 
-                                                                                                                          PkgAvg_MortVolPct = mean(Avg_MortVolPct_FOFEM), 
-                                                                                                                          PkgAvg_CBH = mean(Avg_CBH), 
-                                                                                                                          PkgAvg_Canopy_Density = mean(Avg_Canopy_Density), 
-                                                                                                                          PkgAvg_HS_Sev = mean(Avg_HS_Sev), PkgAvg_FRS = mean(Avg_FRS),
-                                                                                                                          PkgAvg_Initial.TCuFt = mean(Initial.TCuFt), 
-                                                                                                                          PkgSum_Period_Acc = sum(Period_Acc_sum), 
-                                                                                                                          PkgSum_Period_Mort = sum(Period_Mort_sum), 
-                                                                                                                          PkgSum_RTCuFt = sum(Sum_RTCuFt),
-                                                                                                                          PkgSum_NetGrowth_TCuFt = sum(Net_Growth_TCuFt_sum),
-                                                                                                                          PkgSum_NetGrowth_Plus_Harvest_TCuFt = sum(NetGrowth_Plus_Harvest_TCuFt_sum))
   
   package_average$rxpackage <- as.factor(package_average$rxpackage)
   
   return(package_average)
 }
 
-package_avgs <- get_package_averages(get_relevant_stands(stand_summary, c(4,7,17)))
+package_avgs <- get_package_averages(get_relevant_stands(stand_summary, c(1,2,3,4)))
 
 ####GRAPH FUNCTION####
 #This function takes stand level averages, runs the get_package_averages function (above), 
@@ -441,16 +445,23 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
         ymax <- as.numeric(graph_data$YMAX[graph_data$Graph_variable_name == graph_variable_name])
       } else {
         if (ceiling(max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) > 1) {
-        ymax <- ceiling(max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) + max(package.data[,c(which(names(package.data) == y))]) * 0.1
+          ymax <- ceiling(max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) + max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) * 0.1
         } else {
           ymax <- max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) + max(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) * 0.1
+        }
+        if (floor(min(package.data[,c(which(names(package.data) == y))], na.rm = TRUE)) >= 0) {
+          ymin <- 0
+        } else {
+          ymin <- min(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) + min(package.data[,c(which(names(package.data) == y))], na.rm = TRUE) * 0.1
         }
       }
       
       if (!is.na(graph_data$Modifier[graph_data$Graph_variable_name == graph_variable_name])){
         y <- paste0(y,graph_data$Modifier[graph_data$Graph_variable_name == graph_variable_name])
-        mod <- parse(text = paste0(ymax, graph_data$Modifier[graph_data$Graph_variable_name == graph_variable_name]))
-        ymax <- eval(mod)
+        mod.ymax <- parse(text = paste0(ymax, graph_data$Modifier[graph_data$Graph_variable_name == graph_variable_name]))
+        mod.ymin <- parse(text = paste0(ymin, graph_data$Modifier[graph_data$Graph_variable_name == graph_variable_name]))
+        ymax <- eval(mod.ymax)
+        ymin <- eval(mod.ymin)
       }
       if (!graph_data$UNITS[graph_data$Graph_variable_name == graph_variable_name] == ""){
         ylabel <- paste0(as.character(graph_data$YLABEL[graph_data$Graph_variable_name == graph_variable_name]), "\n",
@@ -461,15 +472,29 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
       title <- paste(as.character(graph_data$YLABEL[graph_data$Graph_variable_name == graph_variable_name]), "by Initial Volume")
       yaes <- paste0("package.data$", y)
       
-      graph <- ggplot(package.data, aes_string("rxpackage", y)) +
-        geom_point(aes(color = CEC_type, shape = SC_to_print), size = 4) +
-        facet_grid(Owner~VolClass) + 
-        scale_shape_manual(values=c(15,17), name = "Stand Count") +
-        scale_colour_manual(values=cbPalette, name="Forest Type Group") +
-        scale_y_continuous(limits = c(0,ymax)) +
-        custom_theme +
-        labs(x="RX Package", y=ylabel, title=title) + 
-        theme(legend.position = legend) 
+      if (ymin < 0) {
+        graph <- ggplot(package.data, aes_string("rxpackage", y)) + 
+          geom_hline(yintercept = 0, size = 0.75, color = "gray25") +
+          geom_point(aes(color = CEC_type, shape = SC_to_print), size = 4) +
+          facet_grid(Owner~VolClass) + 
+          scale_shape_manual(values=c(15,17), name = "Stand Count") +
+          scale_colour_manual(values=cbPalette, name="Forest Type Group") +
+          scale_y_continuous(limits = c(ymin,ymax)) +
+          custom_theme +
+          labs(x="RX Package", y=ylabel, title=title) + 
+          theme(legend.position = legend) 
+
+      } else {
+        graph <- ggplot(package.data, aes_string("rxpackage", y)) +
+          geom_point(aes(color = CEC_type, shape = SC_to_print), size = 4) +
+          facet_grid(Owner~VolClass) + 
+          scale_shape_manual(values=c(15,17), name = "Stand Count") +
+          scale_colour_manual(values=cbPalette, name="Forest Type Group") +
+          scale_y_continuous(limits = c(ymin,ymax)) +
+          custom_theme +
+          labs(x="RX Package", y=ylabel, title=title) + 
+          theme(legend.position = legend)
+      }
       
       # yvals <- eval(parse(text = yaes))
       # 
@@ -486,7 +511,7 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
   graph <- grid.arrange(grobs = list(var1,var2,t), nrow = 2, layout_matrix = layout)
   
   old.dir <- getwd()
-  dir <- file.path(getwd(), paste(graph_variable_name1, graph_variable_name2, sep = "_"))
+  dir <- file.path(getwd(), paste(graph_variable_name1, graph_variable_name2, format(Sys.Date(), "%Y%m%d"),sep = "_"))
   dir.create(dir, showWarnings = FALSE)
   setwd(dir)
   
