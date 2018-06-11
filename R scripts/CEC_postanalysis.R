@@ -511,7 +511,9 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
   graph <- grid.arrange(grobs = list(var1,var2,t), nrow = 2, layout_matrix = layout)
   
   old.dir <- getwd()
-  dir <- file.path(getwd(), paste(graph_variable_name1, graph_variable_name2, format(Sys.Date(), "%Y%m%d"),sep = "_"))
+  dir <- file.path(getwd(), "graphs")
+  dir.create(dir, showWarnings = FALSE)
+  dir <- file.path(getwd(), "graphs", paste(format(Sys.Date(), "%Y%m%d"),graph_variable_name1, graph_variable_name2,sep = "_"))
   dir.create(dir, showWarnings = FALSE)
   setwd(dir)
   
