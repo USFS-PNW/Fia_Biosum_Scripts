@@ -9,12 +9,8 @@ package.check <- lapply(packages, FUN = function(x) {
   }
 })
 
-####Load Data
-
-
+####LOAD DATA FROM BIOSUM####
 args=(commandArgs(TRUE))
-
-#args <- "OPCOST_8_7_9_Input_CA_P003_102_102_102_102_2018-01-16_11_20_15_AM"
 
 print(args[1])
 con<-odbcConnectAccess2007(args[1])
@@ -25,7 +21,6 @@ print("m data.frame opcost_input SqlFetch:OK")
 odbcCloseAll()
 
 ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", args[2])
-#ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST/opcost_ref.accdb")
 
 con2 <- odbcDriverConnect(ref2)
 
@@ -51,13 +46,41 @@ opcost_ideal_ref <- opcost_ideal_ref[-1,]
 
 odbcCloseAll()
 
-#####MANUALLY BRING IN A SINGLE OPCOST INPUT FILE######
-# setwd('H:/cec_20170915/OPCOST/Input/')
-# con <- odbcConnectAccess2007("H:/cec_20170915 - Copy/OPCOST/Input/OPCOST_8_7_9_Input_CA_P001_100_100_100_100_2018-01-03_08_32_45_AM.accdb") #Change the text after "DBH=" to the correct directory for your project
-# m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
+####MANUALLY RUN OPCOST ON A SINGLE OPCOST INPUT FILE####
+# opcost.ref.location <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
+# opcost.input.location <- "H:/cec_20180529/OPCOST/Input/OPCOST_10_0_Input_CA_P001_100_100_100_100_2018-06-05_07_43_09_AM.accdb"
 # 
-# con <- odbcConnectAccess2007("C:/Users/Carlin/Downloads/fia_biosum_4927.accdb") #Change the text after "DBH=" to the correct directory for your project
-# m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
+# #Opcost_Input
+# conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(opcost.input.location))
+# conn <- odbcDriverConnect(conn.path)
+# m<-data.frame(sqlFetch(conn, "opcost_input", as.is=TRUE))
+# 
+# odbcCloseAll()
+# 
+# #Opcost_Ref
+# conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(opcost.ref.location))
+# conn <- odbcDriverConnect(conn.path)
+# opcost_equation_ref<- sqlFetch(conn, "opcost_equation_ref", as.is = TRUE)
+# names(opcost_equation_ref) <- opcost_equation_ref[1,]
+# opcost_equation_ref <- opcost_equation_ref[-1,]
+# 
+# opcost_units <- sqlFetch(conn, "opcost_units", as.is = TRUE)
+# names(opcost_units) <- opcost_units[1,]
+# opcost_units <- opcost_units[-1,]
+# 
+# opcost_cost_ref <- sqlFetch(conn, "opcost_cost_ref", as.is = TRUE)
+# names(opcost_cost_ref) <- opcost_cost_ref[1,]
+# opcost_cost_ref <- opcost_cost_ref[-1,]
+# 
+# opcost_harvestsystem_ref <- sqlFetch(conn, "opcost_harvestsystem_ref", as.is = TRUE)
+# names(opcost_harvestsystem_ref) <- opcost_harvestsystem_ref[1,]
+# opcost_harvestsystem_ref <- opcost_harvestsystem_ref[-1,]
+# 
+# opcost_ideal_ref <- sqlFetch(conn, "opcost_ideal_ref", as.is = TRUE)
+# names(opcost_ideal_ref) <- opcost_ideal_ref[1,]
+# opcost_ideal_ref <- opcost_ideal_ref[-1,]
+# 
+# odbcCloseAll()
 
 #####BRING IN REFERENCE TABLES -- THIS IS FOR IF YOU'RE NOT USING THE ACCESS DATABASE VERSION ABOVE AND NEED TO BRING IN THE CSVS######
 # setwd("G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST")
@@ -67,10 +90,6 @@ odbcCloseAll()
 # opcost_harvestsystem_ref <- read.csv("opcost_harvestsystem_ref.csv")
 # opcost_ideal_ref <- read.csv("opcost_ideal_ref.csv")
 
-#Band aid fix to run tethered CTL only. This means that the "optimal" will always be Tethered CTL.
-opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered CTL",]
-opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
-
 
 
 #Convert to Data Frame and set "NaN' to NA
@@ -78,6 +97,10 @@ m <- data.frame(m)
 m[m == "NaN"] <- NA #convert "NaN" values to NA
 pattern <- c("Stand", "Harvesting.System")
 m_old_HS <- m[,c(which(grepl(paste0(pattern, collapse = "|"), names(m))))]
+
+#Band aid fixes to run tethered CTL only. This means that the "optimal" and the harvest system for input will always be Tethered CTL 
+opcost_harvestsystem_ref <- opcost_harvestsystem_ref[opcost_harvestsystem_ref$Harvesting.System == "Tethered CTL",]
+opcost_equation_ref <- opcost_equation_ref[opcost_equation_ref$Equation.ID %in% opcost_harvestsystem_ref$Equation.ID,]
 m$Harvesting.System <- "Tethered CTL"
 
 #twitchVol is (Trees Per Acre * Average Tree Volume (ft3)) by size class, divided by total trees per acre to get average volume per tree (ft3/tree)
@@ -883,12 +906,30 @@ sqlSave(con, opcost_ideal_output, tablename="OpCost_Ideal_Output", safer=FALSE)
 odbcCloseAll()
 
 
-# library("reshape2")
-# library("ggplot2")
-# library("dplyr")
+# ###CREATE ANALYSIS GRAPHICS###
+# packages <- c("reshape2", "ggplot2", "dplyr")
+# 
+# package.check <- lapply(packages, FUN = function(x) {
+#   if (!require(x, character.only = TRUE)) {
+#     install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+#     library(x, character.only = TRUE)
+#   }
+# })
+# 
+# 
+# ##MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
+# #The code below will save it to your project directory in a new folder called "opcost_graphics"
+# project.directory <- "H:/cec_20180529" #change to your project directory
+# setwd(project.directory)
+# dir.create("opcost_graphics", showWarnings = FALSE)
+# setwd(file.path(project.directory, "opcost_graphics"))
+# 
 # graph_analyses_machine <- function(data) {
 #   ref <- opcost_equation_ref
 #   unique.machines <- unique(ref$Machine)
+#   old.dir <- getwd()
+#   dir.create(file.path(getwd(), paste(format(Sys.Date(), "%Y%m%d"), "machine_analysis", sep = "_")), showWarnings = FALSE)
+#   setwd(file.path(old.dir, paste(format(Sys.Date(), "%Y%m%d"), "machine_analysis", sep = "_")))
 # 
 #   for (i in 1:length(unique.machines)) {
 #     values <- ref[as.character(ref$Machine) == as.character(unique.machines[i]),]
@@ -917,6 +958,8 @@ odbcCloseAll()
 #       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n"))
 #     ggsave(filename = paste0(unique.machines[i], ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.1 > 6, nrow(df4)*1.1, 6),)
 #   }
+# 
+#   setwd(old.dir)
 # }
 # 
 # graph_analyses_machine(m)
@@ -924,6 +967,9 @@ odbcCloseAll()
 # graph_analyses_harvest_system <- function(data) {
 #   ref <- opcost_harvestsystem_ref
 #   unique.harvest.system <- unique(ref$Harvesting.System)
+#   old.dir <- getwd()
+#   dir.create(file.path(getwd(), paste(format(Sys.Date(), "%Y%m%d"), "harvest_system_analysis", sep = "_")), showWarnings = FALSE)
+#   setwd(file.path(old.dir, paste(format(Sys.Date(), "%Y%m%d"), "harvest_system_analysis", sep = "_")))
 # 
 #   for (i in 1:length(unique.harvest.system)) {
 #     pattern <- c(" ", "-", "/") #use data frame names as the harvest system names vector
@@ -945,11 +991,12 @@ odbcCloseAll()
 #     # df4$variable <- gsub(unique.machines[i],"",df4$variable)
 #     # ylim1 <- boxplot.stats(df2$value)$stats[c(1, 5)]
 #     graph <- ggplot(df2, aes(variable, value)) + geom_boxplot() + labs(x=unique.harvest.system[i], y="Hours Per Acre") +
-#       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n")) 
+#       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n"))
 #     # coord_cartesian(ylim = ylim1*3)
 #     assign("graph", graph, envir = .GlobalEnv)
 #     ggsave(filename = paste0(filename1, ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.1 > 6, nrow(df4)*1.1, 6),)
 #   }
+#   setwd(old.dir)
 # }
 # 
 # graph_analyses_harvest_system(m)
