@@ -47,8 +47,8 @@ opcost_ideal_ref <- opcost_ideal_ref[-1,]
 odbcCloseAll()
 
 ####MANUALLY RUN OPCOST ON A SINGLE OPCOST INPUT FILE####
-# opcost.ref.location <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
-# opcost.input.location <- "H:/cec_20180529/OPCOST/Input/OPCOST_10_0_Input_CA_P001_100_100_100_100_2018-06-05_07_43_09_AM.accdb"
+# opcost.ref.location <- "E:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/OPCOST/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
+# opcost.input.location <- "E:/cec_20180529/cec_20180529/OPCOST/Input/OPCOST_10_0_Input_CA_P001_100_100_100_100_2018-06-05_07_43_09_AM.accdb"
 # 
 # #Opcost_Input
 # conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(opcost.input.location))
@@ -239,9 +239,6 @@ m$ChipFeedstockWeight <- (m$Chip.tree.per.acre * (m$Chip.trees.MerchAsPctOfTotal
 
 #Example: calculate_hpa(data = m, equation.ID = "TETH_01")
 
-####TO DO: MULTIPLE LIMIT PARAMETERS####
-
-
 calculate_hpa <- function(data, equation.ID) {
   og_data_rows <- nrow(data) #get original number of rows in data
   og_data_columns <- ncol(data) #get original number of columns in data
@@ -262,87 +259,23 @@ calculate_hpa <- function(data, equation.ID) {
   
   if(row$Units != "") { 
     #convert units if Unit column is populated. This references opcost_units to add the unit conversion to the equation in opcost_equation_ref
-    conversion <- units$Hours.Per.Acre.Conversion[units$Unit == as.character(row$Units)]
-    conversion2 <- gsub("result", paste0("(",row$Equation,")"), conversion)
-    if(!complete.cases(row[,8:10])) { #if there are no limiting values
-      equation <- parse(text = paste0("with(data,",conversion2,")"))
-    } else { #if there are limiting values
-      equation <- parse(text = paste0("with(data.treated,",conversion2,")"))
+    if(!row$Units %in% units$Unit){
+      stop("Units not in opcost_units for conversion")
     }
+    equation<- gsub("result", paste0("(",row$Equation,")"), units$Hours.Per.Acre.Conversion[units$Unit == as.character(row$Units)]) 
   } else {
     #If units is not populated, use the equation as is from opcost_equation_ref
-    if(!complete.cases(row[,8:10])) { #if there are no limiting values
-      equation <- parse(text=paste0("with(data,",row$Equation,")"))
-    } else {
-      equation <- parse(text=paste0("with(data.treated,",row$Equation,")"))
-    }
+    equation <- row$Equation
   }
   
-  if(complete.cases(row[,8:10])) {  #for harvest methods with limits
-    
-    limit.parameter <- row$Limiting.Parameter #get limiting parameter 
-    
-    column <- which(names(data) == row$Limiting.Parameter) #get column number of limiting parameter
-    
-    data.na <- data[is.na(data[,column]),] #put rows where limiting parameter = NA into data.na
-    if(nrow(data.na) > 0) {
-      data.na$Treated <- "N"
-    }
-    
-    data.no.na <- data[!is.na(data[,column]),] #remove rows where limiting parameter = NA from data
-    
-    #Combine limiting parameter, limit type, and limiting parameter value to get limit.statement
-    limit.statement <- parse(text = paste0("with(data.no.na,", row$Limiting.Parameter, row$Limit.Type, row$Limiting.Parameter.Value,")"))
-    
-    data.nt <- data.no.na[!eval(limit.statement),] #put rows where limit.statement is false into data.nt
-    if(nrow(data.nt) > 0) {
-      data.nt$Treated <- "N"
-    }
-    data.treated <- data.no.na[eval(limit.statement),] #remove rows where limit.statement is false from data
-    if(nrow(data.treated) > 0) {
-      data.treated$Treated <- "Y"
-    }
-    
-    
-    #recombine the data
-    if(nrow(data.treated) > 0) {
-      data.treated[,ncol(data.treated) + 1] <- eval(equation)
-      if (nrow(data.nt) > 0) {
-        data.nt[,ncol(data.nt) + 1] <- NA
-        if (nrow(data.na) > 0) {
-          data.na[,ncol(data.na) + 1] <- NA
-          data <- rbind(data.treated, data.nt, data.na)
-        } else {
-          data <- rbind(data.treated, data.nt)
-        }
-      } else if (nrow(data.na) > 0) {
-        data.na[,ncol(data.na) + 1] <- NA
-        data <- rbind(data.treated, data.na)
-      } else {
-        data <- data.treated
-      }
-    } else if (nrow(data.na) > 0) {
-      data.na[,ncol(data.na) + 1] <- NA
-      if(nrow(data.nt) > 0) {
-        data.nt[,ncol(data.nt) + 1] <- NA
-        data <- rbind(data.nt, data.na)
-      } else {
-        data <- data.na
-      }
-    } else {
-      data.nt[,ncol(data.nt) + 1] <- NA
-      data <- data.nt
-    }
-    
-    #make sure you didn't lose any rows
-    if(nrow(data) != og_data_rows) {
-      stop("Limiting parameter not working properly") #stops the function if something above broke the data
-    }
-    
+  if(row$Limit.Statement != "") {  #for harvest methods with limits
+    #Evaluate equation for data subset based on Limit.Statement
+    limit.statement <- parse(text = paste0("with(data,", row$Limit.Statement, ")"))
+    equation.statement <- parse(text = paste0("with(data[",limit.statement, ",],", equation, ")"))
+    data[eval(limit.statement),ncol(data) + 1] <- eval(equation.statement)
   } else {
-    #for harvest methods without limits
-    data$Treated <- "Y"
-    data[,ncol(data) + 1] <- eval(equation) #calculate hours per acre value based on equation 
+    equation.statement <- parse(text = paste0("with(data,", equation, ")"))
+    data[,ncol(data) + 1] <- eval(equation.statement) #calculate hours per acre value based on equation 
   }
   
   if(ncol(data) > og_data_columns) {
@@ -351,15 +284,11 @@ calculate_hpa <- function(data, equation.ID) {
     stop("Equation not calculated")
   }
 
-  data$Treated <- NULL
-
-  
   return(data)
   
 }
 
-#calculate_hpa1 <- calculate_hpa(data = m, equation.ID = "TETH_01")
-
+#calculate_hpa1 <- calculate_hpa(data = m, equation.ID = "FB_02")
 
 #####COMPARE HOURS PER ACRE CALCULATIONS BY MACHINE AND GET MEAN######
 #compute_harvest_system_equations runs calculate_hpa() for all equations in an machine type (e.g. "Skidder"),
@@ -448,7 +377,7 @@ compute_harvest_system_equations <- function(data, harvest_system, allCols, mean
   return(data)
 }
 
-tethered <- compute_harvest_system_equations(data = m, harvest_system = "Tethered CTL", allCols = TRUE, meansonly = FALSE)
+#tethered <- compute_harvest_system_equations(data = m, harvest_system = "Tethered CTL", allCols = TRUE, meansonly = FALSE)
 
 #####GET MEAN HARVEST HOURS PER ACRE FOR ALL MACHINES######
 #all_harvesting_systems runs compute_harvest_system_equations for all analyses and compiles a table
@@ -482,7 +411,7 @@ all_harvesting_systems <- function(data) {
   return(mylist)
 }
 
-# all <- all_harvesting_systems(data = m)
+#all <- all_harvesting_systems(data = m)
 
 #tethered_all <- as.data.frame(all$Tethered) #convert list to data frame
 
@@ -907,25 +836,34 @@ odbcCloseAll()
 
 
 # ###CREATE ANALYSIS GRAPHICS###
-# packages <- c("reshape2", "ggplot2", "dplyr")
-# 
-# package.check <- lapply(packages, FUN = function(x) {
-#   if (!require(x, character.only = TRUE)) {
-#     install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
-#     library(x, character.only = TRUE)
-#   }
-# })
-# 
-# 
-# ##MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
-# #The code below will save it to your project directory in a new folder called "opcost_graphics"
-# project.directory <- "H:/cec_20180529" #change to your project directory
+packages <- c("reshape2", "ggplot2", "dplyr")
+
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
+
+##MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
+#The code below will save it to your project directory in a new folder called "opcost_graphics"
+# project.directory <- "E:/cec_20180529/cec_20180529" #change to your project directory
 # setwd(project.directory)
 # dir.create("opcost_graphics", showWarnings = FALSE)
 # setwd(file.path(project.directory, "opcost_graphics"))
 # 
 # graph_analyses_machine <- function(data) {
 #   ref <- opcost_equation_ref
+#   ###SUBSET TO ONLY INCLUDE SPECIFIC EQUATIONS/MACHINES###
+#   #This is a good spot to subset out certain equations
+#   #for example, to remove specific equations, you would change ref to:
+#   #ref <- opcost_equation_ref[!opcost_equation_ref$Equation.ID %in% c("FB_06", "FB_04", "FB_01"),]
+#   #you can remove additional equations by adding to the list after the c().
+#   #You can use the same method to remove machines:
+#   #ref <- opcost_equation_ref[!opcost_equation_ref$Machine %in% c("Feller Buncher"),]
+#   #This will help avoid corrupting any of the tables as ref is not stored
+#   #in the global environment when the function is run
 #   unique.machines <- unique(ref$Machine)
 #   old.dir <- getwd()
 #   dir.create(file.path(getwd(), paste(format(Sys.Date(), "%Y%m%d"), "machine_analysis", sep = "_")), showWarnings = FALSE)
@@ -939,7 +877,7 @@ odbcCloseAll()
 #     for (j in 1:nrow(values)) {
 #       values.data <- calculate_hpa1 <- calculate_hpa(data = data, equation.ID = values$Equation.ID[j])
 #       mylist[[j]] <- values.data
-#       name.vector[j] <- paste0(values$Name[j], values$Equation.ID[j])
+#       name.vector[j] <- paste0(values$Equation.ID[j])
 #     }
 # 
 #     values.data <- Reduce(merge, mylist)
@@ -956,7 +894,7 @@ odbcCloseAll()
 #     df4$variable <- gsub(unique.machines[i],"",df4$variable)
 #     graph <- ggplot(df2, aes(variable, value)) + geom_boxplot() + labs(x=unique.machines[i], y="Hours Per Acre") +
 #       scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n"))
-#     ggsave(filename = paste0(unique.machines[i], ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.1 > 6, nrow(df4)*1.1, 6),)
+#     ggsave(filename = paste0(unique.machines[i], ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.3 > 6, nrow(df4)*1.3, 6),)
 #   }
 # 
 #   setwd(old.dir)

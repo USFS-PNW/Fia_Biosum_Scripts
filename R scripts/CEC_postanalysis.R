@@ -14,8 +14,8 @@ package.check <- lapply(packages, FUN = function(x) {
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #Project root location. 
-project.location <- "H:/cec_20180529/"
-additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
+project.location <- "E:/cec_20180529/cec_20180529/"
+additional.data <- "E:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
 core.scenario.name <- "scenario1" #The name of the core scenario you would like to use to pull in core variables
 
 #Use & set these lines if you aren't in a biosum project directory or if you are using different master/core locations
@@ -481,7 +481,7 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
           scale_colour_manual(values=cbPalette, name="Forest Type Group") +
           scale_y_continuous(limits = c(ymin,ymax)) +
           custom_theme +
-          labs(x="RX Package", y=ylabel, title=title) + 
+          labs(x="Silvicultural Sequence", y=ylabel, title=title) + 
           theme(legend.position = legend) 
 
       } else {
@@ -491,8 +491,8 @@ graph_package_data <- function(data, packages, graph_variable_name1, graph_varia
           scale_shape_manual(values=c(15,17), name = "Stand Count") +
           scale_colour_manual(values=cbPalette, name="Forest Type Group") +
           scale_y_continuous(limits = c(ymin,ymax)) +
-          custom_theme +
-          labs(x="RX Package", y=ylabel, title=title) + 
+          custom_theme + 
+          labs(x="Silvicultural Sequence", y=ylabel, title=title) + 
           theme(legend.position = legend)
       }
       
@@ -529,6 +529,7 @@ data <- stand_summary #This should have been calculated above
 #a folder with the name of the two variables, e.g. E:\cec_20180529\cec_20180529\mortvol_mortvolpct
 
 ##MORTVOL GRAPHS
+packages_1v2v3v4 <- graph_package_data(data, c(1,2,3,4), "mortvol", "mortvolpct")
 packages_1v2v3v4 <- graph_package_data(data, c(1,2,3,4), "mortvol", "mortvolpct")
 packages_1v2v3v4 <- graph_package_data(data, packages = c(1,2,3,4), "mortvol", "mortvolpct") #comparison of post treatment surface fuel treatments
 packages_1v2v12v13 <- graph_package_data(data, packages = c(1,2,12,13), "mortvol", "mortvolpct") #comparison of WTL to CTL
@@ -632,7 +633,11 @@ packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "netgrowth
 packages_4v14 <- graph_package_data(data, packages = c(4,14), "netgrowth", "netgrowthharvest") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "netgrowth", "netgrowthharvest") #ThinDBH vs ThinBBA
 
-######THE CODE BELOW IS FOR GRAPHS DEVELOPED FOR THE DIADB USERS GROUP MEETING######
+
+#Table 25
+packages_5v6v33 <- graph_package_data(data, c(5,6,33), "mortvolpct", "netrev")
+
+ ######THE CODE BELOW IS FOR GRAPHS DEVELOPED FOR THE DIADB USERS GROUP MEETING######
 #This is not as well documented, but they may not be needed for the CEC report
 #I left them in case someone wants to use it for developing additional figures. 
 
