@@ -903,8 +903,8 @@ optimal_stands <- optimal_tmts[,which(names(optimal_tmts) %in% c("biosum_cond_id
 
 opt_vol_val <- merge(optimal_stands, tree_vol_val, by = c("biosum_cond_id", "rxpackage"), all.x = TRUE)
 
-opt_vol_val2 <- opt_vol_val %>% group_by(diam_group) %>% summarise(pct.merch_vol_cf = sum(merch_vol_cf),
-                                                                   pct.chip_vol_cf = sum(chip_vol_cf),
+opt_vol_val2 <- opt_vol_val %>% group_by(diam_group) %>% summarise(sum.merch_vol_cf = sum(merch_vol_cf),
+                                                                   sum.chip_vol_cf = sum(chip_vol_cf),
                                                                    total.sum.vol.cf = sum(merch_vol_cf, chip_vol_cf) 
                                                                    )
 
