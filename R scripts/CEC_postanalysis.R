@@ -2,7 +2,7 @@
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
 
 #Load in required packages. Some red warning text is normal.
-packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2", "flextable", "R.utils", "officer", "RColorBrewer")
+packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2", "R.utils", "flextable",  "officer", "RColorBrewer")
 
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
@@ -14,8 +14,8 @@ package.check <- lapply(packages, FUN = function(x) {
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #Project root location. 
-project.location <- "H:/cec_20180529/"
-additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
+project.location <- "E:/cec_20180529/cec_20180529/"
+additional.data <- "E:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
 core.scenario.name <- "scenario1" #The name of the core scenario you would like to use to pull in core variables
 
 #Use & set these lines if you aren't in a biosum project directory or if you are using different master/core locations
@@ -44,6 +44,7 @@ if (!is.na(project.location)) {
 }
 conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
 master_cond <- sqlFetch(conn, "cond", as.is = TRUE) 
+master_plot <- sqlFetch(conn, "plot", as.is = TRUE)
 ftype <- sqlFetch(conn, "CEC_ftype", as.is = TRUE)
 odbcCloseAll()
 
@@ -547,7 +548,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "mortvol", "mortvo
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "mortvol", "mortvolpct") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "mortvol", "mortvolpct") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "mortvol", "mortvolpct") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "mortvol", "mortvolpct") #min DBH 4 v 9
+packages_1v1v4v14v15v15 <- graph_package_data(data, packages = c(1,4,14,15), "mortvol", "mortvolpct") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "mortvol", "mortvolpct") #ThinDBH vs ThinBBA
 
 ##HSFRS
@@ -560,7 +561,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "hazardscore", "re
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "hazardscore", "resistancescore") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "hazardscore", "resistancescore") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "hazardscore", "resistancescore") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "hazardscore", "resistancescore") #min DBH 4 v 9
+packages_1v1v4v14v15v15 <- graph_package_data(data, packages = c(1,4,14,15), "hazardscore", "resistancescore") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "hazardscore", "resistancescore") #ThinDBH vs ThinBBA
 
 ##CBD CBH
@@ -573,7 +574,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "cbd", "cbh") #CT/
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "cbd", "cbh") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "cbd", "cbh") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "cbd", "cbh") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "cbd", "cbh") #min DBH 4 v 9
+packages_1v1v4v14v15v15 <- graph_package_data(data, packages = c(1,4,14,15), "cbd", "cbh") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "cbd", "cbh") #ThinDBH vs ThinBBA
 
 ##net rev harvest cost
@@ -586,7 +587,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "netrev", "harvest
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "netrev", "harvestcost") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "netrev", "harvestcost") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "netrev", "harvestcost") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "netrev", "harvestcost") #min DBH 4 v 9
+packages_1v1v4v14v15v15 <- graph_package_data(data, packages = c(1,4,14,15), "netrev", "harvestcost") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "netrev", "harvestcost") #ThinDBH vs ThinBBA
 
 ##merch chip
@@ -599,7 +600,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "merch", "chip") #
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "merch", "chip") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "merch", "chip") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "merch", "chip") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "merch", "chip") #min DBH 4 v 9
+packages_1v4v14v15 <- graph_package_data(data, packages = c(1,4,14,15), "merch", "chip") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "merch", "chip") #ThinDBH vs ThinBBA
 
 ##harvest and growth
@@ -612,7 +613,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "harvest", "growth
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "harvest", "growth") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "harvest", "growth") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "harvest", "growth") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "harvest", "growth") #min DBH 4 v 9
+packages_1v4v14v15 <- graph_package_data(data, packages = c(1,4,14,15), "harvest", "growth") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "harvest", "growth") #ThinDBH vs ThinBBA
 
 ##growth and mortality
@@ -625,7 +626,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "growth", "mortali
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "growth", "mortality") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "growth", "mortality") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "growth", "mortality") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "growth", "mortality") #min DBH 4 v 9
+packages_1v4v14v15 <- graph_package_data(data, packages = c(1,4,14,15), "growth", "mortality") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "growth", "mortality") #ThinDBH vs ThinBBA
 
 #net growth & net growth + harvest
@@ -638,7 +639,7 @@ packages_1v20 <- graph_package_data(data, packages = c(1,20), "netgrowth", "netg
 packages_4v6 <- graph_package_data(data, packages = c(4,6), "netgrowth", "netgrowthharvest") #target fir vs no fir target 
 packages_4v7v17 <- graph_package_data(data, packages = c(4,7,17), "netgrowth", "netgrowthharvest") #NFS diameter cap comparison
 packages_4v8v9v11 <- graph_package_data(data, packages = c(4,8,9,11), "netgrowth", "netgrowthharvest") #BA residual 115,135,150,180
-packages_4v14 <- graph_package_data(data, packages = c(4,14), "netgrowth", "netgrowthharvest") #min DBH 4 v 9
+packages_1v4v14v15 <- graph_package_data(data, packages = c(1,4,14,15), "netgrowth", "netgrowthharvest") #min DBH 4 v 9
 packages_4v19 <- graph_package_data(data, packages = c(4,9), "netgrowth", "netgrowthharvest") #ThinDBH vs ThinBBA
 
 
@@ -647,6 +648,7 @@ packages_5v6v33 <- graph_package_data(data, c(5,6,33), "mortvolpct", "netrev")
 
 ####TABLE 6: NUMBER OF UNRESERVED FORESTS CONDITIONS AND ACRES INCALIFORNIA BY OWNERSHIP AND PERCENT OF TOTAL####
 #This table originally had ownership separated out by NFS, Other Fed, State Local, Corporate, and All Owners
+#This is for non-reserved and landclcd = 1
 stand_acres_by_ownership <- master_cond %>% dplyr::group_by(owncd) %>% summarise(Stand_Count = n(), 
                                                                                  Acres = round(sum(acres)), 
                                                                                  Percent = round(sum(acres)/sum(master_cond$acres)*100))
@@ -659,6 +661,7 @@ dir.create(file.path(getwd(), "CEC figures"), showWarnings = FALSE)
 write.csv(stand_acres_by_ownership,  "CEC figures/table_6_stand_acres_by_ownership.csv")
 
 ####TABLE 7: NUMBER OF CONDITIONS FORESTED ACRES REPRESTENTED BY FIA FOREST TYPE GROUP####
+#for non-reserve & landclcd = 1
 forest_types <- read.csv(file.path(additional.data, "fia_forest_type.csv"))
 names(forest_types) <- c("fortypcd", "Forest.Type", "Group")
 group_types <- read.csv(file.path(additional.data, "fia_forest_type_groups.csv"))
@@ -674,19 +677,45 @@ stand_acres_by_forest_type <- master_cond2 %>% dplyr::group_by(Group, Forest.Typ
 write.csv(stand_acres_by_forest_type,  "CEC figures/table_7_stand_acres_by_forest_type.csv")
 
 ####TABLE 8: NUMBER OF CONDITIONS FORESTED ACRES BY PROJECT FOREST TYPE####
-stand_acres_by_CEC_ftype <- master_cond[master_cond$CEC_type %in% c("Douglas-fir", "Mixed conifer", "Pine", "Redwood", "True fir"),]
+stand_acres_by_CEC_ftype <- master_cond[master_cond$CEC_type %in% c("Douglas-fir", "Mixed conifer", "Pine", "Redwood", "True fir") & master_cond$owncd %in% c("11", "46", "47", "48"),]
 
-stand_acres_by_CEC_ftype <- stand_acres_by_CEC_ftype %>% dplyr::group_by(CEC_type) %>% summarise(Stand_Count = n(), 
+stand_acres_by_CEC_ftype <- stand_acres_by_CEC_ftype %>% dplyr::group_by(owncd, CEC_type) %>% summarise(Stand_Count = n(), 
                                                                                                        Acres = round(sum(acres)), 
                                                                                                        Percent = round(sum(acres)/sum(stand_acres_by_CEC_ftype$acres)*100))
 
 
-stand_acres_by_CEC_ftype[nrow(stand_acres_by_CEC_ftype) + 1,] <- c("All Owners", 
+stand_acres_by_CEC_ftype[nrow(stand_acres_by_CEC_ftype) + 1,] <- c("ALL", "ALL", 
                                                                    sum(stand_acres_by_CEC_ftype$Stand_Count), 
                                                                    sum(stand_acres_by_CEC_ftype$Acres), 
                                                                    sum(stand_acres_by_CEC_ftype$Percent))
 
 write.csv(stand_acres_by_forest_type,  "CEC figures/table_8_stand_acres_by_CEC_ftype.csv")
+
+####TABLE 9: YARDING DISTANCE FOR PLOTS####
+yard.dist.table <- merge(master_cond[,which(names(master_cond) %in% c("biosum_cond_id", "biosum_plot_id", "acres", "owncd"))],
+                         master_plot[,which(names(master_plot) %in% c("biosum_plot_id", "gis_yard_dist"))])
+
+
+yard.dist.table$Yard_Dist_bin<- cut(yard.dist.table$gis_yard_dist, breaks = c(0,100,500,1000,2000,6000, (max(yard.dist.table$gis_yard_dist)+1)), labels = c("<100", "100-500", "500-1000", "1000-2000", "2000-6000", ">6000"), right= FALSE)
+
+
+yard.dist.table2 <- yard.dist.table %>% group_by(owncd, Yard_Dist_bin) %>% tally()
+
+custom_theme <- theme_set(theme_bw(base_size = 20))
+
+yard.dist.table2$owncd <- as.factor(yard.dist.table2$owncd)
+
+yard.dist.table3 <- yard.dist.table2[yard.dist.table2$owncd %in% c("11", "46"),]
+
+graph <- ggplot(yard.dist.table3, aes(Yard_Dist_bin, n, color = owncd, fill = owncd)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_fill_manual(values =  brewer.pal(length(unique(yard.dist.table3$owncd)), "Set2"), name = "Ownership") +
+  scale_color_manual(values =  brewer.pal(length(unique(yard.dist.table3$owncd)), "Set2"), name = "Ownership") + 
+  labs(x="Yarding Distance Category", y="Number of Plots", title="") + 
+  theme(legend.position = "right") 
+graph
+
+ggsave("CEC figures/table9.emf", plot = graph, device = "emf", width = 12, height = 10)
 
 ####TABLE 20: TREE SPECIES GROUPS####
 conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "processor", "db", "scenario_processor_rule_definitions.mdb"))
@@ -750,7 +779,7 @@ write.csv(acres.by.slope.ftype,  "CEC figures/table_24_acre_pct_by_slope.csv")
 stand_summary$best <- as.character(stand_summary$best)
 optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
 
-opt_sequence_acres <- optimal_tmts %>% group_by(rxpackage) %>% summarise(Acres = round(sum(acres)))
+opt_sequence_acres <- optimal_tmts %>% group_by(rxpackage, owncd) %>% summarise(Acres = round(sum(acres)))
 opt_sequence_acres$AcresPct <- round(opt_sequence_acres$Acres/sum(opt_sequence_acres$Acres)*100)
 opt_sequence_acres$rxpackage <- as.integer(as.numeric(opt_sequence_acres$rxpackage))
 
@@ -759,7 +788,7 @@ opt_sequence_acres$Terrain[opt_sequence_acres$Surface.fuel.method %in% c("Pile/b
 write.csv(opt_sequence_acres,  "CEC figures/table_27_acres_by_sequence.csv")
 
 ####TABLE 28: RESULTS FOR IMPROVEMENT IN FIRE HAZARD METRICS AS PERCENTAGE OF GROW ONLY ALTERNATIVE AVERAGED OVER THE 40 YEAR PERIOD####
-#NOTE: This is now better described as the percentage difference in average scoring component value for 
+#NOTE: This is now better described as the percentage difference in average fire hazard score value for 
 #optimal treatments and grow only treatments.
 stand_summary$best <- as.character(stand_summary$best)
 optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
@@ -786,7 +815,7 @@ names(fire_improvement3)[3] <- "diff"
 fire_improvement4 <- merge(fire_improvement3, fire_improvement2[fire_improvement2$Grow_Only == "Y",])
 fire_improvement4$Grow_Only <- NULL
 names(fire_improvement4)[which(names(fire_improvement4) == "value")] <- "Grow_Only"
-fire_improvement4$diffpct <- abs(round((fire_improvement4$diff/fire_improvement4$Grow_Only)*100))
+fire_improvement4$diffpct <- -round((fire_improvement4$diff/fire_improvement4$Grow_Only)*100)
 fire_improvement5 <- dcast(fire_improvement4, variable ~ owncd, value.var = "diffpct")
 
 write.csv(fire_improvement5,  "CEC figures/table_28_fire_score_improvement.csv")
@@ -809,7 +838,7 @@ names(score_improvement3)[which(names(score_improvement3) == "value")] <- "diff"
 score_improvement4 <- merge(score_improvement3, score_improvement2[score_improvement2$Grow_Only == "Y",])
 score_improvement4$Grow_Only <- NULL
 names(score_improvement4)[which(names(score_improvement4) == "value")] <- "Grow_Only"
-score_improvement4$diffpct <- abs(round((score_improvement4$diff/score_improvement4$Grow_Only)*100))
+score_improvement4$diffpct <- -round((score_improvement4$diff/score_improvement4$Grow_Only)*100)
 FRS_ftype <- score_improvement4[score_improvement4$variable == "Fire_Resistance",]
 FRS_ftype <- dcast(FRS_ftype, owncd ~ CEC_type, value.var = "diffpct")
 
@@ -828,14 +857,14 @@ iog <- initial.optimal.growonly[paste(initial.optimal.growonly$biosum_cond_id,in
 
 iog_31 <-  initial.optimal.growonly[initial.optimal.growonly$rx == "999",]
 
-iog.summary <- iog %>% group_by(Year1, CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(MortVolPct_FOFEM)*100))
-iog.summary2 <- dcast(iog.summary, CEC_type ~ Year1, value.var = "Avg_MortVolPct_FOFEM")
-iog_31.summary <- iog_31 %>% group_by(CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(MortVolPct_FOFEM)*100))
+iog.summary <- iog %>% group_by(Year1, CEC_type, owncd) %>% summarise(Avg_MortVol_FOFEM = round(mean(MortVol_FOFEM)))
+iog.summary2 <- dcast(iog.summary, CEC_type + owncd ~ Year1, value.var = "Avg_MortVol_FOFEM")
+iog_31.summary <- iog_31 %>% group_by(CEC_type, owncd) %>% summarise(Avg_MortVol_FOFEM = round(mean(MortVol_FOFEM)))
 
 iog2 <-  merge(iog.summary2, iog_31.summary)
-names(iog2) <- c("Forest Type", "Optimal", "Initial", "Grow-Only")
+names(iog2) <- c("Forest Type", "Ownership", "Optimal", "Initial", "Grow-Only")
 
-write.csv(HS_ftype, "CEC figures/table_30_mortvolpct_ftype.csv")
+write.csv(iog2, "CEC figures/table_30_mortvol_ftype.csv")
 
 ####TABLE 33: ANNUAL AVERAGE ALLOCATION OF GROSS REVENUE####
 stand_summary$best <- as.character(stand_summary$best)
@@ -868,16 +897,21 @@ write.csv(revenue.allocation, "CEC figures/table_33_avg_rev_alloc_divided_by_40_
 
 ####TABLE 36: RATIO OF WOOD OUTPUT FROM OPTIMAL BIOSUM SCENARIO TO 2012 HARVEST LEVELS####
 #Note: 2012 harvest levels comes from McIver et al, so this is just biosum raw wood output in cubic ft
-
 stand_summary$best <- as.character(stand_summary$best)
 optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
 
-wood.output <- optimal_tmts %>% group_by(owncd) %>% summarise(mean.Merch.Yield.cf = mean(merch_yield_cf),
-                                                                     mean.Chip.Yield.Cf = mean(chip_yield_cf),
-                                                                     mean.All.Wood.cf = mean(chip_yield_cf + merch_yield_cf),
-                                                                     sum.Merch.Yield.cf = sum(merch_yield_cf),
-                                                                     sum.Chip.Yield.Cf = sum(chip_yield_cf),
-                                                                     sum.All.Wood.cf = sum(chip_yield_cf + merch_yield_cf))
+wood.output <- optimal_tmts %>% group_by(owncd) %>% summarise(mean.Merch.Yield.cf = mean(merch_yield_cf)/40,
+                                                                     mean.Chip.Yield.cf = mean(chip_yield_cf)/40,
+                                                                     mean.All.Wood.cf = mean(chip_yield_cf + merch_yield_cf)/40,
+                                                                     sum.Merch.Yield.cf = sum(merch_yield_cf)/40,
+                                                                     sum.Chip.Yield.Cf = sum(chip_yield_cf)/40,
+                                                                     sum.All.Wood.cf = sum(chip_yield_cf + merch_yield_cf)/40,
+                                                              mean.Merch.Yield.gt = mean(merch_yield_gt)/40,
+                                                              mean.Chip.Yield.gt = mean(chip_yield_gt)/40,
+                                                              mean.All.Wood.gt = mean(chip_yield_gt + merch_yield_gt)/40,
+                                                              sum.Merch.Yield.gt = sum(merch_yield_gt)/40,
+                                                              sum.Chip.Yield.gt = sum(chip_yield_gt)/40,
+                                                              sum.All.Wood.gt = sum(chip_yield_gt + merch_yield_gt)/40)
 
 write.csv(wood.output, "CEC figures/table_36_wood_output_raw.csv")
 
@@ -910,22 +944,23 @@ opt_vol_val2 <- opt_vol_val %>% group_by(diam_group) %>% summarise(sum.merch_vol
 
 opt_vol_val2 <- opt_vol_val2[-which(opt_vol_val2$diam_group == "999"),]
 opt_vol_val3 <- merge(opt_vol_val2, diam_groups[trimws(diam_groups$scenario_id) == processor.scenario.name,], )
-opt_vol_val3$merch.pct <- round((opt_vol_val3$sum.merch_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
-opt_vol_val3$chip.pct <- round((opt_vol_val3$sum.chip_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
+#opt_vol_val3$merch.pct <- round((opt_vol_val3$sum.merch_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
+#opt_vol_val3$chip.pct <- round((opt_vol_val3$sum.chip_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
 
-opt_vol_val4 <- melt(opt_vol_val3, id.vars = "diam_class", measure.vars = c("merch.pct", "chip.pct"))
+#opt_vol_val4 <- melt(opt_vol_val3, id.vars = "diam_class", measure.vars = c("merch.pct", "chip.pct"))
+opt_vol_val4 <- melt(opt_vol_val3, id.vars = "diam_class", measure.vars = c("sum.merch_vol_cf", "sum.chip_vol_cf"))
 opt_vol_val4$diam_class <- as.factor(trimws(opt_vol_val4$diam_class))
 opt_vol_val4$diam_class <- factor(opt_vol_val4$diam_class,levels(opt_vol_val4$diam_class)[c(5,3,2,6,4,1)])
 
 custom_theme <- theme_set(theme_bw(base_size = 20))
 
-graph <- ggplot(opt_vol_val4, aes(variable, value, color = diam_class, fill = diam_class)) +
-  geom_bar(stat = "identity", position = "fill") +
+graph <- ggplot(opt_vol_val4, aes(variable, value/10^5, color = diam_class, fill = diam_class)) +
+  geom_bar(stat = "identity", position = "stack") +
   scale_fill_manual(values =  brewer.pal(6, "Set2"), name = "Diameter Class") +
   scale_color_manual(values =  brewer.pal(6, "Set2"), name = "Diameter Class") + 
-  labs(x="", y="Proportion of Total Volume", title="") + 
+  labs(x="", y=paste("Total Volume","in hundred thousand cubic feet", sep = "\n"), title="") + 
   theme(legend.position = "right") + 
-  scale_x_discrete(labels = c("Merch Total", "Chip Total"))
+  scale_x_discrete(labels = c("Merch", "Chip"))
 graph
 
 ggsave("CEC figures/figure32.emf", plot = graph, device = "emf", width = 10, height = 10)

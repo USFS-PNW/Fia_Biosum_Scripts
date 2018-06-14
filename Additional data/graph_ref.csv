@@ -5,10 +5,10 @@ hazardscore,PkgAvg_HS_Sev,,,Hazard Score,
 resistancescore,PkgAvg_FRS,,,Fire Resistance Score,
 cbh,PkgAvg_CBH,,,Canopy Base Height,
 cbd,PkgAvg_Canopy_Density,,,Canopy Bulk Density,
-netrev,PkgSum_max_nr_dpa,/10^5,,Net Revenue,hundreds of thousands of dollars
-harvestcost,PkgSum_harvest_onsite_cpa,/10^5,,Onsite Harvest Cost,hundreds of thousands of dollars
-merch,PkgSum_merch_val_dpa,/10^5,,Merchantable Volume Value,hundreds of thousands of dollars
-chip,PkgSum_chip_val_dpa,/10^5,,Chip Volume Value,hundreds of thousands of dollars
+netrev,PkgSum_max_nr_dpa,/10^5,,Net Revenue,hundreds of thousands of dollars per acre
+harvestcost,PkgSum_harvest_onsite_cpa,/10^5,,Onsite Harvest Cost,hundreds of thousands of dollars per acre
+merch,PkgSum_merch_val_dpa,/10^5,,Merchantable Volume,hundreds of thousands of dollars per acre
+chip,PkgSum_chip_val_dpa,/10^5,,Chip Volume,hundreds of thousands of dollars per acre
 harvest,PkgSum_RTCuFt,/10^5,,Removed Volume,hundreds of thousands of ft^3
 growth,PkgSum_Period_Acc,/10^5,,Accretion,hundreds of thousands of ft^3
 mortality,PkgSum_Period_Mort,/10^5,,Mortality,hundreds of thousands of ft^3
