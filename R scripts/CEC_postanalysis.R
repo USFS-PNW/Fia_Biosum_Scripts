@@ -2,7 +2,7 @@
 #and you are using 32-bit R (set in RStudio by going to Tools -> Global Options)
 
 #Load in required packages. Some red warning text is normal.
-packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2")
+packages <- c("RODBC", "dplyr", "ggplot2", "gridExtra", "reshape2", "flextable", "R.utils", "officer", "RColorBrewer")
 
 package.check <- lapply(packages, FUN = function(x) {
   if (!require(x, character.only = TRUE)) {
@@ -14,16 +14,16 @@ package.check <- lapply(packages, FUN = function(x) {
 options(scipen = 999) #this is important for making sure your stand IDs do not get translated to scientific notation
 
 #Project root location. 
-project.location <- "E:/cec_20180529/cec_20180529/"
-additional.data <- "E:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
+project.location <- "H:/cec_20180529/"
+additional.data <- "G:/Dropbox/Carlin/GitHub/Fia_Biosum_Scripts/Additional data" #the local location of the Github Fia_Biosum_Scripts repository
 core.scenario.name <- "scenario1" #The name of the core scenario you would like to use to pull in core variables
 
 #Use & set these lines if you aren't in a biosum project directory or if you are using different master/core locations
 # project.location <- NA #project.location should be set to NA so the script knows not to try to use it
 # prepost.location <- "H:/cec_20170915/fvs/db/PREPOST_FVS_SUMMARY.ACCDB"
 # master.location <- "H:/cec_20170915/db/master.mdb"
-#core.location <- "H:/cec_20170915/core/scenario6_20180508/db/scenario_results.mdb"
-#working.directory <- "H:/cec_20170915/" #Directory where you would like to save outputs
+# core.location <- "H:/cec_20170915/core/scenario6_20180508/db/scenario_results.mdb"
+# working.directory <- "H:/cec_20170915/" #Directory where you would like to save outputs
 
 #Get the PREPOST data from PRE_FVS_SUMMARY and POST_FVS_SUMMARY in the fvs/db directory
 if (!is.na(project.location)) {
@@ -76,8 +76,9 @@ post$MortVolPct_FOFEM[post$VolSum == 0] <- 0
 post$MortVolPct_FOFEM[is.na(post$VolSum)] <- 0
 
 #Get relevant columns from PREPOST and core data
-pattern <- c("biosum_cond_id", "rxpackage", "rx", "rxcycle", "Year", "fvs_variant", "TCuFt", "MortVol_FOFEM", "MortVolPct_FOFEM", "RTpa", "RTCuFt", "Acc",
-             "Mort", "Canopy_Density", "CBH", "Avg_CBD_Score", "Avg_CBH_Score", "Avg_PERRESBA_Score", "Avg_SurvVolRatio_Score", "Avg_FRS", "Avg_HS_Sev", "Avg_HS_Mod")
+pattern <- c("biosum_cond_id", "rxpackage", "rx", "rxcycle", "Year", "fvs_variant", "TCuFt", "MortVol_FOFEM", "SurvVolRatio", "MortVolPct_FOFEM", 
+             "RTpa", "RTCuFt", "Acc", "Mort", "Canopy_Density", "CBH", "Torch_Index", "PTorch_Sev", "Surf_Flame_sev", "PERRESBA", "Avg_CBD_Score", 
+             "Avg_CBH_Score", "Avg_PERRESBA_Score", "Avg_SurvVolRatio_Score", "Avg_FRS", "Avg_HS_Sev", "Avg_HS_Mod", "Score")
 pre.relevant.data <- pre[,c(which(grepl(paste0(pattern, collapse = "|"), names(pre))))]
 post.relevant.data <- post[,c(which(grepl(paste0(pattern, collapse = "|"), names(post))))]
 
@@ -103,8 +104,6 @@ all.data <- merge(all.data, Years, by = c("Year")) #add "year difference" to all
 
 all.data$Period_Acc <- all.data$Acc * all.data$Diff #multiply accretion by year difference to get period accretion
 all.data$Period_Mort <- all.data$Mort * all.data$Diff #multiply mortality by year difference to get period mortality
-
-# && net growth        net growth + harvest             = diff(TCuFt-prev.cycle)/#years  - net growth + diff(RTCuft-prev.cycle)/#years
 
 #Calculate net growth by getting difference in TCuFt from one Year to the next
 netgrowth <- melt(all.data, id.vars = c("biosum_cond_id", "rxpackage", "fvs_variant", "Year"),measure.vars = "TCuFt")
@@ -169,12 +168,21 @@ NonYear1_packagestand_data <- NonYear1.data %>% group_by(biosum_cond_id, rxpacka
                                                                                                         Avg_MortVolPct_FOFEM = mean(MortVolPct_FOFEM), 
                                                                                                         Avg_CBH = mean(CBH),
                                                                                                         Avg_Canopy_Density = mean(Canopy_Density), 
+                                                                                                        Avg_PERRESBA = mean(PERRESBA),
+                                                                                                        Avg_Torch_Index = mean(Torch_Index),
+                                                                                                        Avg_Surf_Flame_sev = mean(Surf_Flame_sev),
+                                                                                                        Avg_SurvVolRatio = mean(SurvVolRatio),
                                                                                                         Avg_HS_Sev = mean(Avg_HS_Sev),
                                                                                                         Avg_FRS = mean(Avg_FRS), 
                                                                                                         Avg_CBD_Score = mean(Avg_CBD_Score),
                                                                                                         Avg_PERRESBA_Score = mean(Avg_PERRESBA_Score), 
                                                                                                         Avg_SurvVolRatio_Score = mean(Avg_SurvVolRatio_Score),
-                                                                                                        Avg_CBH_Score = mean(Avg_CBH_Score), 
+                                                                                                        Avg_CBH_Score = mean(Avg_CBH_Score),
+                                                                                                        Avg_Torch_Index_Score = mean(Avg_Torch_Index_Score),
+                                                                                                        Avg_Surf_Flame_Sev_Score = mean(Avg_Surf_Flame_Sev_Score),
+                                                                                                        Avg_SurvVolRatio_Score = mean(Avg_SurvVolRatio_Score),
+                                                                                                        Avg_Ptorch_Sev_Score = mean(Avg_Ptorch_Sev_Score),
+                                                                                                      Avg_MortVolPct2_Sev_Score = mean(Avg_MortVolPct2_Sev_Score),
                                                                                                         Sum_RTpa = sum(RTpa), 
                                                                                                         Sum_RTCuFt = sum(RTCuFt)
                                                                                                       )
@@ -210,7 +218,7 @@ if (!is.na(project.location)) {
 }
 write.csv(treated.area, paste0("TreatedArea_Master_", format(Sys.Date(), "%Y%m%d"), ".csv"), row.names = FALSE)
 
-pattern <- c("biosum_cond_id", "rxpackage", "merch_yield_gt", "chip_yield_gt", "chip_val_dpa", "merch_val_dpa", "harvest_onsite_cpa", "merch_nr_dpa", "max_nr_dpa")
+pattern <- c("biosum_cond_id", "rxpackage", "merch_yield_gt", "chip_yield_gt", "chip_val_dpa", "merch_val_dpa", "haul_chip_cpa", "haul_merch_cpa","merch_yield_cf", "chip_yield_cf", "harvest_onsite_cpa", "merch_nr_dpa", "max_nr_dpa")
 core.data <- net_rev[,c(which(grepl(paste0(pattern, collapse = "|"), names(net_rev))))]
 
 pattern <- c("biosum_cond_id", "rxpackage", "rx", "merch_vol_cf_exp")
@@ -637,7 +645,293 @@ packages_4v19 <- graph_package_data(data, packages = c(4,9), "netgrowth", "netgr
 #Table 25
 packages_5v6v33 <- graph_package_data(data, c(5,6,33), "mortvolpct", "netrev")
 
- ######THE CODE BELOW IS FOR GRAPHS DEVELOPED FOR THE DIADB USERS GROUP MEETING######
+####TABLE 6: NUMBER OF UNRESERVED FORESTS CONDITIONS AND ACRES INCALIFORNIA BY OWNERSHIP AND PERCENT OF TOTAL####
+#This table originally had ownership separated out by NFS, Other Fed, State Local, Corporate, and All Owners
+stand_acres_by_ownership <- master_cond %>% dplyr::group_by(owncd) %>% summarise(Stand_Count = n(), 
+                                                                                 Acres = round(sum(acres)), 
+                                                                                 Percent = round(sum(acres)/sum(master_cond$acres)*100))
+stand_acres_by_ownership[nrow(stand_acres_by_ownership) + 1,] <- c("All Owners", 
+                                                                   sum(stand_acres_by_ownership$Stand_Count), 
+                                                                   sum(stand_acres_by_ownership$Acres), 
+                                                                   sum(stand_acres_by_ownership$Percent))
+
+dir.create(file.path(getwd(), "CEC figures"), showWarnings = FALSE)
+write.csv(stand_acres_by_ownership,  "CEC figures/table_6_stand_acres_by_ownership.csv")
+
+####TABLE 7: NUMBER OF CONDITIONS FORESTED ACRES REPRESTENTED BY FIA FOREST TYPE GROUP####
+forest_types <- read.csv(file.path(additional.data, "fia_forest_type.csv"))
+names(forest_types) <- c("fortypcd", "Forest.Type", "Group")
+group_types <- read.csv(file.path(additional.data, "fia_forest_type_groups.csv"))
+names(group_types) <- c("Group", "Forest.Type.Group")
+
+forest_groups <- merge(forest_types, group_types)
+master_cond2 <- merge(master_cond, forest_groups)
+
+stand_acres_by_forest_type <- master_cond2 %>% dplyr::group_by(Group, Forest.Type.Group) %>% summarise(Stand_Count = n(), 
+                                                                                 Acres = round(sum(acres)), 
+                                                                                 Percent = round(sum(acres)/sum(master_cond$acres)*100))
+
+write.csv(stand_acres_by_forest_type,  "CEC figures/table_7_stand_acres_by_forest_type.csv")
+
+####TABLE 8: NUMBER OF CONDITIONS FORESTED ACRES BY PROJECT FOREST TYPE####
+stand_acres_by_CEC_ftype <- master_cond[master_cond$CEC_type %in% c("Douglas-fir", "Mixed conifer", "Pine", "Redwood", "True fir"),]
+
+stand_acres_by_CEC_ftype <- stand_acres_by_CEC_ftype %>% dplyr::group_by(CEC_type) %>% summarise(Stand_Count = n(), 
+                                                                                                       Acres = round(sum(acres)), 
+                                                                                                       Percent = round(sum(acres)/sum(stand_acres_by_CEC_ftype$acres)*100))
+
+
+stand_acres_by_CEC_ftype[nrow(stand_acres_by_CEC_ftype) + 1,] <- c("All Owners", 
+                                                                   sum(stand_acres_by_CEC_ftype$Stand_Count), 
+                                                                   sum(stand_acres_by_CEC_ftype$Acres), 
+                                                                   sum(stand_acres_by_CEC_ftype$Percent))
+
+write.csv(stand_acres_by_forest_type,  "CEC figures/table_8_stand_acres_by_CEC_ftype.csv")
+
+####TABLE 20: TREE SPECIES GROUPS####
+conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "processor", "db", "scenario_processor_rule_definitions.mdb"))
+conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
+group_names <- sqlFetch(conn, "scenario_tree_species_groups_list", as.is = TRUE) 
+species_groups <- sqlFetch(conn, "scenario_tree_species_groups", as.is = TRUE)
+odbcCloseAll()
+
+processor.scenario.name <- "scenario1"
+ 
+group_names <- group_names[group_names$scenario_id == processor.scenario.name,]
+species_groups <- species_groups[species_groups$scenario_id == processor.scenario.name,]
+
+processor.groups <- merge(group_names, species_groups, all = TRUE)
+processor.groups <- processor.groups[,c(5,3)]
+
+processor.groups <- regulartable(processor.groups)
+processor.groups <- merge_v(processor.groups)
+
+processor.groups <- set_header_labels( processor.groups, species_label = "Species Group", common_name = "Species")
+
+processor.groups
+
+doc <- read_docx()
+doc <- body_add_flextable(doc, value = processor.groups)
+print(doc, target = file.path(project.location, "CEC figures", "table 20 species groups.docx"))
+
+####TABLE 24: MORTALITY VOLUME PCT AND NET REV PER ACRE BY SLOPE CLASS AND INITIAL STAND VOLUME####
+#limit to package 1
+stand_summary1 <- stand_summary[stand_summary$rxpackage == "001",]
+
+#get slope
+master_slope <- master_cond[,which(names(master_cond) %in% c("slope", "biosum_cond_id"))]
+
+stand_summary1 <- merge(stand_summary1, master_slope)
+
+stand_summary1$VolClass <- cut(stand_summary1$Initial.TCuFt, breaks = c(0,3000,5000, (max(stand_summary1$Initial.TCuFt)+1)), labels = c("<3000", "3000-5000", ">5000"), right= FALSE)
+stand_summary1$SlopeClass <- cut(stand_summary1$slope, breaks = c(0, 40, (max(stand_summary1$slope)+1)), labels = c("Gentle", "Steep"), right= FALSE)
+
+mortvol_netrev1 <- stand_summary1 %>% dplyr::group_by(VolClass, SlopeClass, CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(Avg_MortVolPct_FOFEM, na.rm = TRUE) *100),
+                                                                                          Avg_max_nr_dpa = round(mean(max_nr_dpa, na.rm = TRUE)))
+
+all_vols <- stand_summary1 %>% dplyr::group_by(SlopeClass, CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(Avg_MortVolPct_FOFEM, na.rm = TRUE) *100),
+                                                                                          Avg_max_nr_dpa = round(mean(max_nr_dpa, na.rm = TRUE)))
+all_vols$VolClass <- "All"
+
+mortvol_netrev1 <- merge(all_vols, mortvol_netrev1, all = TRUE)
+
+acres.by.forest.type <- stand_summary1 %>% dplyr::group_by(CEC_type) %>% summarise(Ftype.Acres = round(sum(acres)))
+acres.by.slope <- stand_summary1 %>% dplyr::group_by(SlopeClass, CEC_type) %>% summarise(Acres = round(sum(acres)))
+
+acres.by.slope.ftype <- merge(acres.by.forest.type, acres.by.slope)
+
+acres.by.slope.ftype$AcresPct <- round(acres.by.slope.ftype$Acres/acres.by.slope.ftype$Ftype.Acres *100)
+
+write.csv(mortvol_netrev1,  "CEC figures/table_24_mortvol_netrev_slope.csv")
+write.csv(acres.by.slope.ftype,  "CEC figures/table_24_acre_pct_by_slope.csv")
+
+####TABLE 27: SEQUENCE SELECTION FREQUENCY UNDER OPTIMIZATION SCENARIO####
+#Get "best" treatments 
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+
+opt_sequence_acres <- optimal_tmts %>% group_by(rxpackage) %>% summarise(Acres = round(sum(acres)))
+opt_sequence_acres$AcresPct <- round(opt_sequence_acres$Acres/sum(opt_sequence_acres$Acres)*100)
+opt_sequence_acres$rxpackage <- as.integer(as.numeric(opt_sequence_acres$rxpackage))
+
+opt_sequence_acres <- merge(opt_sequence_acres, package_labels, by.x = "rxpackage", by.y = "Package", all.x = TRUE)
+opt_sequence_acres$Terrain[opt_sequence_acres$Surface.fuel.method %in% c("Pile/burn", "Masticate") | opt_sequence_acres$Harvest.System == "CTL"] <- "Not steep"
+write.csv(opt_sequence_acres,  "CEC figures/table_27_acres_by_sequence.csv")
+
+####TABLE 28: RESULTS FOR IMPROVEMENT IN FIRE HAZARD METRICS AS PERCENTAGE OF GROW ONLY ALTERNATIVE AVERAGED OVER THE 40 YEAR PERIOD####
+#NOTE: This is now better described as the percentage difference in average scoring component value for 
+#optimal treatments and grow only treatments.
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+optimal_31 <- rbind(optimal_tmts, stand_summary[stand_summary$rxpackage == "031",])
+optimal_31$Grow_Only[optimal_31$rxpackage == "031"] <- "Y"
+optimal_31$Grow_Only[optimal_31$rxpackage != "031"] <- "N"
+
+fire_improvement <- optimal_31 %>% dplyr::group_by(owncd, Grow_Only) %>% summarise(CBD = mean(Avg_CBD_Score), 
+                                                                                   CBH = mean(Avg_CBH_Score),
+                                                                                   PERRESBA = mean(Avg_PERRESBA_Score),
+                                                                                   SurVolRatio = mean(Avg_SurvVolRatio_Score),
+                                                                                   Fire_Resistance = mean(Avg_FRS),
+                                                                                   Torch_Index = mean(Avg_Torch_Index_Score),
+                                                                                   Ptorch_Sev = mean(Avg_Ptorch_Sev_Score),
+                                                                                   Surf_Flame_Sev = mean(Avg_Surf_Flame_Sev_Score),
+                                                                                   MortVolPct_Sev = mean(Avg_MortVolPct2_Sev_Score),
+                                                                                   Hazard = mean(Avg_HS_Sev)
+                                                                                   )
+
+fire_improvement2 <- melt(fire_improvement, id.vars = c("owncd", "Grow_Only"))
+fire_improvement2 <- fire_improvement2[with(fire_improvement2, order(owncd, variable, Grow_Only)),]
+fire_improvement3 <- aggregate(value ~ owncd + variable, data = fire_improvement2, FUN = diff )
+names(fire_improvement3)[3] <- "diff"
+fire_improvement4 <- merge(fire_improvement3, fire_improvement2[fire_improvement2$Grow_Only == "Y",])
+fire_improvement4$Grow_Only <- NULL
+names(fire_improvement4)[which(names(fire_improvement4) == "value")] <- "Grow_Only"
+fire_improvement4$diffpct <- abs(round((fire_improvement4$diff/fire_improvement4$Grow_Only)*100))
+fire_improvement5 <- dcast(fire_improvement4, variable ~ owncd, value.var = "diffpct")
+
+write.csv(fire_improvement5,  "CEC figures/table_28_fire_score_improvement.csv")
+
+####TABLE 29: AVREAGE COMPOSITE HAZARD SCORE UNDER OPTIMAL AS PCT OF GROW ONLY BY OWNERSHIP AND FOREST TYPE####
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+optimal_31 <- rbind(optimal_tmts, stand_summary[stand_summary$rxpackage == "031",])
+optimal_31$Grow_Only[optimal_31$rxpackage == "031"] <- "Y"
+optimal_31$Grow_Only[optimal_31$rxpackage != "031"] <- "N"
+
+score_improvement <- optimal_31 %>% dplyr::group_by(owncd, Grow_Only, CEC_type) %>% summarise(Fire_Resistance = mean(Avg_FRS),
+                                                                                   Hazard = mean(Avg_HS_Sev)
+)
+
+score_improvement2 <- melt(score_improvement, id.vars = c("owncd", "Grow_Only", "CEC_type"))
+score_improvement2 <- score_improvement2[with(score_improvement2, order(CEC_type, variable,owncd, Grow_Only)),]
+score_improvement3 <- aggregate(value ~ CEC_type + owncd + variable, data = score_improvement2, FUN = diff )
+names(score_improvement3)[which(names(score_improvement3) == "value")] <- "diff"
+score_improvement4 <- merge(score_improvement3, score_improvement2[score_improvement2$Grow_Only == "Y",])
+score_improvement4$Grow_Only <- NULL
+names(score_improvement4)[which(names(score_improvement4) == "value")] <- "Grow_Only"
+score_improvement4$diffpct <- abs(round((score_improvement4$diff/score_improvement4$Grow_Only)*100))
+FRS_ftype <- score_improvement4[score_improvement4$variable == "Fire_Resistance",]
+FRS_ftype <- dcast(FRS_ftype, owncd ~ CEC_type, value.var = "diffpct")
+
+HS_ftype <- score_improvement4[score_improvement4$variable == "Hazard",]
+HS_ftype <- dcast(HS_ftype, owncd ~ CEC_type, value.var = "diffpct")
+
+write.csv(FRS_ftype,"CEC figures/table_29_FRS_improvement_ftype.csv")
+write.csv(HS_ftype, "CEC figures/table_29_HS_improvement_ftype.csv")
+
+####TABLE 30: INITIAL AND AVERAGE MORT VOL PCT OVER 40 YEARS FOR THE OPTIMAL AND GROW-ONLY TREATMENTS####
+initial.optimal.growonly <- relevant.data2
+initial.optimal.growonly$Year1[initial.optimal.growonly$Year == "1"] <- "Y"
+initial.optimal.growonly$Year1[initial.optimal.growonly$Year != "1"] <- "N"
+
+iog <- initial.optimal.growonly[paste(initial.optimal.growonly$biosum_cond_id,initial.optimal.growonly$rx) %in% paste(cycle1_best_rx$biosum_cond_id, cycle1_best_rx$rx),]
+
+iog_31 <-  initial.optimal.growonly[initial.optimal.growonly$rx == "999",]
+
+iog.summary <- iog %>% group_by(Year1, CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(MortVolPct_FOFEM)*100))
+iog.summary2 <- dcast(iog.summary, CEC_type ~ Year1, value.var = "Avg_MortVolPct_FOFEM")
+iog_31.summary <- iog_31 %>% group_by(CEC_type) %>% summarise(Avg_MortVolPct_FOFEM = round(mean(MortVolPct_FOFEM)*100))
+
+iog2 <-  merge(iog.summary2, iog_31.summary)
+names(iog2) <- c("Forest Type", "Optimal", "Initial", "Grow-Only")
+
+write.csv(HS_ftype, "CEC figures/table_30_mortvolpct_ftype.csv")
+
+####TABLE 33: ANNUAL AVERAGE ALLOCATION OF GROSS REVENUE####
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+
+revenue.allocation <- optimal_tmts %>% group_by(owncd) %>% summarise(Harvest.Costs = round(mean(harvest_onsite_cpa)/40),
+                                                                     Haul.Chip.Costs = round(mean(haul_chip_cpa)/40),
+                                                                     Haul.Merch.Costs = round(mean(haul_merch_cpa)/40),
+                                                                     Total.Haul.Costs = round((mean(haul_merch_cpa) + mean(haul_chip_cpa))/40),
+                                                                     Net.Revenue = round(mean(max_nr_dpa)/40))
+# 
+# revenue.allocation <- optimal_tmts %>% group_by(owncd) %>% summarise(Harvest.Costs = round(mean(harvest_onsite_cpa)),
+#                                                                      Haul.Costs = round(mean(haul_chip_cpa)),
+#                                                                      Net.Revenue = round(mean(max_nr_dpa)))
+
+revenue.allocation[nrow(revenue.allocation) + 1,] <- c("Annual Total", 
+                                                       sum(revenue.allocation$Harvest.Costs), 
+                                                       sum(revenue.allocation$Haul.Chip.Costs),
+                                                       sum(revenue.allocation$Haul.Merch.Costs),
+                                                       sum(revenue.allocation$Total.Haul.Costs),
+                                                       sum(revenue.allocation$Net.Revenue))
+
+# revenue.allocation[nrow(revenue.allocation) + 1,] <- c("40 Year Total", 
+#                                                        sum(as.numeric(revenue.allocation$Harvest.Costs[1:(nrow(revenue.allocation)-1)]))*40, 
+#                                                        sum(as.numeric(revenue.allocation$Haul.Costs[1:(nrow(revenue.allocation) -1)]))*40, 
+#                                                        sum(as.numeric(revenue.allocation$Net.Revenue[1:(nrow(revenue.allocation) -1)]))*40)
+
+
+write.csv(revenue.allocation, "CEC figures/table_33_avg_rev_alloc_divided_by_40_years.csv")
+
+####TABLE 36: RATIO OF WOOD OUTPUT FROM OPTIMAL BIOSUM SCENARIO TO 2012 HARVEST LEVELS####
+#Note: 2012 harvest levels comes from McIver et al, so this is just biosum raw wood output in cubic ft
+
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+
+wood.output <- optimal_tmts %>% group_by(owncd) %>% summarise(mean.Merch.Yield.cf = mean(merch_yield_cf),
+                                                                     mean.Chip.Yield.Cf = mean(chip_yield_cf),
+                                                                     mean.All.Wood.cf = mean(chip_yield_cf + merch_yield_cf),
+                                                                     sum.Merch.Yield.cf = sum(merch_yield_cf),
+                                                                     sum.Chip.Yield.Cf = sum(chip_yield_cf),
+                                                                     sum.All.Wood.cf = sum(chip_yield_cf + merch_yield_cf))
+
+write.csv(wood.output, "CEC figures/table_36_wood_output_raw.csv")
+
+####Figure 32: Merchantable Volume and woody biomass feedstock as pct of total harvested volume####
+
+conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "processor", "db", "scenario_processor_rule_definitions.mdb"))
+conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
+diam_groups <- sqlFetch(conn, "scenario_tree_diam_groups", as.is = TRUE) 
+odbcCloseAll()
+
+processor.scenario.name <- "scenario1"
+
+conn.path <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", file.path(project.location, "processor", processor.scenario.name, "db", "scenario_results.mdb"))
+conn <- odbcDriverConnect(conn.path) #Change the text after "DBH=" to the correct directory for your project
+tree_vol_val <- sqlFetch(conn, "tree_vol_val_by_species_diam_groups", as.is = TRUE) 
+odbcCloseAll()
+
+
+#This is for optimal
+stand_summary$best <- as.character(stand_summary$best)
+optimal_tmts <- stand_summary[stand_summary$best == "Y" & !is.na(stand_summary$best),]
+optimal_stands <- optimal_tmts[,which(names(optimal_tmts) %in% c("biosum_cond_id", "rxpackage"))]
+
+opt_vol_val <- merge(optimal_stands, tree_vol_val, by = c("biosum_cond_id", "rxpackage"), all.x = TRUE)
+
+opt_vol_val2 <- opt_vol_val %>% group_by(diam_group) %>% summarise(pct.merch_vol_cf = sum(merch_vol_cf),
+                                                                   pct.chip_vol_cf = sum(chip_vol_cf),
+                                                                   total.sum.vol.cf = sum(merch_vol_cf, chip_vol_cf) 
+                                                                   )
+
+opt_vol_val2 <- opt_vol_val2[-which(opt_vol_val2$diam_group == "999"),]
+opt_vol_val3 <- merge(opt_vol_val2, diam_groups[trimws(diam_groups$scenario_id) == processor.scenario.name,], )
+opt_vol_val3$merch.pct <- round((opt_vol_val3$sum.merch_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
+opt_vol_val3$chip.pct <- round((opt_vol_val3$sum.chip_vol_cf/opt_vol_val3$total.sum.vol.cf)*100)
+
+opt_vol_val4 <- melt(opt_vol_val3, id.vars = "diam_class", measure.vars = c("merch.pct", "chip.pct"))
+opt_vol_val4$diam_class <- as.factor(trimws(opt_vol_val4$diam_class))
+opt_vol_val4$diam_class <- factor(opt_vol_val4$diam_class,levels(opt_vol_val4$diam_class)[c(5,3,2,6,4,1)])
+
+custom_theme <- theme_set(theme_bw(base_size = 20))
+
+graph <- ggplot(opt_vol_val4, aes(variable, value, color = diam_class, fill = diam_class)) +
+  geom_bar(stat = "identity", position = "fill") +
+  scale_fill_manual(values =  brewer.pal(6, "Set2"), name = "Diameter Class") +
+  scale_color_manual(values =  brewer.pal(6, "Set2"), name = "Diameter Class") + 
+  labs(x="", y="Proportion of Total Volume", title="") + 
+  theme(legend.position = "right") + 
+  scale_x_discrete(labels = c("Merch Total", "Chip Total"))
+graph
+
+ggsave("CEC figures/figure32.emf", plot = graph, device = "emf", width = 10, height = 10)
+
+  
+r######THE CODE BELOW IS FOR GRAPHS DEVELOPED FOR THE DIADB USERS GROUP MEETING######
 #This is not as well documented, but they may not be needed for the CEC report
 #I left them in case someone wants to use it for developing additional figures. 
 

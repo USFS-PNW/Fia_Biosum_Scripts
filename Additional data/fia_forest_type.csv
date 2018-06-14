@@ -1,0 +1,144 @@
+﻿Code,FIA Forest Type,Group Code
+0,Non Forest,0
+101,Jack Pine,100
+102,Red Pine,100
+103,Eastern White Pine,100
+104,White Pine / Hemlock,100
+105,Eastern Hemlock,100
+121,Balsam Fir,120
+122,White Spruce,120
+123,Red Spruce,120
+124,Red Spruce / Balsam Fir,120
+125,Black Spruce,120
+126,Tamarack,120
+127,Northern White-cedar,120
+141,Longleaf Pine,140
+142,Slash Pine,140
+161,Loblolly Pine,160
+162,Shortleaf Pine,160
+163,Virginia Pine,160
+164,Sand Pine,160
+165,Table-mountain Pine,160
+166,Pond Pine,160
+167,Pitch Pine,160
+168,Spruce Pine,160
+181,Eastern Redcedar,180
+182,Rocky Mountain Juniper,180
+183,Western Juniper,180
+184,Juniper Woodland,180
+185,Pinyon Juniper Woodland,180
+201,Douglas-fir,200
+202,Port-Orford-cedar,200
+221,Ponderosa Pine,220
+222,Incense Cedar,220
+223,Jeffrey Pine / Coulter Pine / Bigcone Douglas-fir,220
+224,Sugar Pine,220
+225,Jeffrey Pine,220
+226,Coulter Pine,220
+227,Bigcone Douglas-fir,220
+241,Western White Pine,240
+261,White Fir,260
+262,Red Fir,260
+263,Noble Fir,260
+264,Pacific Silver Fir,260
+265,Engelmann Spruce,260
+266,Engelmann Spruce / Subalpine Fir,260
+267,Grand Fir,260
+268,Subalpine Fir,260
+269,Blue Spruce,260
+270,Mountain Hemlock,260
+271,Alaska-yellow-cedar,260
+281,Lodgepole Pine,280
+301,Western Hemlock,300
+304,Western Redcedar,300
+305,Sitka Spruce,300
+321,Western Larch,320
+341,Redwood,340
+342,Giant Sequoia,340
+361,Knobcone Pine,360
+362,Southwest White Pine,360
+363,Bishop Pine,360
+364,Monterey Pine,360
+365,Foxtail Pine / Bristlecone Pine,360
+366,Limber Pine,360
+367,Whitebark Pine,360
+368,Miscellaneous Western Softwoods,360
+371,California Mixed Conifer,370
+381,Scotch Pine,380
+382,Australian Pine,380
+383,Other Exotic Softwoods,380
+390,Western Cypress Group,390
+401,White Pine / Red Oak / White Ash,400
+402,Eastern Redcedar / Hardwood,400
+403,Longleaf Pine / Oak,400
+404,Shortleaf Pine / Oak,400
+405,Virginia Pine / Southern Red Oak,400
+406,Loblolly Pine / Hardwood,400
+407,Slash Pine / Hardwood,400
+409,Other Pine / Hardwood,400
+501,Post Oak / Blackjack Oak,500
+502,Chestnut Oak,500
+503,White Oak / Red Oak / Hickory,500
+504,White Oak,500
+505,Northern Red Oak,500
+506,Yellow-poplar / White Oak / Red Oak,500
+507,Sassafras / Persimmon,500
+508,Sweetgum / Yellow-poplar,500
+509,Bur Oak,500
+510,Scarlet Oak,500
+511,Yellow-poplar,500
+512,Black Walnut,500
+513,Black Locust,500
+514,Southern Scrub Oak,500
+515,Chestnut Oak / Black Oak / Scarlet Oak,500
+519,Red Maple / Oak,500
+520,Mixed Upland Hardwoods,500
+601,Swamp Chestnut Oak / Cherrybark Oak,600
+602,Sweetgum / Nuttall Oak / Willow Oak,600
+605,Overcup Oak / Water Hickory,600
+606,Atlantic White-cedar,600
+607,Baldcypress / Water Tupelo,600
+608,Sweetbay / Swamp Tupelo / Red Maple,600
+701,Black Ash / American Elm / Red Maple,700
+702,River Birch / Sycamore,700
+703,Cottonwood,700
+704,Willow,700
+705,Sycamore / Pecan / American Elm,700
+706,Sugarberry / Hackberry / Elm / Green Ash,700
+708,Red Maple / Lowland,700
+709,Cottonwood / Willow,700
+722,Oregon Ash,700
+801,Sugar Maple / Beech / Yellow Birch,800
+802,Black Cherry,800
+803,Cherry / Ash / Yellow-poplar,800
+805,Hard Maple / Basswood,800
+807,Elm / Ash / Locust,800
+809,Red Maple / Upland,800
+901,Aspen,900
+902,Paper Birch,900
+904,Balsam Poplar,900
+911,Red Alder,910
+912,Bigleaf Maple,910
+921,Gray Pine,920
+922,California Black Oak,920
+923,Oregon White Oak,920
+924,Blue Oak,920
+925,Deciduous Oak Woodland,920
+931,Coast Live Oak,920
+932,Canyon Live Oak / Interior Live Oak,920
+941,Tanoak,940
+942,California Laurel,940
+943,Giant Chinkapin,940
+951,Pacific Madrone,950
+952,Mesquite Woodland,950
+953,Cercocarpus Woodland,950
+954,Intermountain Maple Woodland,950
+955,Miscellaneous Western Hardwood Woodlands,950
+960,Western Woody Shrublands - Chaparral,960
+981,Sable Palm,980
+982,Mangrove,980
+991,Paulownia,990
+992,Melaluca,990
+993,Eucalyptus,990
+995,Other Exotic Hardwoods,990
+999,Non Stocked,990

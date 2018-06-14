@@ -90,8 +90,6 @@ odbcCloseAll()
 # opcost_harvestsystem_ref <- read.csv("opcost_harvestsystem_ref.csv")
 # opcost_ideal_ref <- read.csv("opcost_ideal_ref.csv")
 
-
-
 #Convert to Data Frame and set "NaN' to NA
 m <- data.frame(m)
 m[m == "NaN"] <- NA #convert "NaN" values to NA
