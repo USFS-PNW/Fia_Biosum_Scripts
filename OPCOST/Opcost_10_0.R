@@ -375,7 +375,7 @@ compute_harvest_system_equations <- function(data, harvest_system, allCols, mean
   return(data)
 }
 
-#tethered <- compute_harvest_system_equations(data = m, harvest_system = "Tethered CTL", allCols = TRUE, meansonly = FALSE)
+tethered <- compute_harvest_system_equations(data = m, harvest_system = "Tethered CTL", allCols = TRUE, meansonly = FALSE)
 
 #####GET MEAN HARVEST HOURS PER ACRE FOR ALL MACHINES######
 #all_harvesting_systems runs compute_harvest_system_equations for all analyses and compiles a table
@@ -610,13 +610,13 @@ all_cost <- estimate_cost(harvest_system = "ALL", data = m)
 
 #####CALCULATE HARVEST COSTS######
 #calculate_costs_for_input runs estimate_cost() for the harvest system specified in the input dataset (via
-#the Harvesting.System column) and outputs the total machine cost per acare, the total move in cost per acre, 
+#the Harvesting.System column) and outputs the total machine cost per acre, the total move in cost per acre, 
 #the lowboy cost per acre, and the total cost per acre (i.e. the sum of the other values). The optimal parameter
 #allows you to specify whether the data has been run through the optimal_harvesting.system() function yet; if 
 #so, setting optimal to TRUE will calculate the cost for the optimal harvest system as well. 
 
 #Arguments:
-#data - Input data to be used. This should be an output from the all_harvesting_systems() function
+#data - Input data to be used. 
 #optimal - TRUE/FALSE - specify whether the dataset has an Optimal.Harvest.System column or not (i.e. the dataset has been run through optimal_harvesting.system)
 
 #Example: calculate_costs_for_input(data = m, optimal = FALSE)
@@ -688,7 +688,7 @@ calculate_costs_for_input <- function(data, optimal) {
   return(data2)
 }
 
-#input_with_cost <- calculate_costs_for_input(m, optimal = FALSE)
+input_with_cost <- calculate_costs_for_input(m, optimal = FALSE)
 
 #####DETERMINE OPTIMAL HARVEST SYSTEM######
 #optimal_harvesting.system takes the output from estimate_cost() with "ALL" as the harvest_system
@@ -696,7 +696,7 @@ calculate_costs_for_input <- function(data, optimal) {
 #set in opcost_ideal_ref
 
 #Arguments:
-#data - Input data to be used. This should be an output from the all_harvesting_systems() function
+#data - Input data to be used. 
 #all - This should be the output from the estimate_cost() function with harvest_system set to all for the Input data. This can be left blank and it 
 #      will run within the function, but it will take significantly longer (if you have already run estimate_cost() you can save processing time by 
 #      adding it here)
@@ -834,14 +834,14 @@ odbcCloseAll()
 
 
 # ###CREATE ANALYSIS GRAPHICS###
-packages <- c("reshape2", "ggplot2", "dplyr")
-
-package.check <- lapply(packages, FUN = function(x) {
-  if (!require(x, character.only = TRUE)) {
-    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
-    library(x, character.only = TRUE)
-  }
-})
+# packages <- c("reshape2", "ggplot2", "dplyr")
+# 
+# package.check <- lapply(packages, FUN = function(x) {
+#   if (!require(x, character.only = TRUE)) {
+#     install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+#     library(x, character.only = TRUE)
+#   }
+# })
 
 
 ##MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
