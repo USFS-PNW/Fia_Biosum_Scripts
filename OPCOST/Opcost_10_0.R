@@ -144,6 +144,7 @@ m$treesRemoved <- m$Small.log.trees.per.acre + m$Large.log.trees.per.acre + m$Ch
 ##Cable Manual Log, Helicopter Manual WT##
 #####Small.log.trees.ChipPct_Cat1_3 + Large.log.trees.ChipPct_Cat1_3_4 + Chip.tree.per.acre
 
+#
 m$chipTrees[m$Harvesting.System == "Ground-Based Mech WT" | m$Harvesting.System == "Ground-Based Manual WT" | m$Harvesting.System == "Shovel Logging"] <- 
   (m$Small.log.trees.ChipPct_Cat2_4[m$Harvesting.System == "Ground-Based Mech WT" | m$Harvesting.System == "Ground-Based Manual WT" | m$Harvesting.System == "Shovel Logging"] +
      m$Large.log.trees.ChipPct_Cat2[m$Harvesting.System == "Ground-Based Mech WT" | m$Harvesting.System == "Ground-Based Manual WT" | m$Harvesting.System == "Shovel Logging"] +
