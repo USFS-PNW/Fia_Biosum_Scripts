@@ -9,10 +9,7 @@ package.check <- lapply(packages, FUN = function(x) {
   }
 })
 
-####LOAD DATA FROM BIOSUM####
-args=(commandArgs(TRUE))
-
-print(args[1])
+ 
 con<-odbcConnectAccess2007(args[1])
 print("odbc Connection:OK")
 m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
@@ -499,11 +496,23 @@ opcost_output <- data.frame("stand" = output$Stand,
                             "RxCycle" = substr(output$Stand, 32, 32)
 )
 
-
+######Use if running opcost through Biosum
 con<-odbcConnectAccess2007(args)
 sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
 
 odbcCloseAll()
+
+
+######Comment out lines 499-504, and uncomment 507-514 if running Opcost outside of BioSum
+###set the output location database
+opcost.output.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
+
+#Opcost_Input
+conn <- odbcConnectAccess2007(opcost.output.location)
+sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
+
+odbcCloseAll()
+
 
 ##########################################
 ###CREATE ANALYSIS GRAPHICS###
