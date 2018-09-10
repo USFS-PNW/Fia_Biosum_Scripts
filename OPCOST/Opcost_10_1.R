@@ -9,7 +9,12 @@ package.check <- lapply(packages, FUN = function(x) {
   }
 })
 
- 
+
+# ####LOAD DATA FROM BIOSUM####
+args=(commandArgs(TRUE))
+
+print(args[1])
+
 con<-odbcConnectAccess2007(args[1])
 print("odbc Connection:OK")
 m<-data.frame(sqlFetch(con, "opcost_input", as.is=TRUE))
@@ -46,28 +51,28 @@ odbcCloseAll()
 # ####MANUALLY RUN OPCOST ON A SINGLE OPCOST INPUT FILE####
 # opcost.ref.location <- "C:/Users/sloreno/Opcost/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
 # opcost.input.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
-# 
+#
 # #Opcost_Input
 # conn <- odbcConnectAccess2007(opcost.input.location)
 # m<-data.frame(sqlFetch(conn, "opcost_input", as.is=TRUE))
-# 
+#
 # odbcCloseAll()
-# 
+#
 # #Opcost_Ref
 # conn <- odbcConnectAccess2007(opcost.ref.location)
-# 
+#
 # opcost_equation_ref<- sqlFetch(conn, "opcost_equation_ref", as.is = TRUE)
-# 
+#
 # opcost_units <- sqlFetch(conn, "opcost_units", as.is = TRUE)
-# 
+#
 # opcost_cost_ref <- sqlFetch(conn, "opcost_cost_ref", as.is = TRUE)
-# 
+#
 # opcost_harvestequation_ref <- sqlFetch(conn, "opcost_harvestequation_ref", as.is = TRUE)
-# 
+#
 # opcost_harvestsystem_ref <- sqlFetch(conn, "opcost_harvestsystem_ref", as.is = TRUE)
-# 
+#
 # opcost_ideal_ref <- sqlFetch(conn, "opcost_ideal_ref", as.is = TRUE)
-# 
+#
 # odbcCloseAll()
 
 #####BRING IN REFERENCE TABLES -- THIS IS FOR IF YOU'RE NOT USING THE ACCESS DATABASE VERSION ABOVE AND NEED TO BRING IN THE CSVS######
@@ -503,92 +508,91 @@ sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
 odbcCloseAll()
 
 
-######Comment out lines 499-504, and uncomment 507-514 if running Opcost outside of BioSum
-###set the output location database
-opcost.output.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
-
-#Opcost_Input
-conn <- odbcConnectAccess2007(opcost.output.location)
-sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
-
-odbcCloseAll()
-
-
-##########################################
-###CREATE ANALYSIS GRAPHICS###
-packages <- c("reshape2", "ggplot2", "dplyr", "data.table")
-
-package.check <- lapply(packages, FUN = function(x) {
-  if (!require(x, character.only = TRUE)) {
-    install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
-    library(x, character.only = TRUE)
-  }
-})
+# ######Comment out lines 499-504, and uncomment 507-514 if running Opcost outside of BioSum
+# ###set the output location database
+# opcost.output.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
+# 
+# #Opcost_Input
+# conn <- odbcConnectAccess2007(opcost.output.location)
+# sqlSave(conn, opcost_output, tablename="OpCost_Output", safer=FALSE)
+# 
+# odbcCloseAll()
 
 
-#MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
-#The code below will save it to your project directory in a new folder called "opcost_graphics"
-#MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
-#The code below will save it to your project directory in a new folder called "opcost_graphics"
-project.directory <- "C:/Users/sloreno/Opcost/" #change to your project directory
-setwd(project.directory)
-dir.create("opcost_graphics", showWarnings = FALSE)
-setwd(file.path(project.directory, "opcost_graphics"))
-
-
-graph_analyses_machine <- function(data) {
-  ref <- opcost_equation_ref
-  ###SUBSET TO ONLY INCLUDE SPECIFIC EQUATIONS/MACHINES###
-  #This is a good spot to subset out certain equations
-  #for example, to remove specific equations, you would change ref to:
-  #ref <- opcost_equation_ref[!opcost_equation_ref$Equation.ID %in% c("FB_06", "FB_04", "FB_01"),]
-  #you can remove additional equations by adding to the list after the c().
-  #You can use the same method to remove machines:
-  #ref <- opcost_equation_ref[!opcost_equation_ref$Machine %in% c("Feller Buncher"),]
-  #This will help avoid corrupting any of the tables as ref is not stored
-  #in the global environment when the function is run
-  ref$Machine.size <- paste0(ref$Machine, "_", ref$Size)
-  unique.machines <- unique(ref$Machine.size)
-  old.dir <- getwd()
-  folder <- file.path(old.dir, paste(format(Sys.Date(), "%Y%m%d"), "machine_analysis", sep = "_"))
-  dir.create(folder, showWarnings = FALSE)
-  setwd(folder)
-  
-  
-  for (i in 1:length(unique.machines)) {
-    values <- ref[as.character(ref$Machine.size) == as.character(unique.machines[i]),]
-    values <- values[values$Equation != "",]
-    mylist <- vector(mode="list", length=nrow(values))
-    name.vector <- as.character()
-    for (j in 1:nrow(values)) {
-      values.data <- calculate_hpa1 <-calculate_hpa(data = data, equation.ID = values$EquationID[j])
-      mylist[[j]] <- values.data
-      name.vector[j] <- paste0(values$EquationID[j])
-    }
-    values.data <- Reduce(merge, mylist)
-    names(values.data)[(ncol(values.data) + 1 - length(name.vector)):ncol(values.data)] <- name.vector
-    b <- ncol(values.data)
-    a <- ncol(data) + 1
-    df2 <- melt(values.data, id.vars = c(a:b), measure.vars = names(values.data)[a:b])
-    n <- ncol(df2)
-    df2 <- df2[complete.cases(df2[n]),]
-    df3 <- df2[,c(n-1, n)]
-    df4 <- df3 %>% group_by(variable) %>% tally()
-    df2 <- merge(df4, df3, by = "variable")
-    df2$variable <- gsub(unique.machines[i],"",df2$variable)
-    df4$variable <- gsub(unique.machines[i],"",df4$variable)
-    df5 <- merge(df2, values[, c("EquationID", "Machine.size")], by.x="variable", by.y="EquationID")
-    graph <- ggplot(df5, aes(variable, value, fill =  variable)) + 
-      geom_boxplot() + 
-      labs(x=unique.machines[i], y="Hours Per Acre") +
-      scale_x_discrete(labels = paste(df4$variable, df4$n, sep = "\n")) + 
-      facet_wrap(  ~ Machine.size)
-    ggsave(filename = paste0(unique.machines[i], ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.3 > 6, nrow(df4)*1.3, 6))
-  }
-  setwd(old.dir)
-}
-
-graph_analyses_machine(m)
+# ##########################################
+# ###CREATE ANALYSIS GRAPHICS###
+# packages <- c("reshape2", "ggplot2", "dplyr", "data.table", "plyr")
+# 
+# package.check <- lapply(packages, FUN = function(x) {
+#   if (!require(x, character.only = TRUE)) {
+#     install.packages(x, repos="http://cran.r-project.org", dependencies = TRUE)
+#     library(x, character.only = TRUE)
+#   }
+# })
+# 
+# 
+# #MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
+# #The code below will save it to your project directory in a new folder called "opcost_graphics"
+# #MAKE SURE YOUR WORKING DIRECTORY IS SET TO WHERE YOU WANT THE GRAPHICS TO SAVE###
+# #The code below will save it to your project directory in a new folder called "opcost_graphics"
+# project.directory <- "C:/Users/sloreno/Opcost/" #change to your project directory
+# setwd(project.directory)
+# dir.create("opcost_graphics", showWarnings = FALSE)
+# setwd(file.path(project.directory, "opcost_graphics"))
+# 
+# 
+# graph_analyses_machine <- function(data) {
+#   ref <- opcost_equation_ref
+#   ###SUBSET TO ONLY INCLUDE SPECIFIC EQUATIONS/MACHINES###
+#   #This is a good spot to subset out certain equations
+#   #for example, to remove specific equations, you would change ref to:
+#   #ref <- opcost_equation_ref[!opcost_equation_ref$Equation.ID %in% c("FB_06", "FB_04", "FB_01"),]
+#   #you can remove additional equations by adding to the list after the c().
+#   #You can use the same method to remove machines:
+#   #ref <- opcost_equation_ref[!opcost_equation_ref$Machine %in% c("Feller Buncher"),]
+#   #This will help avoid corrupting any of the tables as ref is not stored
+#   #in the global environment when the function is run
+#   ref$Machine.size <- paste0(ref$Machine, "_", ref$Size)
+#   unique.machines <- unique(ref$Machine.size)
+#   old.dir <- getwd()
+#   folder <- file.path(old.dir, paste(format(Sys.Date(), "%Y%m%d"), "machine_analysis", sep = "_"))
+#   dir.create(folder, showWarnings = FALSE)
+#   setwd(folder)
+#   
+#   
+#   for (i in 1:length(unique.machines)) {
+#     values <- ref[as.character(ref$Machine.size) == as.character(unique.machines[i]),]
+#     values <- values[values$Equation != "",]
+#     mylist <- vector(mode="list", length=nrow(values))
+#     name.vector <- as.character()
+#     for (j in 1:nrow(values)) {
+#       values.data <- calculate_hpa1 <-calculate_hpa(data = data, equation.ID = values$EquationID[j])
+#       mylist[[j]] <- values.data
+#       name.vector[j] <- paste0(values$EquationID[j])
+#     }
+#     values.data <- Reduce(merge, mylist)
+#     names(values.data)[(ncol(values.data) + 1 - length(name.vector)):ncol(values.data)] <- name.vector
+#     b <- ncol(values.data)
+#     a <- ncol(data) + 1
+#     df2 <- melt(values.data, id.vars = c(a:b), measure.vars = names(values.data)[a:b])
+#     n <- ncol(df2)
+#     df2 <- df2[complete.cases(df2[n]),]
+#     df3 <- df2[,c(n-1, n)]
+#     df4 <- df3 %>% group_by(variable) %>% tally()
+#     df2 <- merge(df4, df3, by = "variable")
+#     df2$variable <- gsub(unique.machines[i],"",df2$variable)
+#     df4$variable <- gsub(unique.machines[i],"",df4$variable)
+#     df5 <- merge(df2, values[, c("EquationID", "Machine.size")], by.x="variable", by.y="EquationID")#Turn your 'treatment' column into a character vector
+#     graph <- ggplot(df5, aes(variable, value, fill =  variable)) + 
+#       geom_boxplot() + 
+#       labs(x=unique.machines[i], y="Hours Per Acre") +
+#       facet_wrap(  ~ Machine.size)
+#     ggsave(filename = paste0(unique.machines[i], ".png"),graph, device = "png", width = ifelse(nrow(df4)*1.3 > 6, nrow(df4)*1.3, 6))
+#   }
+#   setwd(old.dir)
+# }
+# 
+# graph_analyses_machine(m)
 
 
 #
