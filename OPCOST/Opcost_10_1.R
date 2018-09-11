@@ -11,6 +11,7 @@ package.check <- lapply(packages, FUN = function(x) {
 
 
 # ####LOAD DATA FROM BIOSUM####
+
 args=(commandArgs(TRUE))
 
 print(args[1])
@@ -27,52 +28,45 @@ ref2 <- paste0("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=", args[2]
 con2 <- odbcDriverConnect(ref2)
 
 opcost_equation_ref<- sqlFetch(con2, "opcost_equation_ref", as.is = TRUE)
-names(opcost_equation_ref) <- opcost_equation_ref[1,]
-opcost_equation_ref <- opcost_equation_ref[-1,]
 
 opcost_units <- sqlFetch(con2, "opcost_units", as.is = TRUE)
-names(opcost_units) <- opcost_units[1,]
-opcost_units <- opcost_units[-1,]
 
 opcost_cost_ref <- sqlFetch(con2, "opcost_cost_ref", as.is = TRUE)
-names(opcost_cost_ref) <- opcost_cost_ref[1,]
-opcost_cost_ref <- opcost_cost_ref[-1,]
+
+opcost_harvestequation_ref <- sqlFetch(con2, "opcost_harvestequation_ref", as.is = TRUE)
 
 opcost_harvestsystem_ref <- sqlFetch(con2, "opcost_harvestsystem_ref", as.is = TRUE)
-names(opcost_harvestsystem_ref) <- opcost_harvestsystem_ref[1,]
-opcost_harvestsystem_ref <- opcost_harvestsystem_ref[-1,]
 
 opcost_ideal_ref <- sqlFetch(con2, "opcost_ideal_ref", as.is = TRUE)
-names(opcost_ideal_ref) <- opcost_ideal_ref[1,]
-opcost_ideal_ref <- opcost_ideal_ref[-1,]
 
 odbcCloseAll()
 
+
 # ####MANUALLY RUN OPCOST ON A SINGLE OPCOST INPUT FILE####
-# opcost.ref.location <- "C:/Users/sloreno/Opcost/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
-# opcost.input.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
-#
+# opcost.ref.location <- "C:/Users/sloreno/Opcost/test/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
+# opcost.input.location <- "C:/Users/sloreno/Opcost/test/fia_biosum_667.accdb"
+# 
 # #Opcost_Input
 # conn <- odbcConnectAccess2007(opcost.input.location)
 # m<-data.frame(sqlFetch(conn, "opcost_input", as.is=TRUE))
-#
+# 
 # odbcCloseAll()
-#
+# 
 # #Opcost_Ref
 # conn <- odbcConnectAccess2007(opcost.ref.location)
-#
+# 
 # opcost_equation_ref<- sqlFetch(conn, "opcost_equation_ref", as.is = TRUE)
-#
+# 
 # opcost_units <- sqlFetch(conn, "opcost_units", as.is = TRUE)
-#
+# 
 # opcost_cost_ref <- sqlFetch(conn, "opcost_cost_ref", as.is = TRUE)
-#
+# 
 # opcost_harvestequation_ref <- sqlFetch(conn, "opcost_harvestequation_ref", as.is = TRUE)
-#
+# 
 # opcost_harvestsystem_ref <- sqlFetch(conn, "opcost_harvestsystem_ref", as.is = TRUE)
-#
+# 
 # opcost_ideal_ref <- sqlFetch(conn, "opcost_ideal_ref", as.is = TRUE)
-#
+# 
 # odbcCloseAll()
 
 #####BRING IN REFERENCE TABLES -- THIS IS FOR IF YOU'RE NOT USING THE ACCESS DATABASE VERSION ABOVE AND NEED TO BRING IN THE CSVS######
@@ -152,7 +146,7 @@ m$FT_wt_SL <- with(m,ifelse(Small.log.trees.per.acre > 0, exp(1.0613+0.8841*log(
 m$FT_wt_LL <- with(m, ifelse(Large.log.trees.per.acre > 0, exp(1.0613+0.8841*log(Large.log.trees.per.acre)+0.6714*log(MerchWtLbs_CT * 0.000453592/Large.log.trees.per.acre)),0))
 
 
-
+print("variables calculated")
 #####CALCULATE HOURS PER ACRE######
 #calculate_hpa calculates harvest time in hours per acre from the imported Opcost_Input table. 
 #It incorporates opcost_equation_ref, opcost_modifiers, opcost_units to get a final hours per acre value 
@@ -455,6 +449,8 @@ estimate_cost <- function(harvest_system, data, cost) {
   
 }
 
+
+
 #####CALCULATE HARVEST COSTS######
 #calculate_costs_for_input runs estimate_cost() for the harvest system specified in the input dataset (via
 #the Harvesting.System column) and outputs the total machine cost per acre, the total move in cost per acre, 
@@ -510,7 +506,7 @@ odbcCloseAll()
 
 # ######Comment out lines 499-504, and uncomment 507-514 if running Opcost outside of BioSum
 # ###set the output location database
-# opcost.output.location <- "C:/Users/sloreno/Opcost/OPCOST_10_0_Input_BM_P001_100_100_100_100_2018-08-02_11_47_13_AM.accdb"
+# opcost.output.location <- "C:/Users/sloreno/Opcost/test/fia_biosum_667.accdb"
 # 
 # #Opcost_Input
 # conn <- odbcConnectAccess2007(opcost.output.location)
