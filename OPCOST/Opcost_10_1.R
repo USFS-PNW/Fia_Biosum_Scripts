@@ -43,8 +43,8 @@ odbcCloseAll()
 
 
 # ####MANUALLY RUN OPCOST ON A SINGLE OPCOST INPUT FILE####
-# opcost.ref.location <- "C:/Users/sloreno/Opcost/test/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
-# opcost.input.location <- "C:/Users/sloreno/Opcost/test/fia_biosum_667.accdb"
+# opcost.ref.location <- "C:/Users/sloreno/Opcost/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
+# opcost.input.location <- "C:/Users/sloreno/Opcost/OPCOST_10_1_Input_BM_P029_210_210_210_210_2018-10-25_11_35_54_AM.accdb"
 # 
 # #Opcost_Input
 # conn <- odbcConnectAccess2007(opcost.input.location)
@@ -98,9 +98,7 @@ m$totalVol_ct <- (m$Chip.tree.per.acre * m$Chip.trees.average.volume.ft3.)* 0.02
 m$totalVol <- (m$totalVol_ll + m$totalVol_sl + m$totalVol_ct)
 
 #dbh calculated from twitchVol
-#calculate for all size bins
-m$dbh_ll <- sqrt((((m$Large.log.trees.MerchAsPctOfTotal/100)*m$Large.log.trees.average.vol.ft3.) + 8.4166)/.2679)
-m$dbh_sl <- sqrt((((m$Small.log.trees.MerchAsPctOfTotal/100)*m$Small.log.trees.average.volume.ft3.) + 8.4166)/.2679)
+#calculate for chip trees
 m$dbh_ct <- sqrt((((m$Chip.trees.MerchAsPctOfTotal/100)*m$Chip.trees.average.volume.ft3.) + 8.4166)/.2679)
 
 #distBetween Trees is calculated by taking all size classes trees per acre (feet)
@@ -114,7 +112,9 @@ is.na(m$Large.log.trees.average.density.lbs.ft3.) <- m$Large.log.trees.average.d
 is.na(m$Small.log.trees.average.density.lbs.ft3.) <- m$Small.log.trees.average.density.lbs.ft3.==0
 
 columns <- c("Large.log.trees.average.density.lbs.ft3.", "Small.log.trees.average.density.lbs.ft3.")
-m$totalWeight<- rowMeans(m[columns], na.rm=TRUE) * (m$totalVol_ll + m$totalVol_sl)
+m$totalVol_smlg_ft <- (m$Large.log.trees.per.acre * m$Large.log.trees.average.vol.ft3.)+
+                  (m$Small.log.trees.per.acre * m$Small.log.trees.average.volume.ft3.)
+m$totalWeight<- rowMeans(m[columns], na.rm=TRUE) * m$totalVol_smlg_ft
 
 m[is.na(m)] <- 0
 
@@ -496,17 +496,16 @@ opcost_output <- data.frame("stand" = output$Stand,
                             "Rx" = substr(output$Stand, 29, 31), 
                             "RxCycle" = substr(output$Stand, 32, 32)
 )
-
 ######Use if running opcost through Biosum
 con<-odbcConnectAccess2007(args)
 sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
 
 odbcCloseAll()
 
-
+# 
 # ######Comment out lines 499-504, and uncomment 507-514 if running Opcost outside of BioSum
 # ###set the output location database
-# opcost.output.location <- "C:/Users/sloreno/Opcost/test/fia_biosum_667.accdb"
+# opcost.output.location <- "C:/Users/sloreno/Opcost/OPCOST_10_1_Input_BM_P029_210_210_210_210_2018-10-25_11_35_54_AM.accdb"
 # 
 # #Opcost_Input
 # conn <- odbcConnectAccess2007(opcost.output.location)
