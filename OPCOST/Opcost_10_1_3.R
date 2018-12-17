@@ -494,7 +494,7 @@ calculate_costs_for_input <- function(data) {
   data2 <- merge(data2, data[, c("Stand", "Harvesting.System")], by="Stand")
   
   drop <- Reduce(rbind, droplist)
-  drop <- merge(drop, data[, c("Stand", "Harvesting.System", "RxCycle", "RxPackage", "Rx")], by="Stand")
+  drop <- merge(drop, data[, c("Stand", "Harvesting.System", "RxCycle", "RxPackage", "Rx", "biosum_cond_id")], by="Stand")
   
   return(list(data2, drop))
 }
@@ -503,7 +503,11 @@ run_output <- calculate_costs_for_input(m)
 output <- run_output[[1]]
 
 drop <- run_output[[2]]
-drop$error <- 'Machine Limit Exceeded'
+
+drop$error <- "Machine Limit Exceeded"
+
+output <- output[!(output$Stand %in% drop$Stand),]
+
 
 opcost_output <- data.frame("stand" = output$Stand, 
                             "harvest_cpa" = output$Total_CPA, 
@@ -517,8 +521,9 @@ opcost_output <- data.frame("stand" = output$Stand,
                             "RxCycle" = substr(output$Stand, 32, 32))
                             
 opcost_errors <- data.frame("stand" = drop$Stand, 
-                            "Harvesting System" = drop$Harvesting.System,
+                            "harvest_system" = drop$Harvesting.System,
                             "error_message" = drop$error,
+                            "biosum_cond_id" = drop$biosum_cond_id, 
                             "RxPackage" = drop$RxPackage, 
                             "Rx" = drop$Rx,
                             "RxCycle" = drop$RxCycle)
