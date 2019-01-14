@@ -1,4 +1,4 @@
-#OpCost 10.1.2 2018 December 4, 2018
+#OpCost 10.1.3 2019 January 14, 2018
 #####Initial package loading
 #####Automatically install if package missing
 packages = ("RODBC")
@@ -13,10 +13,10 @@ package.check <- lapply(packages, FUN = function(x) {
 ###################### STAND ALONE PATH DIRECTORIES ################################
 
 opcost.ref <- "C:/Users/sloreno/Opcost/opcost_ref.accdb" #set the location of the opcost_ref.accdb you'd like to use
-opcost.input <- "C:/Users/sloreno/Opcost/OPCOST_10_1_Input_BM_P029_210_210_210_210_2018-10-25_11_35_54_AM.accdb"#input database
+opcost.input <- "C:/Users/sloreno/Opcost/test29.accdb"#input database
 
 ###set the output location database
-opcost.output <- "C:/Users/sloreno/Opcost/OPCOST_10_1_Input_BM_P029_210_210_210_210_2018-10-25_11_35_54_AM.accdb"
+opcost.output <- "C:/Users/sloreno/Opcost/test29.accdb"
 
 ###set output for the graphs (optional)
 graph.output <- "C:/Users/sloreno/Opcost/opcost_graphics"
@@ -504,7 +504,9 @@ output <- run_output[[1]]
 
 drop <- run_output[[2]]
 
+if (nrow(drop)>0) {
 drop$error <- "Machine Limit Exceeded"
+}
 
 output <- output[!(output$Stand %in% drop$Stand),]
 
@@ -533,13 +535,15 @@ opcost_errors <- data.frame("stand" = drop$Stand,
 
 if (length(args!=0)) {
   con<-odbcConnectAccess2007(args)
-  sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE, append=FALSE)
-  sqlSave(con, opcost_errors, tablename="OpCost_Errors", safer=FALSE, append=FALSE)
+  sqlSave(con, opcost_output, tablename="OpCost_Output", safer=FALSE)
+  if (nrow(opcost_errors)>0)
+  sqlSave(con, opcost_errors, tablename="OpCost_Errors", safer=FALSE)
+  odbcCloseAll()
 } else {
   conn <- odbcConnectAccess2007(opcost.output.location)
-  sqlSave(conn, opcost_output, tablename="OpCost_Output", safer=FALSE, append=FALSE)
-  sqlSave(conn, opcost_errors, tablename="OpCost_Errors", safer=FALSE, append=FALSE)
-
+  sqlSave(conn, opcost_output, tablename="OpCost_Output", safer=FALSE)
+  if (nrow(opcost_errors)>0)
+  sqlSave(conn, opcost_errors, tablename="OpCost_Errors", safer=FALSE)
   odbcCloseAll()
 }
 
