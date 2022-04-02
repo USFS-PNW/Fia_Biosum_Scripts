@@ -5,7 +5,7 @@ library(RODBC)
 library(RSQLite)
 
 #Load NIMS_TREE table, reformat data type, resave in .accdb
-con <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=D:/BioSum_Data/wFERS/NIMS_FIRE_2022.accdb") #Connect to .accdb
+con <- odbcDriverConnect("Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=X:/FERS_Data/data_source/NIMS_FIRE_2022.accdb") #Connect to .accdb
 
 NIMS_TREE <- sqlFetch(con, "NIMS_TREE", as.is = TRUE) #load in the NIMS_TREE table
 
