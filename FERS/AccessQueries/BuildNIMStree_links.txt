@@ -1,10 +1,12 @@
 # These queries on NIMS_FIRE_2022 will build views that make the data more approachable, I think.
+# Note that as of 4/20/22, Jeremy is moving these queries to the documentation in his
+# Box\share\FERS\2020 Westside FERS Analysis\Data\Metadata\AccessQsToBuildDB.doc file
 
 # They depend only on the tables in the NIMS_FIRE_2022 database (remember, we established links to these tables in 
 # a new database that contains mainly queries (dynamic views) which we use to stitch together data to feed to R)
 # plus the FullPlotList table that was in a separate temp database and contained the pre and post plot_cn values 
 # for the 262 wFERS plots. Don't rely on other columns in FullPlotList-- just the plot cns
-# I added 1 to a few columns at the end of each of these views that may be useful in linking across time or data type.
+# I added "1" to a few columns at the end of each of these views that may be useful in linking across time or data type.
 
 
 V1PLOT
@@ -43,6 +45,8 @@ FROM (((FullPlotList INNER JOIN V1TREE ON FullPlotList.PREFIRE_PLT_CN = V1TREE.P
 # So with these precursors, one can start building the custom AllTrees table of your dreams that will contain whatever 
 # attributes you need from pre and post tree tables, cond tables, etc. Just for fun, I brought in some condition 
 # attributes also (treatment codes, so that you could see the values of 18 in treatment code that signify fire salvage).
+# note that as of 4/20/22, the Query below may not reflect how Angel has edited it locally. This was provided as a starting point and
+# hopefully, Angel will update this with the final query version, when ready
 
 
 NewerAllTreeBeginnings
