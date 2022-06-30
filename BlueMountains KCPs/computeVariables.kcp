@@ -1,0 +1,51 @@
+
+*************Calculate Size/Canopy Cover class
+Compute            0
+**canopy cover
+CC=SpMcDBH(7, All, 0, 0, 999, 0, 999, 0, 0.0)
+**QMD
+QMD=SpMcDBH(5, All, 0, 0, 999, 0, 999, 0, 0.0)
+
+CC_C =LinInt(CC,40,40,70,70,1,2,2,3)
+QMD_C =LinInt(QMD, 5,5,10,10,15,15,1,2,2,3,3,4)*10
+RGNST = CC_C + QMD_C
+END
+
+*If                 0
+*RGNST LT 21 OR RGNST GT 43
+*Then
+*Compute            0
+*RGNST = 0
+*End
+*EndIf
+
+
+* Shade Tolerance Rating
+SpGroup     ShdTol_1
+ YC PY
+SpGroup     ShdTol_2
+ WB LM CW
+SpGroup     ShdTol_3
+ DF GF MH LP ES AF PP
+SpGroup     ShdTol_4
+ AS WJ
+
+
+* 2-inch Saps by Shade Tolerance
+Compute            0
+Sap     =SpMcDBH(1,All,0,1.00,3.0,5.0,500.0,0) 
+Sap2ST1 =SpMcDBH(1,ShdTol_1,0,1.00,3.0,5.0,500.0,0)
+Sap2ST2 =SpMcDBH(1,ShdTol_2,0,1.00,3.0,5.0,500.0,0)
+Sap2ST3 =SpMcDBH(1,ShdTol_3,0,1.00,3.0,5.0,500.0,0)
+Sap2ST4 =SpMcDBH(1,ShdTol_4,0,1.00,3.0,5.0,500.0,0)
+End
+
+* Track amount of Grand Fir trees in the stand at each cycle
+Compute            0
+GFtpa   =SpMcDBH(1,GF,0,5.00,21.0,0.0,500.0,0)
+GFba    =SpMcDBH(2,GF,0,5.00,21.0,0.0,500.0,0)
+GFsapba =SpMcDBH(2,GF,0,1.00,5.00,0.0,500.0,0)
+End
+ 
+********************************************************************************
+

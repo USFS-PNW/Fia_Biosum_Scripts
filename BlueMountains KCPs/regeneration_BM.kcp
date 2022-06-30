@@ -1,0 +1,299 @@
+
+********************************************************************************
+*Get shade group seedling counts based on RGNST
+********************************************************************************
+Compute            0
+
+**Assign sapling count (number of trees added via regeneration) based on RGNST value. 
+**This is done via LININT keyword, a way of assigning values based on another value. 
+**RGNST value is based on cc and qmd class. 
+
+_SP1n=LinInt(RGNST, 21, 21, 22, 22, 23, 23, &
+                   31, 31, 32, 32, 33, 33, &
+                   0, 0, 0, 0, 14, 14, &
+                   0, 0, 0, 0, 0, 0)
+
+_SP2n=LinInt(RGNST, 21, 21, 22, 22, 23, 23, &
+                   31, 31, 32, 32, 33, 33,  &
+                   0, 23, 102, 102, 219, 219, &
+                   1, 1, 11, 11, 36, 0)
+
+_SP3n=LinInt(RGNST, 21, 21, 22, 22, 23, 23, &
+                   31, 31, 32, 32, 33, 33,  &
+                   0, 13, 37, 37, 29, 29, &
+                   1, 1, 5, 5, 4, 0)
+
+_SP4n=LinInt(RGNST, 21, 21, 22, 22, 23, 23, &
+                   31, 31, 32, 32, 33, 33,  &
+                   0, 33, 50, 50, 26, 26, &
+                   3, 3, 2, 2, 0, 0)
+
+
+END
+
+********************************************************************************
+*Species Count                                              
+********************************************************************************
+
+Compute            0
+_WP=SpMcDBH(1,WP,0,9.0,200,1.0,500,0)
+_WPb=INDEX(_WP, 0, 1)
+_WL=SpMcDBH(1,WL,0,9.0,200,1.0,500,0)
+_WLb=INDEX(_WL, 0, 1)
+_DF=SpMcDBH(1,DF,0,9.0,200,1.0,500,0)
+_DFb=INDEX(_DF, 0, 1)
+_GF=SpMcDBH(1,GF,0,9.0,200,1.0,500,0)
+_GFb=INDEX(_GF, 0, 1)
+_MH=SpMcDBH(1,MH,0,9.0,200,1.0,500,0)
+_MHb=INDEX(_MH, 0, 1)
+_WJ=SpMcDBH(1,WJ,0,9.0,200,1.0,500,0)
+_WJb=INDEX(_WJ, 0, 1)
+_LP=SpMcDBH(1,LP,0,9.0,200,1.0,500,0)
+_LPb=INDEX(_LP, 0, 1)
+_ES=SpMcDBH(1,ES,0,9.0,200,1.0,500,0)
+_ESb=INDEX(_ES, 0, 1)
+_AF=SpMcDBH(1,AF,0,9.0,200,1.0,500,0)
+_AFb=INDEX(_AF, 0, 1)
+_PP=SpMcDBH(1,PP,0,9.0,200,1.0,500,0)
+_PPb=INDEX(_PP, 0, 1)
+_WB=SpMcDBH(1,WB,0,9.0,200,1.0,500,0)
+_WBb=INDEX(_WB, 0, 1)
+_LM=SpMcDBH(1,LM,0,9.0,200,1.0,500,0)
+_LMb=INDEX(_LM, 0, 1)
+_PY=SpMcDBH(1,PY,0,9.0,200,1.0,500,0)
+_PYb=INDEX(_PY, 0, 1)
+_YC=SpMcDBH(1,YC,0,9.0,200,1.0,500,0)
+_YCb=INDEX(_YC, 0, 1)
+_AS=SpMcDBH(1,AS,0,9.0,200,1.0,500,0)
+_ASb=INDEX(_AS, 0, 1)
+_CW=SpMcDBH(1,CW,0,9.0,200,1.0,500,0)
+_CWb=INDEX(_CW, 0, 1)
+
+SpCount=_DFb+_GFb+_MHb+_LPb+_ESb+_AFb+_PPb+_WPb+_WLb+_WBb+_LMb+_CWb+_YCb+_PYb+_ASb+_WJb
+
+
+fudge=INDEX(SpCount, 1, 1.5, 1.5, 1.5, 1.5, 2)
+
+SP1n = (_SP1n/SpCount)*fudge
+SP2n = (_SP2n/SpCount)*fudge
+SP3n = (_SP3n/SpCount)*fudge
+SP4n = (_SP4n/SpCount)*fudge
+END
+
+Compute            0
+RegWP=0
+RegWL=0
+RegDF=0
+RegGF=0
+RegMH=0
+RegWJ=0
+RegLP=0
+RegES=0
+RegAF=0
+RegPP=0
+RegWB=0
+RegLM=0
+RegPY=0
+RegYC=0
+RegAS=0
+RegCW=0
+END
+
+
+********************************************************************************
+*Add regeneration                                              
+********************************************************************************
+** Western White Pine
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,WP,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(WP, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegWP=SP3n
+End
+EndIf
+
+** Western Larch
+If                 0
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,WL,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(WL, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegWL=SP3n
+End
+EndIf
+
+** Douglas-fir
+If                 0 
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,DF,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(DF, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegDF=SP3n
+End
+EndIf
+
+** Grand Fir
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,GF,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(GF, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegGF=SP3n
+End
+EndIf
+
+** Mountain Hemlock
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,MH,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(MH, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegMH=SP3n
+End
+EndIf
+
+** Western Juniper
+If                 0
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,WJ,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(WJ, SP4n, 100, 5, 0, 0)
+End
+Compute            0
+RegWJ=SP4n
+End
+EndIf
+
+** Lodgepole Pine
+If                 0 
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,LP,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(LP, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegLP=SP3n
+End
+EndIf
+
+** Engelmann Spruce
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,ES,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(ES, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegES=SP3n
+End
+EndIf
+
+** Subalpine fir
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,AF,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(AF, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegAF=SP3n
+End
+EndIf
+
+** Ponderosa Pine
+If                 0
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,PP,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(PP, SP3n, 100, 5, 0, 0)
+End
+Compute            0
+RegPP=SP3n
+End
+EndIf
+
+** Whitebark Pine
+If                 0 
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,WB,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(WB, SP2n, 100, 5, 0, 0)
+End
+Compute            0
+RegWB=SP2n
+End
+EndIf
+
+** Limber Pine
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,LM,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(LM, SP2n, 100, 5, 0, 0)
+End
+Compute            0
+RegLM=SP2n
+End
+EndIf
+
+** Pacific Yew
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,PY,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(PY, SP1n, 100, 5, 0, 0)
+End
+Compute            0
+**Track that regeneration was added for WP
+RegPY=SP1n
+End
+EndIf
+
+** Alaska Cedar
+If                 0
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,YC,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(YC, SP1n, 100, 5, 0, 0)
+End
+Compute            0
+RegYC=SP1n
+End
+EndIf
+
+** Quaking Aspen
+If                 0 
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,AS,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(AS, SP4n, 100, 5, 0, 0)
+End
+Compute            0
+RegAS=SP4n
+End
+EndIf
+
+** Black Cottonwood
+If                 0  
+SpMcDBH(11,ALL,0,1.0,200,1.0,500,0) LE BSDIMAX*0.85 AND SpMcDBH(1,CW,0,9.0,999,0,500,0) GE 1 AND EVPHASE EQ 2 AND CUT EQ 1
+Then
+Estab
+Natural            2    Parms(CW, SP2n, 100, 5, 0, 0)
+End
+Compute            0
+RegCW=SP2n
+End
+EndIf
+
+

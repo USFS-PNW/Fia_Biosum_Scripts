@@ -1,0 +1,22 @@
+COMMENT
+Set Maximum Stand Density Index.  BM variant.
+Following methods described by:
+Vandendriesche, D., 2010. FVS out of the box—assembly required, in: Proceedings
+RMRS-P-61. Presented at the 2009 National Silviculture Workshop (June 15-18,
+2009), U.S. Department of Agriculture, Forest Service, Rocky Mountain Research
+Station, Fort Collins, CO, pp. 289–306.
+https://www.fs.fed.us/rm/pubs/rmrs_p061/rmrs_p061_289_306.pdf
+
+Where >100 FIA plots in the FVS variant had single dominant species, 85% of the
+98th percentile of observed SDI is used to represent an endemic maximum limit.
+Upper limit of density related mortality is set to 75% of SDIMAX.
+END
+
+!! Modify SDIMAX to adjust basal area growth - These species based on FIA
+!! Example - For DF, channge Max SDI to 303
+!! 55% lower density limit when density-related mortality is invoked
+!! 75% upper desnity limit at which stand reaches actual max density
+SDIMAX            DF       303                           55.        75
+SDIMAX            LP       351                           55.        75
+SDIMAX            PP       235                           55.        75
+
