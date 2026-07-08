@@ -27,7 +27,7 @@ maxtime <- 5
 
 startTime <- Sys.time()
 
-database <- "databases/gis_travel_times_master.db"
+database <- "gis_travel_times_master.db"
 
 # connect to db
 con <- dbConnect(RSQLite::SQLite(), dbname = database)
@@ -42,12 +42,29 @@ print("travel_time table created")
 
 # load data into plot_gis table
 df <- read.csv(plotcsv, header=TRUE)
-dbWriteTable(con, "plot_gis", df, row.names = FALSE, append = TRUE)
+dbWriteTable(con, "plot_gis_temp", df, row.names = FALSE, append = TRUE)
+sql <- "CREATE TABLE plot_gis (STATECD INTEGER, COUNTYCD INTEGER, 
+        PLOT INTEGER, PLOT_CN INTEGER, LON DOUBLE, LAT DOUBLE)"
+dbExecute(con, sql)
+sql <- "INSERT INTO plot_gis SELECT * FROM plot_gis_temp"
+dbExecute(con, sql)
+sql <- "DROP TABLE plot_gis_temp"
+dbExecute(con, sql)
 print("data loaded into plot_gis table")
 
 # load data into processing_site table
 df <- read.csv(psitecsv, header=TRUE)
-dbWriteTable(con, "processing_site", df, row.names = FALSE, append = TRUE)
+dbWriteTable(con, "processing_site_temp", df, row.names = FALSE, append = TRUE)
+sql <- "CREATE TABLE processing_site (PSITE_ID INTEGER, PSITE_CN CHAR(12), 
+        NAME CHAR(100), TRANCD INTEGER, TRANCD_DEF CHAR(40), BIOCD INTEGER, 
+        BIOCD_DEF CHAR(40), EXISTS_YN CHAR(1), LAT DOUBLE, LON DOUBLE, 
+        STATE CHAR(2), COUNTY CHAR(40), CITY CHAR(40), STATUS CHAR(40), 
+        MILL_TYPE CHAR(40))"
+dbExecute(con, sql)
+sql <- "INSERT INTO processing_site SELECT * FROM processing_site_temp"
+dbExecute(con, sql)
+sql <- "DROP TABLE processing_site_temp"
+dbExecute(con, sql)
 print("data loaded into processing_site table")
 
 # load data into travel_time table
